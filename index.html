@@ -14,7 +14,10 @@
         body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--text); }
         header { background: #0f172a; color: #fff; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 1.25rem; font-weight: bold; letter-spacing: 0.5px; }
-        .cart-btn { background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .nav-buttons { display: flex; gap: 0.5rem; align-items: center; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-secondary { background: #475569; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-danger { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
         h2 { margin-bottom: 1.5rem; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
@@ -22,10 +25,15 @@
         .product-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 6px; background: #e2e8f0; }
         .product-title { font-size: 1rem; font-weight: 600; margin: 0.75rem 0 0.5rem; }
         .product-price { color: #64748b; font-weight: 500; margin-bottom: 1rem; }
-        .btn { background: var(--primary); color: white; border: none; padding: 0.6rem 1rem; cursor: pointer; border-radius: 6px; width: 100%; font-weight: 600; transition: background 0.2s; }
-        .btn:hover { background: var(--primary-dark); }
+        .btn { background: var(--primary); color: white; border: none; padding: 0.6rem 1rem; cursor: pointer; border-radius: 6px; width: 100%; font-weight: 600; }
         
-        /* Modal / Cart Drawer Styling */
+        /* Modals Common Style */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 2rem; border-radius: 10px; width: 90%; max-width: 400px; box-sizing: border-box; }
+        .modal-content input { width: 100%; padding: 0.5rem; margin-bottom: 1rem; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 4px; }
+
+        /* Cart Drawer */
         .cart-modal { display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 400px; height: 100%; background: white; box-shadow: -4px 0 15px rgba(0,0,0,0.1); z-index: 1000; padding: 1.5rem; box-sizing: border-box; flex-direction: column; justify-content: space-between; }
         .cart-modal.active { display: flex; }
         .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; }
@@ -34,19 +42,49 @@
         .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem; }
         .cart-footer { border-top: 1px solid #e2e8f0; padding-top: 1rem; }
         .total-price { font-size: 1.1rem; font-weight: bold; margin-bottom: 1rem; display: flex; justify-content: space-between; }
+        #user-greeting { font-size: 0.9rem; color: #94a3b8; margin-right: 0.5rem; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">SwiftSelect</div>
-        <button class="cart-btn" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</button>
+        <div class="nav-buttons">
+            <span id="user-greeting"></span>
+            <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login</button>
+            <button class="btn-secondary" onclick="checkAdminPassword()">Admin</button>
+            <button class="btn-primary" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</button>
+        </div>
     </header>
 
     <div class="container">
         <h2>Featured Products</h2>
         <div class="product-grid" id="product-grid">
             <!-- Dynamic Products -->
+        </div>
+    </div>
+
+    <!-- User Account / Signup Modal -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-content">
+            <h3>Customer Account</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Enter your details to create an account or sign in.</p>
+            <input type="text" id="auth-name" placeholder="Full Name">
+            <input type="email" id="auth-email" placeholder="Email Address">
+            <button class="btn-primary" onclick="loginUser()" style="width:100%; margin-bottom:0.5rem;">Continue</button>
+            <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal" id="admin-modal">
+        <div class="modal-content">
+            <h3>Add New Product</h3>
+            <input type="text" id="admin-name" placeholder="Product Name">
+            <input type="number" id="admin-price" placeholder="Price ($)">
+            <input type="text" id="admin-image" placeholder="Image URL">
+            <button class="btn-primary" onclick="addProduct()" style="width:100%; margin-bottom:0.5rem;">Save Product</button>
+            <button class="btn-secondary" onclick="toggleAdminModal()" style="width:100%;">Close</button>
         </div>
     </div>
 
@@ -66,21 +104,24 @@
                 <span>Total:</span>
                 <span id="cart-total">$0.00</span>
             </div>
-            <button class="btn" onclick="checkout()">Proceed to Checkout</button>
+            <button class="btn-primary" style="width:100%;" onclick="proceedToCheckout()">Proceed to Checkout</button>
         </div>
     </div>
 
     <script>
-        // Product Catalog
-        const products = [
+        let products = JSON.parse(localStorage.getItem('swift_products')) || [
             { id: 1, name: "Smart Gadget Pro", price: 49.99, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=80" },
-            { id: 2, name: "Minimalist Watch", price: 29.99, image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=300&auto=format&fit=crop&q=80" },
-            { id: 3, name: "Wireless Earbuds", price: 39.99, image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=300&auto=format&fit=crop&q=80" }
+            { id: 2, name: "Minimalist Watch", price: 29.99, image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=300&auto=format&fit=crop&q=80" }
         ];
 
         let cart = [];
+        let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
 
-        // Render Products onto the Homepage
+        function initApp() {
+            renderProducts();
+            updateAuthUI();
+        }
+
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = products.map(product => `
@@ -93,7 +134,110 @@
             `).join('');
         }
 
-        // Add Product to Cart array
+        function updateAuthUI() {
+            const authBtn = document.getElementById('auth-btn');
+            const greeting = document.getElementById('user-greeting');
+            if (currentUser) {
+                greeting.innerText = `Hi, ${currentUser.name}`;
+                authBtn.innerText = "Logout";
+                authBtn.className = "btn-danger";
+            } else {
+                greeting.innerText = "";
+                authBtn.innerText = "Login";
+                authBtn.className = "btn-secondary";
+            }
+        }
+
+        function handleAuthClick() {
+            if (currentUser) {
+                if (confirm("Are you sure you want to log out?")) {
+                    localStorage.removeItem('swift_current_user');
+                    currentUser = null;
+                    updateAuthUI();
+                    alert("You have been logged out.");
+                }
+            } else {
+                toggleAuthModal();
+            }
+        }
+
+        function toggleAuthModal() {
+            const modal = document.getElementById('auth-modal');
+            modal.classList.toggle('active');
+        }
+
+        function loginUser() {
+            const name = document.getElementById('auth-name').value;
+            const email = document.getElementById('auth-email').value;
+
+            if (!name || !email) {
+                alert("Please fill in your name and email.");
+                return;
+            }
+
+            currentUser = { name, email };
+            localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
+            updateAuthUI();
+            toggleAuthModal();
+
+            document.getElementById('auth-name').value = '';
+            document.getElementById('auth-email').value = '';
+            alert(`Welcome, ${name}! You are now signed in.`);
+        }
+
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+            if (!currentUser) {
+                alert("Please sign in or create an account to complete your checkout.");
+                toggleCart();
+                toggleAuthModal();
+                return;
+            }
+            alert(`Thank you for your order, ${currentUser.name}! Redirecting to secure payment...`);
+            cart = [];
+            updateCartUI();
+            toggleCart();
+        }
+
+        function checkAdminPassword() {
+            const password = prompt("Enter Admin Password:");
+            if (password === "admin123") {
+                toggleAdminModal();
+            } else if (password !== null) {
+                alert("Incorrect password!");
+            }
+        }
+
+        function toggleAdminModal() {
+            const modal = document.getElementById('admin-modal');
+            modal.classList.toggle('active');
+        }
+
+        function addProduct() {
+            const name = document.getElementById('admin-name').value;
+            const price = parseFloat(document.getElementById('admin-price').value);
+            const image = document.getElementById('admin-image').value;
+
+            if (!name || isNaN(price) || !image) {
+                alert('Please fill in all fields correctly.');
+                return;
+            }
+
+            const newProduct = { id: Date.now(), name, price, image };
+            products.push(newProduct);
+            localStorage.setItem('swift_products', JSON.stringify(products));
+            renderProducts();
+            toggleAdminModal();
+
+            document.getElementById('admin-name').value = '';
+            document.getElementById('admin-price').value = '';
+            document.getElementById('admin-image').value = '';
+            alert('Product added successfully!');
+        }
+
         function addToCart(productId) {
             const product = products.find(p => p.id === productId);
             const existingItem = cart.find(item => item.id === productId);
@@ -105,10 +249,8 @@
             }
 
             updateCartUI();
-            alert(`${product.name} added to cart!`);
         }
 
-        // Update Cart Bubble Count and Drawer Content
         function updateCartUI() {
             const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             document.getElementById('cart-count').innerText = totalCount;
@@ -137,23 +279,12 @@
             document.getElementById('cart-total').innerText = `$${totalPrice.toFixed(2)}`;
         }
 
-        // Toggle Cart Drawer Visibility
         function toggleCart() {
             const modal = document.getElementById('cart-modal');
             modal.classList.toggle('active');
         }
 
-        // Mock Checkout Trigger
-        function checkout() {
-            if (cart.length === 0) {
-                alert('Your cart is empty!');
-                return;
-            }
-            alert('Redirecting to secure payment gateway...');
-        }
-
-        // Initialize Store on Load
-        renderProducts();
+        initApp();
     </script>
 </body>
 </html>
