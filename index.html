@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Custom Store</title>
+    <title>NovaCart - Online Store</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }
         header { background: #111; color: #fff; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
@@ -11,14 +11,14 @@
         .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
         .product-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; text-align: center; }
         .product-card img { max-width: 100%; height: 200px; object-fit: cover; border-radius: 4px; }
-        .btn { background: #007bff; color: white; border: none; padding: 0.5rem 1rem; cursor: pointer; border-radius: 4px; margin-top: 1rem; }
+        .btn { background: #007bff; color: white; border: none; padding: 0.5rem 1rem; cursor: pointer; border-radius: 4px; margin-top: 1-rem; }
         .btn:hover { background: #0056b3; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>My Store</h1>
+        <h1>NovaCart</h1>
         <div id="cart-count">Cart: 0 items</div>
     </header>
 
@@ -49,8 +49,11 @@
             `).join('');
         }
 
+        let cartCount = 0;
         function addToCart(id) {
-            alert(`Product ${id} added to cart!`);
+            cartCount++;
+            document.getElementById('cart-count').innerText = `Cart: ${cartCount} items`;
+            alert(`Product added to cart!`);
         }
 
         renderProducts();
