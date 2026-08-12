@@ -69,10 +69,8 @@
         .recent-order-item:hover { background: #f1f5f9; }
         .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
 
-        /* Normal Search Bar Container position in flow */
-        .search-container-wrapper { margin-bottom: 1.5rem; }
-
-        /* Sticky Search Bar Container: Sits naturally in flow until scrolled past, then sticks right under the header (top: 73px) */
+        /* Sticky Search Bar Container: Sits right above trending products in flow, sticks under header when swiped up */
+        .search-container-wrapper { margin-bottom: 1.25rem; }
         .sticky-search-container { position: sticky; top: 73px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
         .sticky-search-container.is-stuck { box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(8px); }
         
@@ -171,7 +169,7 @@
 <body>
 
     <div class="announcement-bar">
-        ⚡ Firebase Cloud Sync Active | Prepaid Orders Only | Secure Checkout
+        ⚡ Firebase Cloud Sync Active | Global Global Real-Time Reviews & Sync
     </div>
 
     <header>
@@ -194,16 +192,6 @@
             <p>Handpicked products delivered directly to your doorstep with guaranteed fast fulfillment and prepaid online ordering.</p>
         </div>
 
-        <!-- Sticky Search Bar Container: Sits naturally under the dashboard, but sticks right under the header when swiped up past it -->
-        <div class="search-container-wrapper" id="search-wrapper">
-            <div class="sticky-search-container" id="sticky-search">
-                <div class="search-input-wrapper">
-                    <span>🔍</span>
-                    <input type="text" id="search-input" class="search-input" placeholder="Search catalog for smart gadgets, apparel, accessories..." oninput="handleSearch()">
-                </div>
-            </div>
-        </div>
-
         <!-- Track Order Section -->
         <div class="track-section">
             <h3>📦 Track Your Order Status</h3>
@@ -224,6 +212,16 @@
             <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.5rem;">Manage and view your account's order activity.</p>
             <div class="recent-orders-list" id="recent-orders-list">
                 <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Sticky Search Bar Container: Sits right above Trending Products in flow, sticks under header when swiped up -->
+        <div class="search-container-wrapper" id="search-wrapper">
+            <div class="sticky-search-container" id="sticky-search">
+                <div class="search-input-wrapper">
+                    <span>🔍</span>
+                    <input type="text" id="search-input" class="search-input" placeholder="Search catalog for smart gadgets, apparel, accessories..." oninput="handleSearch()">
+                </div>
             </div>
         </div>
 
@@ -269,7 +267,7 @@
             <img id="detail-image" class="detail-img-main" src="" alt="">
             <div class="detail-thumbnails-grid" id="detail-thumbnails"></div>
             <div id="detail-video-container" class="detail-video-container"></div>
-            <div class="product-stars" style="margin-bottom: 0.5rem;">⭐⭐⭐⭐⭐ (128 verified reviews)</div>
+            <div class="product-stars" style="margin-bottom: 0.5rem;">⭐⭐⭐⭐⭐ (Verified Global Reviews)</div>
             <div id="detail-price" style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.15rem;"></div>
             <div class="shipping-badge">
                 <span>📦</span> <span id="detail-shipping">Estimated delivery: 2 - 4 business days</span>
@@ -318,7 +316,7 @@
                 <h3 style="margin: 0;">⭐ Global Customer Ratings & Recommendations</h3>
                 <button class="close-btn" onclick="openReviewsModal()">&times;</button>
             </div>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback shared globally by verified customers whose orders were fulfilled and rated.</p>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback shared globally by verified customers whose orders were fulfilled and rated. Visible across all devices instantly.</p>
             <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;">
                 <!-- Dynamically populated inside modal -->
             </div>
@@ -509,7 +507,7 @@
         let currentRatingOrderId = null;
         let selectedStarCount = 5;
 
-        // Sync with Firebase Realtime Database
+        // Sync with Firebase Realtime Database (ensuring global reviews/ratings update live across all devices)
         const stateRef = ref(db, 'swiftStoreState');
         
         onValue(stateRef, (snapshot) => {
@@ -1032,7 +1030,7 @@
             renderReviews();
             toggleRatingModal();
             renderRecentOrdersList();
-            showToast("Thank you! Your recommendation is now visible globally.");
+            showToast("Thank you! Your recommendation is now visible globally across all devices.");
         };
 
         window.checkAdminPassword = function() {
