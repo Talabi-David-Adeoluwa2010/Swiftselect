@@ -30,7 +30,7 @@
         .logo-container { display: flex; align-items: center; gap: 0.5rem; }
         .logo-icon { width: 32px; height: 32px; background: var(--primary); color: white; display: flex; justify-content: center; align-items: center; border-radius: 8px; font-weight: 800; font-size: 1.1rem; }
         .logo { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; color: var(--primary); }
-        .nav-buttons { display: flex; gap: 0.75rem; align-items: center; }
+        .nav-buttons { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
         
         .btn-primary { background: var(--primary); color: white; border: none; padding: 0.55rem 1.1rem; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
         .btn-primary:hover { background: var(--primary-dark); }
@@ -38,6 +38,8 @@
         .btn-danger { background: #fee2e2; color: #dc2626; border: none; padding: 0.55rem 1.1rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .btn-small { background: #e0e7ff; color: #4f46e5; border: none; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
         .btn-danger-small { background: #fee2e2; color: #dc2626; border: none; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
+        .btn-nav-link { background: transparent; color: #4f46e5; border: 1px solid #e0e7ff; padding: 0.55rem 1.1rem; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .btn-nav-link:hover { background: #e0e7ff; }
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
         
@@ -158,6 +160,7 @@
         </div>
         <div class="nav-buttons">
             <span id="user-greeting"></span>
+            <button class="btn-nav-link" onclick="openReviewsModal()">Other users experience and ratings</button>
             <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login</button>
             <button class="btn-primary" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</button>
         </div>
@@ -180,10 +183,10 @@
             </div>
             <div id="track-result-container" style="display: none;" class="track-result-box"></div>
 
-            <!-- Recent Store Orders Lookup Feed -->
+            <!-- Recent Store Orders Lookup Feed (Only shows orders for the currently logged-in user account) -->
             <div class="recent-orders-box">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h4 style="margin: 0; font-size: 0.95rem; color: #0f172a;">Recent Store Orders (Forgot your ID? Find it here)</h4>
+                    <h4 style="margin: 0; font-size: 0.95rem; color: #0f172a;" id="recent-orders-title">Your Recent Orders</h4>
                     <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
                 </div>
                 <div class="recent-orders-list" id="recent-orders-list">
@@ -194,7 +197,7 @@
 
         <!-- Customer Proof & Recommendation Testimonials Section -->
         <div class="reviews-section">
-            <h3 style="margin-top: 0; margin-bottom: 0.3rem; color: #0f172a;">⭐ Customer Success Stories & Proof</h3>
+            <h3 style="margin-top: 0; margin-bottom: 0.3rem; color: #0f172a;">⭐ Other users experience and ratings</h3>
             <p style="font-size: 0.85rem; color: #64748b; margin-top: 0;">Verified ratings and reviews from customers who received their orders.</p>
             <div class="reviews-grid" id="reviews-grid">
                 <!-- Dynamically populated customer reviews -->
@@ -266,6 +269,20 @@
             <input type="email" id="auth-email" placeholder="Email Address">
             <button class="btn-primary" onclick="loginUser()" style="width:100%; margin-bottom:0.75rem;">Continue</button>
             <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Recommendations / Customer Success Stories Modal -->
+    <div class="modal" id="reviews-modal">
+        <div class="modal-content" style="max-width: 650px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;">⭐ Other users experience and ratings</h3>
+                <button class="close-btn" onclick="openReviewsModal()">&times;</button>
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback and recommendations shared by verified customers.</p>
+            <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto;">
+                <!-- Dynamically populated inside modal -->
+            </div>
         </div>
     </div>
 
@@ -414,11 +431,7 @@
         ];
 
         let cart = [];
-        
-        // Fixed account for Talabi Emmanuel Okunola using sessionStorage so that it stays logged in 
-        // only on his specific browser tab/device session, and automatically starts logged out on any new device.
         let currentUser = JSON.parse(sessionStorage.getItem('swift_current_user')) || null;
-
         let orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
         let reviews = JSON.parse(localStorage.getItem('swift_reviews')) || [
             { name: "David T.", rating: 5, comment: "Super fast shipping and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
@@ -533,6 +546,7 @@
                 authBtn.innerText = "Login";
                 authBtn.className = "btn-secondary";
             }
+            renderRecentOrdersList();
         }
 
         function handleAuthClick() {
@@ -671,6 +685,11 @@
             resultBox.style.display = 'block';
 
             if (found) {
+                if (!currentUser || currentUser.email.toLowerCase() !== found.customerEmail.toLowerCase()) {
+                    resultBox.innerHTML = `<p style="color: #dc2626; margin: 0;">Access denied. You can only track orders belonging to your logged-in account.</p>`;
+                    return;
+                }
+
                 resultBox.innerHTML = `
                     <p style="margin: 0 0 0.5rem;"><strong>Order ID:</strong> ${found.id}</p>
                     <p style="margin: 0 0 0.5rem;"><strong>Items:</strong> ${found.items}</p>
@@ -684,12 +703,24 @@
 
         function renderRecentOrdersList() {
             const listContainer = document.getElementById('recent-orders-list');
-            if (orders.length === 0) {
-                listContainer.innerHTML = '<p style="color: #64748b; font-size: 0.8rem; margin: 0; text-align: center;">No orders placed yet in this session.</p>';
+            const titleElement = document.getElementById('recent-orders-title');
+
+            if (!currentUser) {
+                titleElement.innerText = "Your Recent Orders";
+                listContainer.innerHTML = '<p style="color: #64748b; font-size: 0.8rem; margin: 0; text-align: center;">Please log in to view your recent orders.</p>';
                 return;
             }
 
-            listContainer.innerHTML = [...orders].reverse().slice(0, 5).map(order => `
+            titleElement.innerText = `Your Recent Orders (${currentUser.name})`;
+
+            const userOrders = orders.filter(o => o.customerEmail.toLowerCase() === currentUser.email.toLowerCase());
+
+            if (userOrders.length === 0) {
+                listContainer.innerHTML = '<p style="color: #64748b; font-size: 0.8rem; margin: 0; text-align: center;">No orders placed yet from this account.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = [...userOrders].reverse().slice(0, 5).map(order => `
                 <div class="recent-order-item">
                     <div>
                         <span class="order-pill">${order.id}</span>
@@ -711,29 +742,46 @@
         }
 
         function clearAllOrders() {
-            if (confirm("Are you sure you want to clear recent orders history?")) {
-                orders = [];
-                localStorage.removeItem('swift_orders');
+            if (!currentUser) {
+                alert("Please log in first.");
+                return;
+            }
+            if (confirm("Are you sure you want to clear your recent orders history?")) {
+                orders = orders.filter(o => o.customerEmail.toLowerCase() !== currentUser.email.toLowerCase());
+                localStorage.setItem('swift_orders', JSON.stringify(orders));
                 renderRecentOrdersList();
                 document.getElementById('track-result-container').style.display = 'none';
-                showToast("Order history cleared");
+                showToast("Your order history cleared");
             }
         }
 
         function renderReviews() {
             const grid = document.getElementById('reviews-grid');
+            const modalGrid = document.getElementById('modal-reviews-grid');
+
             if (reviews.length === 0) {
-                grid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Be the first to review once your order is delivered!</p>';
+                const emptyMsg = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Be the first to review once your order is delivered!</p>';
+                if (grid) grid.innerHTML = emptyMsg;
+                if (modalGrid) modalGrid.innerHTML = emptyMsg;
                 return;
             }
 
-            grid.innerHTML = reviews.map(r => `
+            const reviewsHTML = reviews.map(r => `
                 <div class="review-card">
                     <div class="stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
                     <p>"${r.comment}"</p>
                     <span class="author">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
                 </div>
             `).join('');
+
+            if (grid) grid.innerHTML = reviewsHTML;
+            if (modalGrid) modalGrid.innerHTML = reviewsHTML;
+        }
+
+        function openReviewsModal() {
+            const modal = document.getElementById('reviews-modal');
+            modal.classList.toggle('active');
+            renderReviews();
         }
 
         function triggerRatingModal(orderId) {
@@ -825,7 +873,6 @@
                 return;
             }
 
-            // ALL orders are fully active and updatable without any blocking or locking
             listContainer.innerHTML = orders.map((ord, index) => `
                 <div class="admin-order-card">
                     <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
@@ -856,7 +903,6 @@
             renderAdminOrderList();
             renderRecentOrdersList();
 
-            // If status is newly updated to Delivered Successfully, trigger rating prompt if not already reviewed
             if (newStatus === "Delivered Successfully" && !previousStatus.includes('Delivered') && !orders[index].hasReviewed) {
                 toggleAdminModal();
                 triggerRatingModal(orders[index].id);
