@@ -9,7 +9,7 @@
     <script type="text/javascript">
         (function() {
             emailjs.init({
-                publicKey: "5viHIEbeZ90KuRrb3",
+                publicKey: "5viHlEbeZ90KuRrb3",
             });
         })();
     </script>
@@ -27,6 +27,8 @@
         .announcement-bar { background: linear-gradient(90deg, #4f46e5, #9333ea); color: white; text-align: center; padding: 0.5rem; font-size: 0.85rem; font-weight: 500; }
 
         header { background: #ffffff; color: #0f172a; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .logo-container { display: flex; align-items: center; gap: 0.5rem; }
+        .logo-icon { width: 32px; height: 32px; background: var(--primary); color: white; display: flex; justify-content: center; align-items: center; border-radius: 8px; font-weight: 800; font-size: 1.1rem; }
         .logo { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; color: var(--primary); }
         .nav-buttons { display: flex; gap: 0.75rem; align-items: center; }
         
@@ -123,7 +125,10 @@
     </div>
 
     <header>
-        <div class="logo">SwiftSelect</div>
+        <div class="logo-container">
+            <div class="logo-icon">S</div>
+            <div class="logo">SwiftSelect</div>
+        </div>
         <div class="nav-buttons">
             <span id="user-greeting"></span>
             <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login</button>
@@ -206,19 +211,19 @@
         </div>
     </div>
 
-    <!-- Billing & Checkout Modal (With Active Payment Method Dropdown) -->
+    <!-- Billing & Checkout Modal -->
     <div class="modal" id="billing-modal">
         <div class="modal-content">
             <h3>Prepaid Checkout & Delivery</h3>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Provide your accurate delivery information for online prepaid fulfillment.</p>
-            <input type="text" id="bill-address" placeholder="Street Address">
-            <input type="text" id="bill-city" placeholder="City">
+            <input type="text" id="bill-address" placeholder="Street Address (e.g. Fashakin)">
+            <input type="text" id="bill-city" placeholder="City (e.g. Akute)">
             <div style="display: flex; gap: 0.5rem;">
                 <input type="text" id="bill-state" placeholder="State / Province">
                 <input type="text" id="bill-postal" placeholder="Postal / Zip Code">
             </div>
-            <input type="text" id="bill-country" placeholder="Country (e.g. Nigeria)" value="Nigeria">
-            <input type="text" id="bill-phone" placeholder="Phone Number">
+            <input type="text" id="bill-country" placeholder="Country" value="Nigeria">
+            <input type="text" id="bill-phone" placeholder="Phone Number (for delivery rider)">
             
             <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Payment Method:</label>
             <select id="bill-payment">
@@ -510,7 +515,6 @@
                 payment_method: paymentMethod
             };
 
-            // Replace "template_tuq2hhk" with your exact Template ID from your EmailJS dashboard
             emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams)
                 .then(function(response) {
                     alert(`Order successful! Redirecting to secure ${paymentMethod} gateway...`);
@@ -528,6 +532,12 @@
                     cart = [];
                     updateCartUI();
                     toggleBillingModal();
+
+                    document.getElementById('bill-address').value = '';
+                    document.getElementById('bill-city').value = '';
+                    document.getElementById('bill-state').value = '';
+                    document.getElementById('bill-postal').value = '';
+                    document.getElementById('bill-phone').value = '';
                 });
         }
 
