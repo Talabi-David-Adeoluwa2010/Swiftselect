@@ -47,7 +47,7 @@
 
         .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
         
-        /* Hero Banner */
+        /* Hero Banner (Dashboard) */
         .hero-banner { background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; padding: 2rem 2rem; border-radius: 20px; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.2); position: relative; overflow: hidden; }
         .hero-banner h1 { margin: 0; font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
         .hero-banner p { margin: 0; color: #c7d2fe; font-size: 0.95rem; max-width: 600px; line-height: 1.5; }
@@ -69,8 +69,13 @@
         .recent-order-item:hover { background: #f1f5f9; }
         .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
 
-        /* Sticky Search Bar Container: Sticks right under header/announcement (top: 73px) */
-        .sticky-search-container { position: sticky; top: 73px; z-index: 90; background: var(--bg); padding: 1rem 0; margin-bottom: 1.5rem; transition: box-shadow 0.2s ease; }
+        /* Normal Search Bar Container position in flow */
+        .search-container-wrapper { margin-bottom: 1.5rem; }
+
+        /* Sticky Search Bar Container: Sits naturally in flow until scrolled past, then sticks right under the header (top: 73px) */
+        .sticky-search-container { position: sticky; top: 73px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
+        .sticky-search-container.is-stuck { box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(8px); }
+        
         .search-input-wrapper { position: relative; }
         .search-input-wrapper span { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem; }
         .search-input { width: 100%; padding: 0.9rem 1rem 0.9rem 3rem; font-size: 1rem; border: 1px solid var(--border); border-radius: 14px; box-sizing: border-box; outline: none; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.2s; }
@@ -182,21 +187,21 @@
         </div>
     </header>
 
-    <!-- Sticky Search Bar placed directly under header/announcement bar -->
-    <div class="sticky-search-container">
-        <div class="container" style="margin: 0 auto; padding: 0 1rem;">
-            <div class="search-input-wrapper">
-                <span>🔍</span>
-                <input type="text" id="search-input" class="search-input" placeholder="Search catalog for smart gadgets, apparel, accessories..." oninput="handleSearch()">
-            </div>
-        </div>
-    </div>
-
     <div class="container">
-        <!-- Hero Section -->
+        <!-- Hero Section (Dashboard) -->
         <div class="hero-banner">
             <h1>Discover Premium Quality Essentials</h1>
             <p>Handpicked products delivered directly to your doorstep with guaranteed fast fulfillment and prepaid online ordering.</p>
+        </div>
+
+        <!-- Sticky Search Bar Container: Sits naturally under the dashboard, but sticks right under the header when swiped up past it -->
+        <div class="search-container-wrapper" id="search-wrapper">
+            <div class="sticky-search-container" id="sticky-search">
+                <div class="search-input-wrapper">
+                    <span>🔍</span>
+                    <input type="text" id="search-input" class="search-input" placeholder="Search catalog for smart gadgets, apparel, accessories..." oninput="handleSearch()">
+                </div>
+            </div>
         </div>
 
         <!-- Track Order Section -->
@@ -313,7 +318,7 @@
                 <h3 style="margin: 0;">⭐ Global Customer Ratings & Recommendations</h3>
                 <button class="close-btn" onclick="openReviewsModal()">&times;</button>
             </div>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback shared globally by verified customers whose orders were fulfilled.</p>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback shared globally by verified customers whose orders were fulfilled and rated.</p>
             <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;">
                 <!-- Dynamically populated inside modal -->
             </div>
@@ -494,8 +499,8 @@
             ],
             orders: [],
             reviews: [
-                { name: "David T.", rating: 5, comment: "Super fast shipping and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
-                { name: "Sarah M.", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery rider.", date: "11/08/2026" }
+                { name: "@david_t", rating: 5, comment: "Super fast shipping and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
+                { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery rider.", date: "11/08/2026" }
             ]
         };
 
@@ -538,6 +543,20 @@
             updateAuthUI();
             renderRecentOrdersList();
             renderReviews();
+            setupStickySearchScrollObserver();
+        }
+
+        // Observer or scroll listener to toggle visual shadow/background when search bar sticks right under header
+        function setupStickySearchScrollObserver() {
+            const stickySearchEl = document.getElementById('sticky-search');
+            window.addEventListener('scroll', () => {
+                // When scrolled past header (header height ~ 73px), add sticky class
+                if (window.scrollY >= 73) {
+                    stickySearchEl.classList.add('is-stuck');
+                } else {
+                    stickySearchEl.classList.remove('is-stuck');
+                }
+            });
         }
 
         function formatPrice(product) {
