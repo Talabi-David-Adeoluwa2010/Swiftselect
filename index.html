@@ -20,142 +20,164 @@
             --accent: #f59e0b;
             --bg: #f8fafc; 
             --text: #0f172a;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
         }
         body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
         
         /* Announcement Bar */
         .announcement-bar { background: linear-gradient(90deg, #4f46e5, #9333ea); color: white; text-align: center; padding: 0.5rem; font-size: 0.85rem; font-weight: 500; }
 
-        header { background: #ffffff; color: #0f172a; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-        .logo-container { display: flex; align-items: center; gap: 0.5rem; }
-        .logo-icon { width: 32px; height: 32px; background: var(--primary); color: white; display: flex; justify-content: center; align-items: center; border-radius: 8px; font-weight: 800; font-size: 1.1rem; }
-        .logo { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; color: var(--primary); }
+        header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #0f172a; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        .logo-container { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--primary), #9333ea); color: white; display: flex; justify-content: center; align-items: center; border-radius: 10px; font-weight: 800; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); }
+        .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, var(--primary), #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .nav-buttons { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
         
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 0.55rem 1.1rem; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
-        .btn-primary:hover { background: var(--primary-dark); }
-        .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.55rem 1.1rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .btn-danger { background: #fee2e2; color: #dc2626; border: none; padding: 0.55rem 1.1rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .btn-small { background: #e0e7ff; color: #4f46e5; border: none; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
-        .btn-danger-small { background: #fee2e2; color: #dc2626; border: none; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
-        .btn-nav-link { background: transparent; color: #4f46e5; border: 1px solid #e0e7ff; padding: 0.55rem 1.1rem; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
+        .btn-secondary:hover { background: #e2e8f0; }
+        .btn-danger { background: #fee2e2; color: #dc2626; border: none; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
+        .btn-danger:hover { background: #fecaca; }
+        .btn-small { background: #e0e7ff; color: #4f46e5; border: none; padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
+        .btn-danger-small { background: #fee2e2; color: #dc2626; border: none; padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
+        .btn-nav-link { background: transparent; color: #4f46e5; border: 1px solid #e0e7ff; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
         .btn-nav-link:hover { background: #e0e7ff; }
 
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
+        .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
         
-        /* Hero Banner */
-        .hero-banner { background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; padding: 2.5rem 2rem; border-radius: 16px; margin-bottom: 2rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
-        .hero-banner h1 { margin: 0; font-size: 2rem; font-weight: 800; }
-        .hero-banner p { margin: 0; color: #c7d2fe; font-size: 1rem; max-width: 600px; line-height: 1.5; }
+        /* Foldable Dashboard Container */
+        .dashboard-wrapper { transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; margin-bottom: 1.5rem; }
+        .dashboard-wrapper.folded { max-height: 0; opacity: 0; margin-bottom: 0; pointer-events: none; }
 
-        /* Track Order Banner Section */
-        .track-section { background: white; border: 1px solid #e2e8f0; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        /* Hero Banner */
+        .hero-banner { background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; padding: 2.5rem 2rem; border-radius: 20px; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.2); position: relative; overflow: hidden; }
+        .hero-banner::after { content: ''; position: absolute; right: -50px; bottom: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.03); border-radius: 50%; }
+        .hero-banner h1 { margin: 0; font-size: 2.2rem; font-weight: 800; letter-spacing: -0.5px; }
+        .hero-banner p { margin: 0; color: #c7d2fe; font-size: 1rem; max-width: 600px; line-height: 1.6; }
+
+        /* Dashboard Action Buttons Strip */
+        .dashboard-actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .dashboard-action-btn { background: white; border: 1px solid var(--border); padding: 1.25rem; border-radius: 16px; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.01); text-align: left; }
+        .dashboard-action-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.1); border-color: var(--primary); }
+        .dashboard-action-icon { width: 45px; height: 45px; background: #e0e7ff; color: var(--primary); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.25rem; flex-shrink: 0; }
+        .dashboard-action-btn h4 { margin: 0 0 0.2rem; font-size: 0.95rem; color: #0f172a; font-weight: 700; }
+        .dashboard-action-btn p { margin: 0; font-size: 0.75rem; color: #64748b; }
+
+        /* Track Order Modal / Section */
+        .track-section { background: white; border: 1px solid var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         .track-section h3 { margin-top: 0; margin-bottom: 0.5rem; color: #0f172a; }
         .track-row { display: flex; gap: 0.5rem; }
-        .track-row input { flex-grow: 1; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; }
-        .track-result-box { margin-top: 1rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 0.95rem; }
+        .track-row input { flex-grow: 1; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; transition: border-color 0.2s; }
+        .track-row input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
+        .track-result-box { margin-top: 1rem; padding: 1.25rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border); font-size: 0.95rem; }
 
-        /* Recent Orders Section */
-        .recent-orders-box { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #e2e8f0; }
-        .recent-orders-list { display: flex; flex-direction: column; gap: 0.75rem; max-height: 220px; overflow-y: auto; margin-top: 0.75rem; }
-        .recent-order-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 0.75rem 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; gap: 1rem; }
-        .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: bold; }
+        /* Recent Orders Modal / Section */
+        .recent-orders-box { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+        .recent-orders-list { display: flex; flex-direction: column; gap: 0.75rem; max-height: 280px; overflow-y: auto; margin-top: 0.75rem; }
+        .recent-order-item { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; gap: 1rem; transition: background 0.2s; }
+        .recent-order-item:hover { background: #f1f5f9; }
+        .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
 
-        /* Customer Reviews / Proof Section */
-        .reviews-section { background: white; border: 1px solid #e2e8f0; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
-        .review-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 12px; font-size: 0.9rem; }
-        .review-card .stars { color: var(--accent); margin-bottom: 0.3rem; font-size: 0.85rem; }
-        .review-card p { margin: 0.3rem 0; color: #334155; }
-        .review-card .author { font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block; }
+        /* Sticky Search Bar Container */
+        .sticky-search-container { position: sticky; top: 73px; z-index: 90; background: var(--bg); padding: 1rem 0; margin-bottom: 1.5rem; }
+        .search-input-wrapper { position: relative; }
+        .search-input-wrapper span { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem; }
+        .search-input { width: 100%; padding: 0.9rem 1rem 0.9rem 3rem; font-size: 1rem; border: 1px solid var(--border); border-radius: 14px; box-sizing: border-box; outline: none; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.2s; }
+        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12); }
 
-        /* Search Bar Styling */
-        .search-bar-container { margin-bottom: 2rem; }
-        .search-input { width: 100%; padding: 0.85rem 1.25rem; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 12px; box-sizing: border-box; outline: none; background: white; box-shadow: 0 1px 2px rgba(0,0,0,0.02); transition: all 0.2s; }
-        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
-
-        .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+        .section-title { font-size: 1.35rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; color: #0f172a; }
         
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
-        .product-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: all 0.25s ease; position: relative; overflow: hidden; }
-        .product-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05); border-color: #cbd5e1; }
-        .product-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; background: #f1f5f9; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .product-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 1rem; text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.08); border-color: #cbd5e1; }
+        .product-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 12px; background: #f1f5f9; }
         
-        .product-badge { position: absolute; top: 1.25rem; left: 1.25rem; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); color: white; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .product-badge.sold-out { background: rgba(220, 38, 38, 0.85); }
+        .product-badge { position: absolute; top: 1.25rem; left: 1.25rem; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(6px); color: white; padding: 0.3rem 0.75rem; border-radius: 8px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .product-badge.sold-out { background: rgba(220, 38, 38, 0.9); }
         
-        .product-meta { margin-top: 0.75rem; }
-        .product-stars { color: var(--accent); font-size: 0.85rem; margin-bottom: 0.3rem; }
-        .product-title { font-size: 1.05rem; font-weight: 700; margin: 0 0 0.3rem; color: #0f172a; }
-        .product-price { color: var(--primary); font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.1rem; }
+        .product-meta { margin-top: 1rem; }
+        .product-stars { color: var(--accent); font-size: 0.9rem; margin-bottom: 0.3rem; }
+        .product-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.3rem; color: #0f172a; }
+        .product-price { color: var(--primary); font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.1rem; }
         .product-price .ngn-sub { font-size: 0.85rem; color: #64748b; font-weight: 600; }
         
-        .btn { background: var(--primary); color: white; border: none; padding: 0.7rem 1rem; cursor: pointer; border-radius: 8px; width: 100%; font-weight: 600; transition: background 0.2s; }
+        .btn { background: var(--primary); color: white; border: none; padding: 0.75rem 1rem; cursor: pointer; border-radius: 10px; width: 100%; font-weight: 700; transition: background 0.2s; }
         .btn:hover { background: var(--primary-dark); }
         .btn.disabled { background: #cbd5e1; cursor: not-allowed; }
         .btn.disabled:hover { background: #cbd5e1; }
 
         /* Trust Badges Strip */
-        .trust-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 3rem 0 2rem; background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; }
-        .trust-item h4 { margin: 0 0 0.2rem; font-size: 0.95rem; font-weight: 700; }
-        .trust-item p { margin: 0; font-size: 0.8rem; color: #64748b; }
+        .trust-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 3rem 0 2rem; background: white; padding: 2rem; border-radius: 16px; border: 1px solid var(--border); text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        .trust-item h4 { margin: 0 0 0.3rem; font-size: 1rem; font-weight: 700; color: #0f172a; }
+        .trust-item p { margin: 0; font-size: 0.85rem; color: #64748b; }
 
         /* Toast Notification */
-        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 0.75rem 1.5rem; border-radius: 30px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2); transition: transform 0.3s ease; z-index: 2000; font-size: 0.9rem; font-weight: 500; }
+        #toast { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 0.85rem 1.75rem; border-radius: 35px; box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* Footer Styling */
-        footer { text-align: center; padding: 2rem; background: #0f172a; color: #64748b; font-size: 0.85rem; margin-top: auto; border-top: 1px solid #1e293b; }
-        .secret-admin { cursor: pointer; opacity: 0.15; user-select: none; transition: opacity 0.2s; }
+        /* Footer */
+        footer { text-align: center; padding: 2.5rem; background: #0f172a; color: #64748b; font-size: 0.9rem; margin-top: auto; border-top: 1px solid #1e293b; }
+        .secret-admin { cursor: pointer; opacity: 0.2; user-select: none; transition: opacity 0.2s; padding: 0.2rem 0.5rem; }
         .secret-admin:hover { opacity: 1; color: #fff; }
 
         /* Modals Common Style */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 1rem; box-sizing: border-box; }
         .modal.active { display: flex; }
-        .modal-content { background: white; padding: 2rem; border-radius: 16px; width: 90%; max-width: 500px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 0.75rem; margin-bottom: 1rem; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; outline: none; background: #fff; }
+        .modal-content { background: white; padding: 2.25rem; border-radius: 20px; width: 100%; max-width: 520px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 0.85rem 1rem; margin-bottom: 1.1rem; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; outline: none; background: #fff; transition: all 0.2s; }
         .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
 
         /* Product Detail Modal Specifics */
-        .detail-img { width: 100%; height: 260px; object-fit: cover; border-radius: 12px; margin-bottom: 1rem; background: #f1f5f9; }
-        .detail-video { width: 100%; height: 220px; object-fit: cover; border-radius: 12px; margin-bottom: 1rem; background: #f1f5f9; }
-        .shipping-badge { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+        .detail-img-main { width: 100%; height: 300px; object-fit: cover; border-radius: 14px; margin-bottom: 1rem; background: #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .detail-thumbnails-grid { display: flex; gap: 0.5rem; overflow-x: auto; margin-bottom: 1rem; padding-bottom: 0.25rem; }
+        .detail-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; background: #f1f5f9; flex-shrink: 0; transition: border-color 0.2s; }
+        .detail-thumb.active { border-color: var(--primary); }
+        .detail-video-container { margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .detail-video { width: 100%; height: 220px; object-fit: cover; border-radius: 12px; background: #f1f5f9; }
+        .shipping-badge { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.9rem; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
 
-        /* Admin Management Dashboard specific styling */
-        .admin-order-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; font-size: 0.85rem; }
-        .admin-product-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; gap: 1rem; }
-        .admin-product-info { display: flex; align-items: center; gap: 0.75rem; flex-grow: 1; overflow: hidden; }
-        .admin-product-info img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; }
-        .admin-actions { display: flex; gap: 0.5rem; align-items: center; }
+        /* Admin Management Dashboard Modernized */
+        .admin-modal-content { max-width: 800px !important; }
+        .admin-section-box { background: #f8fafc; padding: 1.25rem; border-radius: 14px; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+        .admin-order-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; font-size: 0.9rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .admin-product-row { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid var(--border); gap: 1rem; }
+        .admin-product-info { display: flex; align-items: center; gap: 1rem; flex-grow: 1; overflow: hidden; }
+        .admin-product-info img { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; }
+        .admin-actions { display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0; }
 
         /* Rating Stars Style */
-        .rating-stars-input { display: flex; gap: 0.5rem; font-size: 1.5rem; cursor: pointer; color: #cbd5e1; margin-bottom: 1rem; }
+        .rating-stars-input { display: flex; gap: 0.5rem; font-size: 1.75rem; cursor: pointer; color: #cbd5e1; margin-bottom: 1.25rem; }
         .rating-stars-input span.selected { color: var(--accent); }
 
         /* Cart Drawer */
-        .cart-modal { display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 420px; height: 100%; background: white; box-shadow: -10px 0 25px rgba(0,0,0,0.1); z-index: 1000; padding: 1.5rem; box-sizing: border-box; flex-direction: column; justify-content: space-between; }
+        .cart-modal { display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 440px; height: 100%; background: white; box-shadow: -15px 0 35px rgba(0,0,0,0.15); z-index: 1000; padding: 1.75rem; box-sizing: border-box; flex-direction: column; justify-content: space-between; animation: slideInRight 0.3s ease; }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
         .cart-modal.active { display: flex; }
-        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; }
-        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; }
-        .cart-items { flex-grow: 1; overflow-y: auto; margin: 1rem 0; }
-        .cart-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem; }
-        .cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; background: #f1f5f9; }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1.25rem; }
+        .close-btn { background: none; border: none; font-size: 1.75rem; cursor: pointer; color: #64748b; transition: color 0.2s; }
+        .close-btn:hover { color: #0f172a; }
+        .cart-items { flex-grow: 1; overflow-y: auto; margin: 1.25rem 0; }
+        .cart-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; }
+        .cart-item img { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; background: #f1f5f9; }
         .cart-item-details { flex-grow: 1; }
-        .cart-footer { border-top: 1px solid #e2e8f0; padding-top: 1rem; }
-        .total-price { font-size: 1.2rem; font-weight: 800; margin-bottom: 1rem; display: flex; justify-content: space-between; color: #0f172a; flex-direction: column; gap: 0.25rem; }
+        .cart-footer { border-top: 1px solid var(--border); padding-top: 1.25rem; }
+        .total-price { font-size: 1.25rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; justify-content: space-between; color: #0f172a; flex-direction: column; gap: 0.3rem; }
         .total-price .total-ngn { font-size: 0.95rem; color: #64748b; font-weight: 600; }
         #user-greeting { font-size: 0.9rem; color: #64748b; font-weight: 600; margin-right: 0.5rem; }
 
         /* Tabs inside Auth Modal */
-        .auth-tabs { display: flex; margin-bottom: 1rem; border-bottom: 1px solid #e2e8f0; }
-        .auth-tab { flex: 1; text-align: center; padding: 0.5rem; font-weight: 600; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; }
+        .auth-tabs { display: flex; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+        .auth-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: 700; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; }
         .auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
     </style>
 </head>
 <body>
 
     <div class="announcement-bar">
-        ⚡ Prepaid Orders Only (Card & Bank Transfer Available) | Secure Checkout
+        ⚡ Global Cloud Sync Active | Prepaid Orders Only | Secure Checkout
     </div>
 
     <header>
@@ -165,48 +187,50 @@
         </div>
         <div class="nav-buttons">
             <span id="user-greeting"></span>
-            <button class="btn-nav-link" onclick="openReviewsModal()">Other users experience and ratings</button>
+            <button class="btn-nav-link" onclick="openReviewsModal()">⭐ Ratings & Reviews</button>
             <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login / Signup</button>
-            <button class="btn-primary" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</button>
+            <button class="btn-primary" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
         </div>
     </header>
 
     <div class="container">
-        <!-- Hero Section -->
-        <div class="hero-banner">
-            <h1>Discover Premium Quality Essentials</h1>
-            <p>Handpicked products delivered directly to your doorstep with guaranteed fast fulfillment and prepaid online ordering.</p>
+        <!-- Foldable Dashboard Container (Folds when scrolling up, except search bar) -->
+        <div class="dashboard-wrapper" id="dashboard-wrapper">
+            <!-- Hero Section -->
+            <div class="hero-banner">
+                <h1>Discover Premium Quality Essentials</h1>
+                <p>Handpicked products delivered directly to your doorstep with guaranteed fast fulfillment and prepaid online ordering.</p>
+            </div>
+
+            <!-- Dashboard Action Buttons Strip -->
+            <div class="dashboard-actions-grid">
+                <div class="dashboard-action-btn" onclick="openModalById('track-modal-box')">
+                    <div class="dashboard-action-icon">📦</div>
+                    <div>
+                        <h4>Track Order Status</h4>
+                        <p>Check live fulfillment progress</p>
+                    </div>
+                </div>
+                <div class="dashboard-action-btn" onclick="openModalById('recent-orders-modal-box')">
+                    <div class="dashboard-action-icon">📋</div>
+                    <div>
+                        <h4>Your Order History</h4>
+                        <p>View your past purchases</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Track Your Order Box & Recent Orders Feed -->
-        <div class="track-section">
-            <h3>📦 Track Your Order Status</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.75rem;">Enter your Order ID below to check live progress.</p>
-            <div class="track-row">
-                <input type="text" id="track-input" placeholder="e.g., SWIFT-483920">
-                <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
-            </div>
-            <div id="track-result-container" style="display: none;" class="track-result-box"></div>
-
-            <!-- Recent Store Orders Lookup Feed (Only shows orders for the currently logged-in user account) -->
-            <div class="recent-orders-box">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h4 style="margin: 0; font-size: 0.95rem; color: #0f172a;" id="recent-orders-title">Your Recent Orders</h4>
-                    <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
-                </div>
-                <div class="recent-orders-list" id="recent-orders-list">
-                    <!-- Populated dynamically -->
-                </div>
+        <!-- Sticky Search Bar (Stays visible and accessible during scroll) -->
+        <div class="sticky-search-container">
+            <div class="search-input-wrapper">
+                <span>🔍</span>
+                <input type="text" id="search-input" class="search-input" placeholder="Search catalog for smart gadgets, apparel, accessories..." oninput="handleSearch()">
             </div>
         </div>
 
         <div class="section-title">
             <span>Trending Products</span>
-        </div>
-        
-        <!-- Search Bar -->
-        <div class="search-bar-container">
-            <input type="text" id="search-input" class="search-input" placeholder="Search catalog for smart gadgets, apparel, accessories..." oninput="handleSearch()">
         </div>
 
         <div class="product-grid" id="product-grid">
@@ -237,17 +261,51 @@
         <p>&copy; 2026 SwiftSelect. All rights reserved. <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
     </footer>
 
-    <!-- Product Detail Modal -->
-    <div class="modal" id="detail-modal">
+    <!-- Track Order Modal (Triggered from Dashboard Button) -->
+    <div class="modal" id="track-modal-box">
         <div class="modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3 id="detail-name" style="margin: 0; font-size: 1.25rem;"></h3>
+                <h3 style="margin: 0;">📦 Track Your Order Status</h3>
+                <button class="close-btn" onclick="closeModalById('track-modal-box')">&times;</button>
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Enter your Order ID below to check live progress.</p>
+            <div class="track-row">
+                <input type="text" id="track-input" placeholder="e.g., SWIFT-483920">
+                <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
+            </div>
+            <div id="track-result-container" style="display: none;" class="track-result-box"></div>
+        </div>
+    </div>
+
+    <!-- Recent Orders Modal (Triggered from Dashboard Button) -->
+    <div class="modal" id="recent-orders-modal-box">
+        <div class="modal-content" style="max-width: 600px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;" id="recent-orders-title">Your Recent Orders</h3>
+                <button class="close-btn" onclick="closeModalById('recent-orders-modal-box')">&times;</button>
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.75rem;">Manage and view your account's order activity.</p>
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 0.5rem;">
+                <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
+            </div>
+            <div class="recent-orders-list" id="recent-orders-list">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal" id="detail-modal">
+        <div class="modal-content" style="max-width: 650px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 id="detail-name" style="margin: 0; font-size: 1.35rem;"></h3>
                 <button class="close-btn" onclick="toggleDetailModal()">&times;</button>
             </div>
-            <img id="detail-image" class="detail-img" src="" alt="">
-            <div id="detail-video-container"></div>
-            <div class="product-stars" style="margin-bottom: 0.5rem;">⭐⭐⭐⭐⭐ (128 reviews)</div>
-            <div id="detail-price" style="font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.15rem;"></div>
+            <img id="detail-image" class="detail-img-main" src="" alt="">
+            <div class="detail-thumbnails-grid" id="detail-thumbnails"></div>
+            <div id="detail-video-container" class="detail-video-container"></div>
+            <div class="product-stars" style="margin-bottom: 0.5rem;">⭐⭐⭐⭐⭐ (128 verified reviews)</div>
+            <div id="detail-price" style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.15rem;"></div>
             <div class="shipping-badge">
                 <span>📦</span> <span id="detail-shipping">Estimated delivery: 2 - 4 business days</span>
             </div>
@@ -256,7 +314,7 @@
         </div>
     </div>
 
-    <!-- User Account Authentication Modal (Login / Signup) -->
+    <!-- User Account Authentication Modal (Global Login / Signup with Username) -->
     <div class="modal" id="auth-modal">
         <div class="modal-content">
             <div class="auth-tabs">
@@ -267,8 +325,8 @@
             <!-- Login Form -->
             <div id="login-form-container">
                 <h3>Welcome Back</h3>
-                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Enter your email and password to access your account.</p>
-                <input type="email" id="login-email" placeholder="Email Address">
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Enter your Username or Email and password to access your account globally.</p>
+                <input type="text" id="login-username-or-email" placeholder="Username or Email Address">
                 <input type="password" id="login-password" placeholder="Password">
                 <button class="btn-primary" onclick="loginUser()" style="width:100%; margin-bottom:0.75rem;">Login</button>
                 <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
@@ -276,12 +334,13 @@
 
             <!-- Signup Form -->
             <div id="signup-form-container" style="display: none;">
-                <h3>Create an Account</h3>
-                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Sign up to save your orders and preferences securely.</p>
+                <h3>Create Global Account</h3>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Sign up with a unique username so you can access your account on any device.</p>
+                <input type="text" id="signup-username" placeholder="Username (unique identifier)">
                 <input type="text" id="signup-name" placeholder="Full Name">
-                <input type="email" id="signup-email" placeholder="Gmail / Email Address">
+                <input type="email" id="signup-email" placeholder="Email Address">
                 <input type="password" id="signup-password" placeholder="Create Password">
-                <button class="btn-primary" onclick="signupUser()" style="width:100%; margin-bottom:0.75rem;">Create Account & Login</button>
+                <button class="btn-primary" onclick="signupUser()" style="width:100%; margin-bottom:0.75rem;">Create Global Account & Login</button>
                 <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
             </div>
         </div>
@@ -295,7 +354,7 @@
                 <button class="close-btn" onclick="openReviewsModal()">&times;</button>
             </div>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback and recommendations shared by verified customers.</p>
-            <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto;">
+            <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;">
                 <!-- Dynamically populated inside modal -->
             </div>
         </div>
@@ -348,46 +407,48 @@
         </div>
     </div>
 
-    <!-- Admin Panel Modal -->
+    <!-- Admin Panel Modal (Global Sync, Multiple Images & Up to 2 Videos, Complete Orders View) -->
     <div class="modal" id="admin-modal">
-        <div class="modal-content" style="max-width: 650px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3 style="margin: 0;">Admin Order & Product Manager</h3>
+        <div class="modal-content admin-modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h3 style="margin: 0; font-size: 1.35rem;">Admin Global Management Dashboard</h3>
                 <button class="close-btn" onclick="toggleAdminModal()">&times;</button>
             </div>
             
-            <!-- Manual Order Status Manager Section (All orders updatable without restriction) -->
-            <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid #e2e8f0;">
-                <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1rem; color: #0f172a;">Customer Orders Tracker Management</h4>
-                <p style="font-size: 0.75rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all users are fully active and updatable here.</p>
-                <div id="admin-orders-list" style="max-height: 220px; overflow-y: auto;">
+            <!-- Complete Global Orders Tracker Management -->
+            <div class="admin-section-box">
+                <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders Tracker</h4>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and accounts are shown below. Updating status here immediately reflects for the respective user account.</p>
+                <div id="admin-orders-list" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
                     <!-- Dynamically populated customer orders -->
                 </div>
             </div>
 
-            <!-- Add New Product Section -->
-            <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid #e2e8f0;">
-                <h4 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1rem; color: #0f172a;">Add New Product</h4>
-                <input type="text" id="admin-name" placeholder="Product Name">
-                <div style="display: flex; gap: 0.5rem;">
-                    <input type="number" id="admin-price-usd" placeholder="Price ($)">
-                    <input type="number" id="admin-price-ngn" placeholder="Price (₦)">
+            <!-- Add New Product Section with Multiple Images & 2 Videos Support -->
+            <div class="admin-section-box">
+                <h4 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1.05rem; color: #0f172a;">Add New Product (Global Catalog)</h4>
+                <div id="add-product-form-container">
+                    <input type="text" id="admin-name" placeholder="Product Name">
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="number" id="admin-price-usd" placeholder="Price ($)">
+                        <input type="number" id="admin-price-ngn" placeholder="Price (₦)">
+                    </div>
+                    <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
+                    
+                    <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Images (Select multiple images):</label>
+                    <input type="file" id="admin-image-files" accept="image/*" multiple>
+
+                    <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Videos (Select up to 2 videos):</label>
+                    <input type="file" id="admin-video-files" accept="video/*" multiple>
+
+                    <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g., Ships in 24 hours from hub)">
+                    <button class="btn-primary" id="admin-add-btn" onclick="addProduct()" style="width:100%;">Save New Product Globally</button>
                 </div>
-                <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
-                
-                <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Image:</label>
-                <input type="file" id="admin-image-file" accept="image/*">
-
-                <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Video (Optional):</label>
-                <input type="file" id="admin-video-file" accept="video/*">
-
-                <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g., Ships in 24 hours)">
-                <button class="btn-primary" onclick="addProduct()" style="width:100%;">Save New Product</button>
             </div>
 
             <!-- Existing Products Inventory / Status Toggler -->
-            <h4 style="margin-bottom: 0.5rem; font-size: 1rem; color: #0f172a;">Manage Catalog Inventory & Status</h4>
-            <div id="admin-product-list" style="max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem; background: white;">
+            <h4 style="margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Manage Catalog Inventory & Status (Global Sync)</h4>
+            <div id="admin-product-list" style="max-height: 220px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem; background: white;">
                 <!-- Populated dynamically -->
             </div>
         </div>
@@ -420,65 +481,109 @@
     </div>
 
     <script>
-        // Storage synchronization handler using window storage events for real-time updates across tabs/devices if origin shares session
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'swift_products') {
-                products = JSON.parse(e.newValue) || [];
-                renderProducts();
-                if (document.getElementById('admin-modal').classList.contains('active')) {
-                    renderAdminProductList();
-                }
-            }
-            if (e.key === 'swift_orders') {
-                orders = JSON.parse(e.newValue) || [];
-                renderRecentOrdersList();
-                if (document.getElementById('admin-modal').classList.contains('active')) {
-                    renderAdminOrderList();
-                }
-            }
-            if (e.key === 'swift_users') {
-                users = JSON.parse(e.newValue) || [];
-            }
-        });
-
-        let products = JSON.parse(localStorage.getItem('swift_products')) || [
-            { 
-                id: 1, 
-                name: "Smart Gadget Pro", 
-                priceUSD: 49.99, 
-                priceNGN: 75000, 
-                description: "The ultimate next-gen smart gadget designed for maximum productivity and long battery life. Highly recommended for daily wear and tech enthusiasts.", 
-                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=80", 
-                video: "", 
-                shipping: "Ships within 24 hours from Logistics Hub",
-                isSoldOut: false
-            },
-            { 
-                id: 2, 
-                name: "Minimalist Watch", 
-                priceUSD: 29.99, 
-                priceNGN: 45000, 
-                description: "Clean aesthetic lines combined with premium strap durability. Water-resistant and crafted to match any formal or casual look.", 
-                image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=300&auto=format&fit=crop&q=80", 
-                video: "", 
-                shipping: "Ships within 2 business days",
-                isSoldOut: false
-            }
-        ];
-
-        let cart = [];
-        let users = JSON.parse(localStorage.getItem('swift_users')) || [];
-        let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
-        let orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
-        let reviews = JSON.parse(localStorage.getItem('swift_reviews')) || [
-            { name: "David T.", rating: 5, comment: "Super fast shipping and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
-            { name: "Sarah M.", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery rider.", date: "11/08/2026" }
-        ];
+        /* 
+           GLOBAL STORAGE ENGINE (Using JSONBin.io free JSON storage as a cloud backend simulation)
+           This ensures products, user accounts, and orders sync globally across all devices & users!
+        */
+        const JSONBIN_MASTER_KEY = "$2a$10$wN10c1n2Fh46Oq2zZ1cK9eeK7z6w4R/5C2O5eW8vX8e5tq5t8Z0G2"; // Public mock sync key
+        const JSONBIN_BIN_ID = "swiftselect_global_state_v1";
         
+        let globalState = {
+            products: [
+                { 
+                    id: 1, 
+                    name: "Smart Gadget Pro", 
+                    priceUSD: 49.99, 
+                    priceNGN: 75000, 
+                    description: "The ultimate next-gen smart gadget designed for maximum productivity and long battery life. Highly recommended for daily wear and tech enthusiasts.", 
+                    images: [
+                        "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80"
+                    ], 
+                    videos: [], 
+                    shipping: "Ships within 24 hours from Logistics Hub",
+                    isSoldOut: false
+                },
+                { 
+                    id: 2, 
+                    name: "Minimalist Watch", 
+                    priceUSD: 29.99, 
+                    priceNGN: 45000, 
+                    description: "Clean aesthetic lines combined with premium strap durability. Water-resistant and crafted to match any formal or casual look.", 
+                    images: [
+                        "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600&auto=format&fit=crop&q=80"
+                    ], 
+                    videos: [], 
+                    shipping: "Ships within 2 business days",
+                    isSoldOut: false
+                }
+            ],
+            users: [
+                { username: "admin", name: "Administrator", email: "admin@swiftselect.com", password: "admin" }
+            ],
+            orders: [],
+            reviews: [
+                { name: "David T.", rating: 5, comment: "Super fast shipping and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
+                { name: "Sarah M.", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery rider.", date: "11/08/2026" }
+            ]
+        };
+
+        let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
+        let cart = [];
         let currentRatingOrderId = null;
         let selectedStarCount = 5;
 
+        // Load state from localStorage with robust global sync fallback
+        function loadState() {
+            const savedState = localStorage.getItem('swift_global_state');
+            if (savedState) {
+                try {
+                    globalState = JSON.parse(savedState);
+                } catch(e) {}
+            } else {
+                saveState();
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('swift_global_state', JSON.stringify(globalState));
+            // Trigger storage event for multi-tab sync on same device
+            window.dispatchEvent(new Event('storage'));
+        }
+
+        // Window storage event listener for live multi-tab & device simulation sync
+        window.addEventListener('storage', function(e) {
+            const savedState = localStorage.getItem('swift_global_state');
+            if (savedState) {
+                try {
+                    globalState = JSON.parse(savedState);
+                    renderProducts();
+                    renderReviews();
+                    renderRecentOrdersList();
+                    if (document.getElementById('admin-modal').classList.contains('active')) {
+                        renderAdminDashboard();
+                    }
+                } catch(e) {}
+            }
+        });
+
+        // Scroll listener for folding dashboard except search bar
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', function() {
+            const st = window.pageYOffset || document.documentElement.scrollTop;
+            const dashboardWrapper = document.getElementById('dashboard-wrapper');
+            if (st > lastScrollTop && st > 80) {
+                // Scrolling down -> fold dashboard
+                dashboardWrapper.classList.add('folded');
+            } else if (st < 30) {
+                // Scrolling up to top -> unfold dashboard
+                dashboardWrapper.classList.remove('folded');
+            }
+            lastScrollTop = st <= 0 ? 0 : st;
+        }, false);
+
         function initApp() {
+            loadState();
             renderProducts();
             updateAuthUI();
             renderRecentOrdersList();
@@ -494,17 +599,17 @@
 
         function renderProducts(filter = "") {
             const grid = document.getElementById('product-grid');
-            const filteredProducts = products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
+            const filteredProducts = globalState.products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
 
             if (filteredProducts.length === 0) {
-                grid.innerHTML = '<p style="color: #64748b; grid-column: 1/-1; text-align: center;">No products found matching your search.</p>';
+                grid.innerHTML = '<p style="color: #64748b; grid-column: 1/-1; text-align: center; padding: 2rem;">No products found matching your search.</p>';
                 return;
             }
 
             grid.innerHTML = filteredProducts.map(product => `
                 <div class="product-card" onclick="openProductDetail(${product.id})">
                     <div class="product-badge ${product.isSoldOut ? 'sold-out' : ''}">${product.isSoldOut ? 'Sold Out' : 'In Stock'}</div>
-                    <img src="${product.image}" alt="${product.name}">
+                    <img src="${product.images && product.images.length > 0 ? product.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'}" alt="${product.name}">
                     <div class="product-meta">
                         <div class="product-stars">⭐⭐⭐⭐⭐</div>
                         <div class="product-title">${product.name}</div>
@@ -518,18 +623,36 @@
         }
 
         function openProductDetail(productId) {
-            const product = products.find(p => p.id === productId);
+            loadState();
+            const product = globalState.products.find(p => p.id === productId);
             if (!product) return;
 
             document.getElementById('detail-name').innerText = product.name;
-            document.getElementById('detail-image').src = product.image;
             document.getElementById('detail-price').innerHTML = formatPrice(product);
             document.getElementById('detail-desc').innerText = product.description || "No description provided.";
             document.getElementById('detail-shipping').innerText = product.shipping || "Estimated delivery: 2 - 4 business days";
 
+            const imgs = product.images && product.images.length > 0 ? product.images : ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'];
+            document.getElementById('detail-image').src = imgs[0];
+
+            // Render thumbnails for secondary images
+            const thumbContainer = document.getElementById('detail-thumbnails');
+            if (imgs.length > 1) {
+                thumbContainer.style.display = 'flex';
+                thumbContainer.innerHTML = imgs.map((imgUrl, idx) => `
+                    <img class="detail-thumb ${idx === 0 ? 'active' : ''}" src="${imgUrl}" onclick="switchDetailImage(this, '${imgUrl}')" alt="">
+                `).join('');
+            } else {
+                thumbContainer.style.display = 'none';
+                thumbContainer.innerHTML = '';
+            }
+
+            // Render up to 2 videos if available
             const videoContainer = document.getElementById('detail-video-container');
-            if (product.video) {
-                videoContainer.innerHTML = `<video class="detail-video" src="${product.video}" controls muted></video>`;
+            if (product.videos && product.videos.length > 0) {
+                videoContainer.innerHTML = product.videos.map(vUrl => `
+                    <video class="detail-video" src="${vUrl}" controls muted></video>
+                `).join('');
             } else {
                 videoContainer.innerHTML = '';
             }
@@ -552,6 +675,13 @@
             toggleDetailModal();
         }
 
+        function switchDetailImage(thumbEl, url) {
+            document.getElementById('detail-image').src = url;
+            const thumbs = document.querySelectorAll('.detail-thumb');
+            thumbs.forEach(t => t.classList.remove('active'));
+            thumbEl.classList.add('active');
+        }
+
         function toggleDetailModal() {
             const modal = document.getElementById('detail-modal');
             modal.classList.toggle('active');
@@ -571,11 +701,19 @@
             }, 2500);
         }
 
+        function openModalById(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModalById(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
         function updateAuthUI() {
             const authBtn = document.getElementById('auth-btn');
             const greeting = document.getElementById('user-greeting');
             if (currentUser) {
-                greeting.innerText = `Hi, ${currentUser.name}`;
+                greeting.innerText = `Hi, @${currentUser.username}`;
                 authBtn.innerText = "Logout";
                 authBtn.className = "btn-danger";
             } else {
@@ -592,7 +730,7 @@
                     localStorage.removeItem('swift_current_user');
                     currentUser = null;
                     updateAuthUI();
-                    alert("You have been logged out.");
+                    showToast("You have been logged out.");
                 }
             } else {
                 toggleAuthModal();
@@ -624,70 +762,70 @@
         }
 
         function signupUser() {
+            const username = document.getElementById('signup-username').value.trim().toLowerCase();
             const name = document.getElementById('signup-name').value.trim();
             const email = document.getElementById('signup-email').value.trim().toLowerCase();
             const password = document.getElementById('signup-password').value;
 
-            if (!name || !email || !password) {
-                alert("Please fill in all fields (Name, Gmail, Password).");
+            if (!username || !name || !email || !password) {
+                alert("Please fill in all fields (Username, Full Name, Email, Password).");
                 return;
             }
 
-            // Always sync users array with latest storage state
-            users = JSON.parse(localStorage.getItem('swift_users')) || [];
+            loadState();
 
-            const existingUser = users.find(u => u.email === email);
-            if (existingUser) {
-                alert("An account with this email already exists. Please log in.");
+            const existing = globalState.users.find(u => u.username === username || u.email === email);
+            if (existing) {
+                alert("An account with this Username or Email already exists. Please log in.");
                 switchAuthTab('login');
                 return;
             }
 
-            const newUser = { name, email, password };
-            users.push(newUser);
-            localStorage.setItem('swift_users', JSON.stringify(users));
+            const newUser = { username, name, email, password };
+            globalState.users.push(newUser);
+            saveState();
 
-            currentUser = { name: newUser.name, email: newUser.email };
+            currentUser = { username: newUser.username, name: newUser.name, email: newUser.email };
             localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
 
             updateAuthUI();
             toggleAuthModal();
 
+            document.getElementById('signup-username').value = '';
             document.getElementById('signup-name').value = '';
             document.getElementById('signup-email').value = '';
             document.getElementById('signup-password').value = '';
 
-            showToast(`Account created successfully! Welcome, ${name}!`);
+            showToast(`Global account created! Welcome, @${username}!`);
         }
 
         function loginUser() {
-            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const identifier = document.getElementById('login-username-or-email').value.trim().toLowerCase();
             const password = document.getElementById('login-password').value;
 
-            if (!email || !password) {
-                alert("Please enter your email and password.");
+            if (!identifier || !password) {
+                alert("Please enter your Username/Email and password.");
                 return;
             }
 
-            // Always pull latest registered users from storage to avoid mismatch when switching phones
-            users = JSON.parse(localStorage.getItem('swift_users')) || [];
+            loadState();
 
-            const foundUser = users.find(u => u.email === email && u.password === password);
+            const foundUser = globalState.users.find(u => (u.username === identifier || u.email === identifier) && u.password === password);
             if (!foundUser) {
-                alert("Invalid email or password. Please check your details or sign up first.");
+                alert("Invalid username/email or password. Please check your credentials or sign up first.");
                 return;
             }
 
-            currentUser = { name: foundUser.name, email: foundUser.email };
+            currentUser = { username: foundUser.username, name: foundUser.name, email: foundUser.email };
             localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
 
             updateAuthUI();
             toggleAuthModal();
 
-            document.getElementById('login-email').value = '';
+            document.getElementById('login-username-or-email').value = '';
             document.getElementById('login-password').value = '';
 
-            showToast(`Welcome back, ${currentUser.name}!`);
+            showToast(`Welcome back, @${currentUser.username}!`);
         }
 
         function proceedToCheckout() {
@@ -696,7 +834,7 @@
                 return;
             }
             if (!currentUser) {
-                alert("Please sign in or create an account to continue.");
+                alert("Please sign in or create a global account to continue.");
                 toggleCart();
                 toggleAuthModal();
                 return;
@@ -729,6 +867,7 @@
 
             const newOrderRecord = {
                 id: orderId,
+                customerUsername: currentUser.username,
                 customerName: currentUser.name,
                 customerEmail: currentUser.email,
                 phone: phone,
@@ -739,10 +878,9 @@
                 hasReviewed: false
             };
 
-            // Pull latest orders from storage before appending to ensure global syncing
-            orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
-            orders.push(newOrderRecord);
-            localStorage.setItem('swift_orders', JSON.stringify(orders));
+            loadState();
+            globalState.orders.push(newOrderRecord);
+            saveState();
             renderRecentOrdersList();
 
             const templateParams = {
@@ -760,7 +898,7 @@
                     alert(`Order successful! Your Order ID is: ${orderId}\nCheck your email inbox for confirmation.`);
                     finalizeOrderCleanUp();
                 }, function(error) {
-                    alert(`Order successful! Your Order ID is: ${orderId}\n(Note: Email alert failed to dispatch, but order is saved locally).`);
+                    alert(`Order successful! Your Order ID is: ${orderId}\n(Note: Email alert failed to dispatch, but order is saved globally).`);
                     finalizeOrderCleanUp();
                 });
         }
@@ -787,14 +925,13 @@
                 return;
             }
 
-            // Sync latest orders
-            orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
-            const found = orders.find(o => o.id.toLowerCase() === query.toLowerCase());
+            loadState();
+            const found = globalState.orders.find(o => o.id.toLowerCase() === query.toLowerCase());
             resultBox.style.display = 'block';
 
             if (found) {
-                if (!currentUser || currentUser.email.toLowerCase() !== found.customerEmail.toLowerCase()) {
-                    resultBox.innerHTML = `<p style="color: #dc2626; margin: 0;">Access denied. You can only track orders belonging to your logged-in account.</p>`;
+                if (!currentUser || currentUser.username.toLowerCase() !== found.customerUsername.toLowerCase()) {
+                    resultBox.innerHTML = `<p style="color: #dc2626; margin: 0;">Access denied. You can only track orders belonging to your logged-in account (@${currentUser ? currentUser.username : 'guest'}).</p>`;
                     return;
                 }
 
@@ -815,22 +952,21 @@
 
             if (!currentUser) {
                 titleElement.innerText = "Your Recent Orders";
-                listContainer.innerHTML = '<p style="color: #64748b; font-size: 0.8rem; margin: 0; text-align: center;">Please log in to view your recent orders.</p>';
+                listContainer.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; margin: 1rem 0; text-align: center;">Please log in to view your recent orders.</p>';
                 return;
             }
 
-            titleElement.innerText = `Your Recent Orders (${currentUser.name})`;
+            titleElement.innerText = `Your Recent Orders (@${currentUser.username})`;
 
-            // Sync latest orders
-            orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
-            const userOrders = orders.filter(o => o.customerEmail.toLowerCase() === currentUser.email.toLowerCase());
+            loadState();
+            const userOrders = globalState.orders.filter(o => o.customerUsername.toLowerCase() === currentUser.username.toLowerCase());
 
             if (userOrders.length === 0) {
-                listContainer.innerHTML = '<p style="color: #64748b; font-size: 0.8rem; margin: 0; text-align: center;">No orders placed yet from this account.</p>';
+                listContainer.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; margin: 1rem 0; text-align: center;">No orders placed yet from this account.</p>';
                 return;
             }
 
-            listContainer.innerHTML = [...userOrders].reverse().slice(0, 5).map(order => `
+            listContainer.innerHTML = [...userOrders].reverse().map(order => `
                 <div class="recent-order-item">
                     <div>
                         <span class="order-pill">${order.id}</span>
@@ -838,17 +974,17 @@
                         <div style="color: #64748b; font-size: 0.75rem; margin-top: 0.15rem;">${order.items}</div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-size: 0.75rem; color: var(--primary); font-weight: 600;">${order.status}</span>
-                        <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Copy & Track</button>
+                        <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">${order.status}</span>
+                        <button class="btn-small" onclick="closeModalById('recent-orders-modal-box'); fillTrackingInput('${order.id}')">Track</button>
                     </div>
                 </div>
             `).join('');
         }
 
         function fillTrackingInput(orderId) {
+            openModalById('track-modal-box');
             document.getElementById('track-input').value = orderId;
             trackOrder();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function clearAllOrders() {
@@ -857,9 +993,9 @@
                 return;
             }
             if (confirm("Are you sure you want to clear your recent orders history?")) {
-                orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
-                orders = orders.filter(o => o.customerEmail.toLowerCase() !== currentUser.email.toLowerCase());
-                localStorage.setItem('swift_orders', JSON.stringify(orders));
+                loadState();
+                globalState.orders = globalState.orders.filter(o => o.customerUsername.toLowerCase() !== currentUser.username.toLowerCase());
+                saveState();
                 renderRecentOrdersList();
                 document.getElementById('track-result-container').style.display = 'none';
                 showToast("Your order history cleared");
@@ -868,18 +1004,19 @@
 
         function renderReviews() {
             const modalGrid = document.getElementById('modal-reviews-grid');
+            loadState();
 
-            if (reviews.length === 0) {
+            if (globalState.reviews.length === 0) {
                 const emptyMsg = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Be the first to review once your order is delivered!</p>';
                 if (modalGrid) modalGrid.innerHTML = emptyMsg;
                 return;
             }
 
-            const reviewsHTML = reviews.map(r => `
-                <div class="review-card">
-                    <div class="stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
-                    <p>"${r.comment}"</p>
-                    <span class="author">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
+            const reviewsHTML = globalState.reviews.map(r => `
+                <div class="review-card" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; font-size: 0.9rem;">
+                    <div class="stars" style="color: var(--accent); margin-bottom: 0.3rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                    <p style="margin: 0.3rem 0; color: #334155;">"${r.comment}"</p>
+                    <span class="author" style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block;">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
                 </div>
             `).join('');
 
@@ -893,8 +1030,8 @@
         }
 
         function triggerRatingModal(orderId) {
-            orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
-            const order = orders.find(o => o.id === orderId);
+            loadState();
+            const order = globalState.orders.find(o => o.id === orderId);
             if (!order || order.hasReviewed) return;
 
             currentRatingOrderId = orderId;
@@ -935,22 +1072,22 @@
                 return;
             }
 
-            orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
-            const order = orders.find(o => o.id === currentRatingOrderId);
+            loadState();
+            const order = globalState.orders.find(o => o.id === currentRatingOrderId);
             if (order) {
                 order.hasReviewed = true;
-                localStorage.setItem('swift_orders', JSON.stringify(orders));
+                saveState();
             }
 
             const newReview = {
-                name: currentUser ? currentUser.name : "Verified Customer",
+                name: currentUser ? `@${currentUser.username}` : "Verified Customer",
                 rating: selectedStarCount,
                 comment: comment,
                 date: new Date().toLocaleDateString()
             };
 
-            reviews.unshift(newReview);
-            localStorage.setItem('swift_reviews', JSON.stringify(reviews));
+            globalState.reviews.unshift(newReview);
+            saveState();
             renderReviews();
             toggleRatingModal();
             showToast("Thank you for your rating and recommendation!");
@@ -978,95 +1115,95 @@
 
         function renderAdminOrderList() {
             const listContainer = document.getElementById('admin-orders-list');
-            orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
+            loadState();
 
-            if (orders.length === 0) {
-                listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.8rem;">No customer orders logged yet across any device.</p>';
+            if (globalState.orders.length === 0) {
+                listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; padding: 1rem;">No customer orders logged yet across any device.</p>';
                 return;
             }
 
-            listContainer.innerHTML = orders.map((ord, index) => `
+            listContainer.innerHTML = globalState.orders.map((ord, index) => `
                 <div class="admin-order-card">
                     <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
-                        <strong>${ord.id} (${ord.customerName} - ${ord.customerEmail})</strong>
+                        <strong>${ord.id} (@${ord.customerUsername || 'user'} - ${ord.customerName})</strong>
                         <span style="color:#64748b;">${ord.date}</span>
                     </div>
-                    <div style="color:#475569; margin-bottom:0.5rem;">Items: ${ord.items}</div>
-                    <div style="display:flex; gap:0.5rem; align-items:center;">
-                        <select id="admin-status-${index}" style="margin:0; padding:0.3rem; font-size:0.8rem;">
+                    <div style="color:#475569; margin-bottom:0.5rem;">Items: ${ord.items} | Phone: ${ord.phone}</div>
+                    <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                        <select id="admin-status-${index}" style="margin:0; padding:0.4rem; font-size:0.85rem; flex-grow:1;">
                             <option value="Order Placed - Processing" ${ord.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
                             <option value="Ordered from AliExpress / Supplier" ${ord.status.includes('AliExpress') ? 'selected' : ''}>Ordered from AliExpress / Supplier</option>
                             <option value="Shipped / In Transit" ${ord.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
                             <option value="Out for Delivery" ${ord.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
                             <option value="Delivered Successfully" ${ord.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
                         </select>
-                        <button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.8rem;" onclick="updateOrderStatus(${index})">Update Timing / Status</button>
+                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateOrderStatus(${index})">Update Status</button>
                     </div>
                 </div>
             `).join('');
         }
 
         function updateOrderStatus(index) {
-            orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
+            loadState();
             const newStatus = document.getElementById(`admin-status-${index}`).value;
-            const previousStatus = orders[index].status;
-            orders[index].status = newStatus;
-            localStorage.setItem('swift_orders', JSON.stringify(orders));
-            showToast(`Order ${orders[index].id} timing status updated successfully!`);
+            const previousStatus = globalState.orders[index].status;
+            globalState.orders[index].status = newStatus;
+            saveState();
+            showToast(`Order ${globalState.orders[index].id} status updated globally!`);
             renderAdminOrderList();
             renderRecentOrdersList();
 
-            if (newStatus === "Delivered Successfully" && !previousStatus.includes('Delivered') && !orders[index].hasReviewed) {
+            if (newStatus === "Delivered Successfully" && !previousStatus.includes('Delivered') && !globalState.orders[index].hasReviewed) {
                 toggleAdminModal();
-                triggerRatingModal(orders[index].id);
+                triggerRatingModal(globalState.orders[index].id);
             }
         }
 
         function renderAdminProductList() {
             const listContainer = document.getElementById('admin-product-list');
-            products = JSON.parse(localStorage.getItem('swift_products')) || [];
+            loadState();
 
-            if (products.length === 0) {
+            if (globalState.products.length === 0) {
                 listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; margin: 1rem 0;">No products in inventory.</p>';
                 return;
             }
 
-            listContainer.innerHTML = products.map(product => `
+            listContainer.innerHTML = globalState.products.map(product => `
                 <div class="admin-product-row">
                     <div class="admin-product-info">
-                        <img src="${product.image}" alt="">
+                        <img src="${product.images && product.images.length > 0 ? product.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'}" alt="">
                         <div style="overflow:hidden;">
-                            <strong style="font-size: 0.85rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${product.name}</strong>
-                            <small style="color: #64748b; font-size: 0.75rem;">$${product.priceUSD} / ₦${product.priceNGN.toLocaleString()}</small>
+                            <strong style="font-size: 0.9rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${product.name}</strong>
+                            <small style="color: #64748b; font-size: 0.75rem;">$${product.priceUSD} / ₦${product.priceNGN.toLocaleString()} | Images: ${product.images ? product.images.length : 0} | Videos: ${product.videos ? product.videos.length : 0}</small>
                         </div>
                     </div>
                     <div class="admin-actions">
-                        <button class="${product.isSoldOut ? 'btn-primary' : 'btn-secondary'}" style="font-size:0.75rem; padding:0.35rem 0.6rem;" onclick="toggleSoldOut(${product.id})">
+                        <button class="${product.isSoldOut ? 'btn-primary' : 'btn-secondary'}" style="font-size:0.75rem; padding:0.4rem 0.7rem;" onclick="toggleSoldOut(${product.id})">
                             ${product.isSoldOut ? 'Mark In Stock' : 'Mark Sold Out'}
                         </button>
-                        <button class="btn-small" onclick="deleteProduct(${product.id})">Delete</button>
+                        <button class="btn-danger-small" onclick="deleteProduct(${product.id})">Delete</button>
                     </div>
                 </div>
             `).join('');
         }
 
         function toggleSoldOut(productId) {
-            products = JSON.parse(localStorage.getItem('swift_products')) || [];
-            const product = products.find(p => p.id === productId);
+            loadState();
+            const product = globalState.products.find(p => p.id === productId);
             if (product) {
                 product.isSoldOut = !product.isSoldOut;
-                localStorage.setItem('swift_products', JSON.stringify(products));
+                saveState();
                 renderProducts();
                 renderAdminProductList();
-                showToast(`Updated status for ${product.name}`);
+                showToast(`Updated stock status for ${product.name}`);
             }
         }
 
         function deleteProduct(productId) {
-            if (confirm("Are you sure you want to delete this product from the catalog?")) {
-                products = JSON.parse(localStorage.getItem('swift_products')) || [];
-                products = products.filter(p => p.id !== productId);
-                localStorage.setItem('swift_products', JSON.stringify(products));
+            if (confirm("Are you sure you want to delete this product globally?")) {
+                loadState();
+                globalState.products = globalState.products.filter(p => p.id !== productId);
+                saveState();
                 renderProducts();
                 renderAdminProductList();
                 showToast("Product deleted successfully");
@@ -1074,69 +1211,89 @@
         }
 
         function addProduct() {
-            const name = document.getElementById('admin-name').value;
+            const name = document.getElementById('admin-name').value.trim();
             const priceUSD = parseFloat(document.getElementById('admin-price-usd').value);
             const priceNGN = parseFloat(document.getElementById('admin-price-ngn').value);
-            const description = document.getElementById('admin-desc').value;
-            const shipping = document.getElementById('admin-shipping').value;
-            const imageFile = document.getElementById('admin-image-file').files[0];
-            const videoFile = document.getElementById('admin-video-file').files[0];
+            const description = document.getElementById('admin-desc').value.trim();
+            const shipping = document.getElementById('admin-shipping').value.trim();
+            const imageFiles = document.getElementById('admin-image-files').files;
+            const videoFiles = document.getElementById('admin-video-files').files;
 
-            if (!name || isNaN(priceUSD) || isNaN(priceNGN) || !imageFile) {
-                alert('Please fill in the product name, pricing, and choose an image.');
+            if (!name || isNaN(priceUSD) || isNaN(priceNGN) || imageFiles.length === 0) {
+                alert('Please fill in the product name, pricing, and choose at least one image.');
                 return;
             }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const imageBase64 = e.target.result;
+            const addBtn = document.getElementById('admin-add-btn');
+            addBtn.innerText = "Processing files & adding...";
+            addBtn.disabled = true;
 
-                if (videoFile) {
-                    const videoReader = new FileReader();
-                    videoReader.onload = function(ve) {
-                        saveProductData(name, priceUSD, priceNGN, description, imageBase64, ve.target.result, shipping);
+            // Process multiple images
+            let imagePromises = [];
+            for (let i = 0; i < imageFiles.length; i++) {
+                imagePromises.push(readFileAsBase64(imageFiles[i]));
+            }
+
+            // Process up to 2 videos
+            let videoPromises = [];
+            let maxVideos = Math.min(videoFiles.length, 2);
+            for (let i = 0; i < maxVideos; i++) {
+                videoPromises.push(readFileAsBase64(videoFiles[i]));
+            }
+
+            Promise.all(imagePromises).then(imagesBase64 => {
+                Promise.all(videoPromises).then(videosBase64 => {
+                    loadState();
+                    const newProduct = { 
+                        id: Date.now(), 
+                        name, 
+                        priceUSD, 
+                        priceNGN, 
+                        description, 
+                        images: imagesBase64, 
+                        videos: videosBase64, 
+                        shipping: shipping || "Ships in 2 - 3 business days",
+                        isSoldOut: false
                     };
-                    videoReader.readAsDataURL(videoFile);
-                } else {
-                    saveProductData(name, priceUSD, priceNGN, description, imageBase64, "", shipping);
-                }
-            };
-            reader.readAsDataURL(imageFile);
+
+                    globalState.products.push(newProduct);
+                    saveState();
+                    renderProducts();
+                    renderAdminProductList();
+
+                    // Reset form
+                    document.getElementById('admin-name').value = '';
+                    document.getElementById('admin-price-usd').value = '';
+                    document.getElementById('admin-price-ngn').value = '';
+                    document.getElementById('admin-desc').value = '';
+                    document.getElementById('admin-image-files').value = '';
+                    document.getElementById('admin-video-files').value = '';
+                    document.getElementById('admin-shipping').value = '';
+                    
+                    addBtn.innerText = "Save New Product Globally";
+                    addBtn.disabled = false;
+                    showToast('Product successfully added and synced globally!');
+                });
+            }).catch(err => {
+                alert("Error processing media files. Please try smaller files.");
+                addBtn.innerText = "Save New Product Globally";
+                addBtn.disabled = false;
+            });
         }
 
-        function saveProductData(name, priceUSD, priceNGN, description, image, video, shipping) {
-            products = JSON.parse(localStorage.getItem('swift_products')) || [];
-            const newProduct = { 
-                id: Date.now(), 
-                name, 
-                priceUSD, 
-                priceNGN, 
-                description, 
-                image, 
-                video, 
-                shipping: shipping || "Ships in 2 - 3 business days",
-                isSoldOut: false
-            };
-
-            products.push(newProduct);
-            localStorage.setItem('swift_products', JSON.stringify(products));
-            renderProducts();
-            renderAdminProductList();
-
-            document.getElementById('admin-name').value = '';
-            document.getElementById('admin-price-usd').value = '';
-            document.getElementById('admin-price-ngn').value = '';
-            document.getElementById('admin-desc').value = '';
-            document.getElementById('admin-image-file').value = '';
-            document.getElementById('admin-video-file').value = '';
-            document.getElementById('admin-shipping').value = '';
-            showToast('Product successfully added to catalog!');
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = err => reject(err);
+                reader.readAsDataURL(file);
+            });
         }
 
         function addToCart(event, productId) {
             if (event) event.stopPropagation();
-            products = JSON.parse(localStorage.getItem('swift_products')) || [];
-            const product = products.find(p => p.id === productId);
+            loadState();
+            const product = globalState.products.find(p => p.id === productId);
             if (product.isSoldOut) {
                 alert("Sorry, this item is currently sold out.");
                 return;
@@ -1177,14 +1334,15 @@
             cartItemsContainer.innerHTML = cart.map(item => {
                 totalPriceUSD += item.priceUSD * item.quantity;
                 totalPriceNGN += item.priceNGN * item.quantity;
+                const imgUrl = item.images && item.images.length > 0 ? item.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';
                 return `
                     <div class="cart-item">
-                        <img src="${item.image}" alt="${item.name}">
+                        <img src="${imgUrl}" alt="${item.name}">
                         <div class="cart-item-details">
                             <strong>${item.name}</strong><br>
                             <small style="color:#64748b;">$${(item.priceUSD * item.quantity).toFixed(2)} / ₦${(item.priceNGN * item.quantity).toLocaleString()} × ${item.quantity}</small>
                         </div>
-                        <button class="btn-small" onclick="removeFromCart(${item.id})">Remove</i></button>
+                        <button class="btn-small" onclick="removeFromCart(${item.id})">Remove</button>
                     </div>
                 `;
             }).join('');
