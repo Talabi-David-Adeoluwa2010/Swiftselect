@@ -206,13 +206,18 @@
         </div>
     </div>
 
-    <!-- Billing & Checkout Modal -->
+    <!-- Billing & Checkout Modal (Expanded with State & Postal Code for Suppliers) -->
     <div class="modal" id="billing-modal">
         <div class="modal-content">
             <h3>Prepaid Checkout & Delivery</h3>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Provide your accurate delivery information for online prepaid fulfillment.</p>
             <input type="text" id="bill-address" placeholder="Street Address">
             <input type="text" id="bill-city" placeholder="City">
+            <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="bill-state" placeholder="State / Province">
+                <input type="text" id="bill-postal" placeholder="Postal / Zip Code">
+            </div>
+            <input type="text" id="bill-country" placeholder="Country (e.g. Nigeria)" value="Nigeria">
             <input type="text" id="bill-phone" placeholder="Phone Number">
             <select id="bill-payment" disabled style="background: #f1f5f9; cursor: not-allowed;">
                 <option value="card">Prepaid Online Payment (Required)</option>
@@ -479,10 +484,13 @@
         function completeOrder() {
             const address = document.getElementById('bill-address').value;
             const city = document.getElementById('bill-city').value;
+            const state = document.getElementById('bill-state').value;
+            const postal = document.getElementById('bill-postal').value;
+            const country = document.getElementById('bill-country').value;
             const phone = document.getElementById('bill-phone').value;
 
-            if (!address || !city || !phone) {
-                alert("Please fill in all delivery information fields.");
+            if (!address || !city || !state || !postal || !phone) {
+                alert("Please fill in all required delivery information fields.");
                 return;
             }
 
@@ -492,10 +500,9 @@
                 customer_name: currentUser.name,
                 customer_email: currentUser.email,
                 customer_phone: phone,
-                customer_address: address,
-                customer_city: city,
+                customer_address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 order_items: orderItemsText,
-                payment_method: 'Prepaid Online Payment (Dropshipping Confirmed)'
+                payment_method: 'Prepaid Online Payment (Dropshipping Verified)'
             };
 
             emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams)
@@ -507,6 +514,8 @@
 
                     document.getElementById('bill-address').value = '';
                     document.getElementById('bill-city').value = '';
+                    document.getElementById('bill-state').value = '';
+                    document.getElementById('bill-postal').value = '';
                     document.getElementById('bill-phone').value = '';
                 }, function(error) {
                     alert('Order placed, but failed to send email notification. Please check console.');
