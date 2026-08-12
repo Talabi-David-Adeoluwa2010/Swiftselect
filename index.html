@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SwiftSelect - Online Store</title>
+    <title>SwiftSelect - Professional Online Store</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -18,7 +18,10 @@
         .btn-primary { background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .btn-secondary { background: #475569; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .btn-danger { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-small { background: #ef4444; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
         
+        .currency-select { background: #1e293b; color: white; border: 1px solid #475569; padding: 0.4rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
+
         .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
         
         /* Search Bar Styling */
@@ -28,13 +31,17 @@
 
         h2 { margin-bottom: 1rem; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
-        .product-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; }
+        .product-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: transform 0.2s; }
+        .product-card:hover { transform: translateY(-3px); }
         .product-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 6px; background: #e2e8f0; }
-        .product-card video { width: 100%; height: 180px; object-fit: cover; border-radius: 6px; background: #e2e8f0; margin-top: 0.5rem; }
-        .product-title { font-size: 1rem; font-weight: 600; margin: 0.75rem 0 0.5rem; }
-        .product-price { color: #64748b; font-weight: 500; margin-bottom: 1rem; }
+        .product-title { font-size: 1rem; font-weight: 600; margin: 0.75rem 0 0.25rem; }
+        .product-price { color: #64748b; font-weight: 500; margin-bottom: 0.75rem; }
         .btn { background: var(--primary); color: white; border: none; padding: 0.6rem 1rem; cursor: pointer; border-radius: 6px; width: 100%; font-weight: 600; }
         
+        /* Toast Notification */
+        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 0.75rem 1.5rem; border-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.3s ease; z-index: 2000; font-size: 0.9rem; font-weight: 500; }
+        #toast.show { transform: translateX(-50%) translateY(0); }
+
         /* Footer Styling */
         footer { text-align: center; padding: 1.5rem; background: #0f172a; color: #64748b; font-size: 0.85rem; margin-top: auto; }
         .secret-admin { cursor: pointer; opacity: 0.15; user-select: none; transition: opacity 0.2s; }
@@ -43,8 +50,13 @@
         /* Modals Common Style */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
-        .modal-content { background: white; padding: 2rem; border-radius: 10px; width: 90%; max-width: 400px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
-        .modal-content input, .modal-content select { width: 100%; padding: 0.5rem; margin-bottom: 1rem; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 4px; }
+        .modal-content { background: white; padding: 2rem; border-radius: 10px; width: 90%; max-width: 500px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
+        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 0.5rem; margin-bottom: 1rem; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 4px; font-family: inherit; }
+
+        /* Product Detail Modal Specifics */
+        .detail-img { width: 100%; height: 240px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem; background: #e2e8f0; }
+        .detail-video { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem; background: #e2e8f0; }
+        .shipping-badge { background: #eff6ff; color: #1e40af; padding: 0.5rem; border-radius: 6px; font-size: 0.85rem; font-weight: 500; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
 
         /* Cart Drawer */
         .cart-modal { display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 400px; height: 100%; background: white; box-shadow: -4px 0 15px rgba(0,0,0,0.1); z-index: 1000; padding: 1.5rem; box-sizing: border-box; flex-direction: column; justify-content: space-between; }
@@ -52,7 +64,9 @@
         .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; }
         .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
         .cart-items { flex-grow: 1; overflow-y: auto; margin: 1rem 0; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem; }
+        .cart-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem; }
+        .cart-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; background: #e2e8f0; }
+        .cart-item-details { flex-grow: 1; }
         .cart-footer { border-top: 1px solid #e2e8f0; padding-top: 1rem; }
         .total-price { font-size: 1.1rem; font-weight: bold; margin-bottom: 1rem; display: flex; justify-content: space-between; }
         #user-greeting { font-size: 0.9rem; color: #94a3b8; margin-right: 0.5rem; }
@@ -63,6 +77,10 @@
     <header>
         <div class="logo">SwiftSelect</div>
         <div class="nav-buttons">
+            <select id="currency-selector" class="currency-select" onchange="changeCurrency()">
+                <option value="USD">USD ($)</option>
+                <option value="NGN">NGN (₦)</option>
+            </select>
             <span id="user-greeting"></span>
             <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login</button>
             <button class="btn-primary" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</button>
@@ -82,9 +100,30 @@
         </div>
     </div>
 
+    <!-- Toast Notification Popup -->
+    <div id="toast">Item added to cart!</div>
+
     <footer>
         <p>&copy; 2026 SwiftSelect. All rights reserved. <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
     </footer>
+
+    <!-- Product Detail Modal -->
+    <div class="modal" id="detail-modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 id="detail-name" style="margin: 0;"></h3>
+                <button class="close-btn" onclick="toggleDetailModal()">&times;</button>
+            </div>
+            <img id="detail-image" class="detail-img" src="" alt="">
+            <div id="detail-video-container"></div>
+            <div id="detail-price" style="font-size: 1.25rem; font-weight: bold; color: var(--primary); margin-bottom: 0.75rem;"></div>
+            <div class="shipping-badge">
+                <span>🚚</span> <span id="detail-shipping">Estimated delivery: 2 - 4 business days</span>
+            </div>
+            <p id="detail-desc" style="color: #475569; font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;"></p>
+            <button class="btn" id="detail-add-btn">Add to Cart</button>
+        </div>
+    </div>
 
     <!-- User Account / Signup Modal -->
     <div class="modal" id="auth-modal">
@@ -107,10 +146,10 @@
             <input type="text" id="bill-city" placeholder="City">
             <input type="text" id="bill-phone" placeholder="Phone Number">
             <select id="bill-payment">
-                <option value="card">Credit / Debit Card</option>
+                <option value="card">Paystack / Credit Card</option>
                 <option value="delivery">Cash on Delivery</option>
             </select>
-            <button class="btn-primary" onclick="completeOrder()" style="width:100%; margin-bottom:0.5rem;">Place Order</button>
+            <button class="btn-primary" onclick="completeOrder()" style="width:100%; margin-bottom:0.5rem;">Pay & Place Order</button>
             <button class="btn-secondary" onclick="toggleBillingModal()" style="width:100%;">Cancel</button>
         </div>
     </div>
@@ -118,11 +157,14 @@
     <!-- Admin Panel Modal -->
     <div class="modal" id="admin-modal">
         <div class="modal-content">
-            <h3>Add New Product</h3>
+            <h3>Add Professional Product</h3>
             <input type="text" id="admin-name" placeholder="Product Name">
-            <input type="number" id="admin-price" placeholder="Price ($)">
+            <input type="number" id="admin-price-usd" placeholder="Price in USD ($)">
+            <input type="number" id="admin-price-ngn" placeholder="Price in NGN (₦)">
+            <textarea id="admin-desc" placeholder="Product Description & Recommendations..." rows="3"></textarea>
             <input type="text" id="admin-image" placeholder="Image URL">
             <input type="text" id="admin-video" placeholder="Video URL (Optional)">
+            <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g. Ships in 24 hours)">
             <button class="btn-primary" onclick="addProduct()" style="width:100%; margin-bottom:0.5rem;">Save Product</button>
             <button class="btn-secondary" onclick="toggleAdminModal()" style="width:100%;">Close</button>
         </div>
@@ -149,9 +191,30 @@
     </div>
 
     <script>
+        let currentCurrency = localStorage.getItem('swift_currency') || 'USD';
+        document.getElementById('currency-selector').value = currentCurrency;
+
         let products = JSON.parse(localStorage.getItem('swift_products')) || [
-            { id: 1, name: "Smart Gadget Pro", price: 49.99, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=80", video: "" },
-            { id: 2, name: "Minimalist Watch", price: 29.99, image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=300&auto=format&fit=crop&q=80", video: "" }
+            { 
+                id: 1, 
+                name: "Smart Gadget Pro", 
+                priceUSD: 49.99, 
+                priceNGN: 75000, 
+                description: "The ultimate next-gen smart gadget designed for maximum productivity and long battery life. Highly recommended for daily wear and tech enthusiasts.", 
+                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=80", 
+                video: "", 
+                shipping: "Ships within 24 hours from Lagos Hub" 
+            },
+            { 
+                id: 2, 
+                name: "Minimalist Watch", 
+                priceUSD: 29.99, 
+                priceNGN: 45000, 
+                description: "Clean aesthetic lines combined with premium strap durability. Water-resistant and crafted to match any formal or casual look.", 
+                image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=300&auto=format&fit=crop&q=80", 
+                video: "", 
+                shipping: "Ships within 2 business days" 
+            }
         ];
 
         let cart = [];
@@ -160,6 +223,20 @@
         function initApp() {
             renderProducts();
             updateAuthUI();
+        }
+
+        function changeCurrency() {
+            currentCurrency = document.getElementById('currency-selector').value;
+            localStorage.setItem('swift_currency', currentCurrency);
+            renderProducts();
+            updateCartUI();
+        }
+
+        function formatPrice(product) {
+            if (currentCurrency === 'NGN') {
+                return `₦${product.priceNGN.toLocaleString()}`;
+            }
+            return `$${product.priceUSD.toFixed(2)}`;
         }
 
         function renderProducts(filter = "") {
@@ -173,20 +250,58 @@
 
             grid.innerHTML = filteredProducts.map(product => `
                 <div class="product-card">
-                    <div>
+                    <div onclick="openProductDetail(${product.id})">
                         <img src="${product.image}" alt="${product.name}">
-                        ${product.video ? `<video src="${product.video}" controls muted></video>` : ''}
                         <div class="product-title">${product.name}</div>
-                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                        <div class="product-price">${formatPrice(product)}</div>
                     </div>
-                    <button class="btn" onclick="addToCart(${product.id})">Add to Cart</button>
+                    <button class="btn" onclick="addToCart(event, ${product.id})">Add to Cart</button>
                 </div>
             `).join('');
+        }
+
+        function openProductDetail(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            document.getElementById('detail-name').innerText = product.name;
+            document.getElementById('detail-image').src = product.image;
+            document.getElementById('detail-price').innerText = formatPrice(product);
+            document.getElementById('detail-desc').innerText = product.description || "No description provided.";
+            document.getElementById('detail-shipping').innerText = product.shipping || "Estimated delivery: 2 - 4 business days";
+
+            const videoContainer = document.getElementById('detail-video-container');
+            if (product.video) {
+                videoContainer.innerHTML = `<video class="detail-video" src="${product.video}" controls muted></video>`;
+            } else {
+                videoContainer.innerHTML = '';
+            }
+
+            document.getElementById('detail-add-btn').onclick = function() {
+                addToCart(null, product.id);
+                toggleDetailModal();
+            };
+
+            toggleDetailModal();
+        }
+
+        function toggleDetailModal() {
+            const modal = document.getElementById('detail-modal');
+            modal.classList.toggle('active');
         }
 
         function handleSearch() {
             const query = document.getElementById('search-input').value;
             renderProducts(query);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
         }
 
         function updateAuthUI() {
@@ -237,7 +352,7 @@
 
             document.getElementById('auth-name').value = '';
             document.getElementById('auth-email').value = '';
-            alert(`Welcome, ${name}! You are now signed in.`);
+            showToast(`Welcome, ${name}!`);
         }
 
         function proceedToCheckout() {
@@ -264,13 +379,19 @@
             const address = document.getElementById('bill-address').value;
             const city = document.getElementById('bill-city').value;
             const phone = document.getElementById('bill-phone').value;
+            const paymentMethod = document.getElementById('bill-payment').value;
 
             if (!address || !city || !phone) {
                 alert("Please fill in all billing and shipping information.");
                 return;
             }
 
-            alert(`Success! Thank you for your order, ${currentUser.name}. Your items will be shipped to ${address}, ${city}.`);
+            if (paymentMethod === 'card') {
+                alert(`Redirecting ${currentUser.name} to Paystack Gateway securely... Order placed successfully!`);
+            } else {
+                alert(`Success! Thank you for your order, ${currentUser.name}. Cash on delivery confirmed for ${address}, ${city}.`);
+            }
+
             cart = [];
             updateCartUI();
             toggleBillingModal();
@@ -296,29 +417,45 @@
 
         function addProduct() {
             const name = document.getElementById('admin-name').value;
-            const price = parseFloat(document.getElementById('admin-price').value);
+            const priceUSD = parseFloat(document.getElementById('admin-price-usd').value);
+            const priceNGN = parseFloat(document.getElementById('admin-price-ngn').value);
+            const description = document.getElementById('admin-desc').value;
             const image = document.getElementById('admin-image').value;
             const video = document.getElementById('admin-video').value;
+            const shipping = document.getElementById('admin-shipping').value;
 
-            if (!name || isNaN(price) || !image) {
-                alert('Please fill in the name, price, and image fields.');
+            if (!name || isNaN(priceUSD) || isNaN(priceNGN) || !image) {
+                alert('Please fill in the name, USD price, NGN price, and image URL.');
                 return;
             }
 
-            const newProduct = { id: Date.now(), name, price, image, video };
+            const newProduct = { 
+                id: Date.now(), 
+                name, 
+                priceUSD, 
+                priceNGN, 
+                description, 
+                image, 
+                video, 
+                shipping: shipping || "Ships in 2 - 3 business days" 
+            };
             products.push(newProduct);
             localStorage.setItem('swift_products', JSON.stringify(products));
             renderProducts();
             toggleAdminModal();
 
             document.getElementById('admin-name').value = '';
-            document.getElementById('admin-price').value = '';
+            document.getElementById('admin-price-usd').value = '';
+            document.getElementById('admin-price-ngn').value = '';
+            document.getElementById('admin-desc').value = '';
             document.getElementById('admin-image').value = '';
             document.getElementById('admin-video').value = '';
-            alert('Product added successfully!');
+            document.getElementById('admin-shipping').value = '';
+            showToast('Professional product added successfully!');
         }
 
-        function addToCart(productId) {
+        function addToCart(event, productId) {
+            if (event) event.stopPropagation();
             const product = products.find(p => p.id === productId);
             const existingItem = cart.find(item => item.id === productId);
 
@@ -329,6 +466,13 @@
             }
 
             updateCartUI();
+            showToast(`Added ${product.name} to cart!`);
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+            showToast("Item removed from cart");
         }
 
         function updateCartUI() {
@@ -338,25 +482,30 @@
             const cartItemsContainer = document.getElementById('cart-items');
             if (cart.length === 0) {
                 cartItemsContainer.innerHTML = '<p style="color: #64748b; text-align: center; margin-top: 2rem;">Your cart is empty.</p>';
-                document.getElementById('cart-total').innerText = '$0.00';
+                document.getElementById('cart-total').innerText = currentCurrency === 'NGN' ? '₦0' : '$0.00';
                 return;
             }
 
-            let totalPrice = 0;
+            let totalPriceUSD = 0;
+            let totalPriceNGN = 0;
             cartItemsContainer.innerHTML = cart.map(item => {
-                totalPrice += item.price * item.quantity;
+                totalPriceUSD += item.priceUSD * item.quantity;
+                totalPriceNGN += item.priceNGN * item.quantity;
+                const itemPriceDisplay = currentCurrency === 'NGN' ? `₦${(item.priceNGN * item.quantity).toLocaleString()}` : `$${(item.priceUSD * item.quantity).toFixed(2)}`;
                 return `
                     <div class="cart-item">
-                        <div>
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="cart-item-details">
                             <strong>${item.name}</strong><br>
-                            <small style="color:#64748b;">$${item.price.toFixed(2)} x ${item.quantity}</small>
+                            <small style="color:#64748b;">${itemPriceDisplay} x ${item.quantity}</small>
                         </div>
-                        <div>$${(item.price * item.quantity).toFixed(2)}</div>
+                        <button class="btn-small" onclick="removeFromCart(${item.id})">Remove</button>
                     </div>
                 `;
             }).join('');
 
-            document.getElementById('cart-total').innerText = `$${totalPrice.toFixed(2)}`;
+            const finalTotalDisplay = currentCurrency === 'NGN' ? `₦${totalPriceNGN.toLocaleString()}` : `$${totalPriceUSD.toFixed(2)}`;
+            document.getElementById('cart-total').innerText = finalTotalDisplay;
         }
 
         function toggleCart() {
