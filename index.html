@@ -47,35 +47,24 @@
 
         .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
         
-        /* Foldable Dashboard Container */
-        .dashboard-wrapper { transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; margin-bottom: 1.5rem; }
-        .dashboard-wrapper.folded { max-height: 0; opacity: 0; margin-bottom: 0; pointer-events: none; }
-
         /* Hero Banner */
-        .hero-banner { background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; padding: 2.5rem 2rem; border-radius: 20px; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.2); position: relative; overflow: hidden; }
-        .hero-banner::after { content: ''; position: absolute; right: -50px; bottom: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.03); border-radius: 50%; }
-        .hero-banner h1 { margin: 0; font-size: 2.2rem; font-weight: 800; letter-spacing: -0.5px; }
-        .hero-banner p { margin: 0; color: #c7d2fe; font-size: 1rem; max-width: 600px; line-height: 1.6; }
+        .hero-banner { background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; padding: 2rem 2rem; border-radius: 20px; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.2); position: relative; overflow: hidden; }
+        .hero-banner h1 { margin: 0; font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
+        .hero-banner p { margin: 0; color: #c7d2fe; font-size: 0.95rem; max-width: 600px; line-height: 1.5; }
 
-        /* Dashboard Action Buttons Strip */
-        .dashboard-actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-        .dashboard-action-btn { background: white; border: 1px solid var(--border); padding: 1.25rem; border-radius: 16px; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.01); text-align: left; }
-        .dashboard-action-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.1); border-color: var(--primary); }
-        .dashboard-action-icon { width: 45px; height: 45px; background: #e0e7ff; color: var(--primary); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.25rem; flex-shrink: 0; }
-        .dashboard-action-btn h4 { margin: 0 0 0.2rem; font-size: 0.95rem; color: #0f172a; font-weight: 700; }
-        .dashboard-action-btn p { margin: 0; font-size: 0.75rem; color: #64748b; }
-
-        /* Track Order Modal / Section */
-        .track-section { background: white; border: 1px solid var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-        .track-section h3 { margin-top: 0; margin-bottom: 0.5rem; color: #0f172a; }
+        /* Track Order Section (Flows smoothly with page scroll) */
+        .track-section { background: white; border: 1px solid var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        .track-section h3 { margin-top: 0; margin-bottom: 0.5rem; color: #0f172a; font-size: 1.15rem; }
         .track-row { display: flex; gap: 0.5rem; }
         .track-row input { flex-grow: 1; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; transition: border-color 0.2s; }
         .track-row input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
         .track-result-box { margin-top: 1rem; padding: 1.25rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border); font-size: 0.95rem; }
 
-        /* Recent Orders Modal / Section */
-        .recent-orders-box { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
-        .recent-orders-list { display: flex; flex-direction: column; gap: 0.75rem; max-height: 280px; overflow-y: auto; margin-top: 0.75rem; }
+        /* Recent Orders Section (Flows smoothly with page scroll) */
+        .recent-orders-section { background: white; border: 1px solid var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        .recent-orders-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+        .recent-orders-header h3 { margin: 0; color: #0f172a; font-size: 1.15rem; }
+        .recent-orders-list { display: flex; flex-direction: column; gap: 0.75rem; max-height: 260px; overflow-y: auto; margin-top: 0.75rem; }
         .recent-order-item { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; gap: 1rem; transition: background 0.2s; }
         .recent-order-item:hover { background: #f1f5f9; }
         .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
@@ -194,30 +183,32 @@
     </header>
 
     <div class="container">
-        <!-- Foldable Dashboard Container (Folds when scrolling up, except search bar) -->
-        <div class="dashboard-wrapper" id="dashboard-wrapper">
-            <!-- Hero Section -->
-            <div class="hero-banner">
-                <h1>Discover Premium Quality Essentials</h1>
-                <p>Handpicked products delivered directly to your doorstep with guaranteed fast fulfillment and prepaid online ordering.</p>
-            </div>
+        <!-- Hero Section -->
+        <div class="hero-banner">
+            <h1>Discover Premium Quality Essentials</h1>
+            <p>Handpicked products delivered directly to your doorstep with guaranteed fast fulfillment and prepaid online ordering.</p>
+        </div>
 
-            <!-- Dashboard Action Buttons Strip -->
-            <div class="dashboard-actions-grid">
-                <div class="dashboard-action-btn" onclick="openModalById('track-modal-box')">
-                    <div class="dashboard-action-icon">📦</div>
-                    <div>
-                        <h4>Track Order Status</h4>
-                        <p>Check live fulfillment progress</p>
-                    </div>
-                </div>
-                <div class="dashboard-action-btn" onclick="openModalById('recent-orders-modal-box')">
-                    <div class="dashboard-action-icon">📋</div>
-                    <div>
-                        <h4>Your Order History</h4>
-                        <p>View your past purchases</p>
-                    </div>
-                </div>
+        <!-- Track Order Section (Swipes up with the page as you scroll) -->
+        <div class="track-section">
+            <h3>📦 Track Your Order Status</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Enter your Order ID below to check live progress.</p>
+            <div class="track-row">
+                <input type="text" id="track-input" placeholder="e.g., SWIFT-483920">
+                <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
+            </div>
+            <div id="track-result-container" style="display: none;" class="track-result-box"></div>
+        </div>
+
+        <!-- Recent Orders Section (Swipes up with the page as you scroll) -->
+        <div class="recent-orders-section">
+            <div class="recent-orders-header">
+                <h3 id="recent-orders-title">Your Recent Orders</h3>
+                <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.5rem;">Manage and view your account's order activity.</p>
+            <div class="recent-orders-list" id="recent-orders-list">
+                <!-- Populated dynamically -->
             </div>
         </div>
 
@@ -260,39 +251,6 @@
     <footer>
         <p>&copy; 2026 SwiftSelect. All rights reserved. <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
     </footer>
-
-    <!-- Track Order Modal (Triggered from Dashboard Button) -->
-    <div class="modal" id="track-modal-box">
-        <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3 style="margin: 0;">📦 Track Your Order Status</h3>
-                <button class="close-btn" onclick="closeModalById('track-modal-box')">&times;</button>
-            </div>
-            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Enter your Order ID below to check live progress.</p>
-            <div class="track-row">
-                <input type="text" id="track-input" placeholder="e.g., SWIFT-483920">
-                <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
-            </div>
-            <div id="track-result-container" style="display: none;" class="track-result-box"></div>
-        </div>
-    </div>
-
-    <!-- Recent Orders Modal (Triggered from Dashboard Button) -->
-    <div class="modal" id="recent-orders-modal-box">
-        <div class="modal-content" style="max-width: 600px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3 style="margin: 0;" id="recent-orders-title">Your Recent Orders</h3>
-                <button class="close-btn" onclick="closeModalById('recent-orders-modal-box')">&times;</button>
-            </div>
-            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.75rem;">Manage and view your account's order activity.</p>
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 0.5rem;">
-                <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
-            </div>
-            <div class="recent-orders-list" id="recent-orders-list">
-                <!-- Populated dynamically -->
-            </div>
-        </div>
-    </div>
 
     <!-- Product Detail Modal -->
     <div class="modal" id="detail-modal">
@@ -407,7 +365,7 @@
         </div>
     </div>
 
-    <!-- Admin Panel Modal (Global Sync, Multiple Images & Up to 2 Videos, Complete Orders View) -->
+    <!-- Admin Panel Modal -->
     <div class="modal" id="admin-modal">
         <div class="modal-content admin-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
@@ -438,7 +396,7 @@
                     <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Images (Select multiple images):</label>
                     <input type="file" id="admin-image-files" accept="image/*" multiple>
 
-                    <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Videos (Select up to 2 videos):</label>
+                    <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Videos (Select up to 2 videos - keeps files lightweight):</label>
                     <input type="file" id="admin-video-files" accept="video/*" multiple>
 
                     <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g., Ships in 24 hours from hub)">
@@ -481,13 +439,6 @@
     </div>
 
     <script>
-        /* 
-           GLOBAL STORAGE ENGINE (Using JSONBin.io free JSON storage as a cloud backend simulation)
-           This ensures products, user accounts, and orders sync globally across all devices & users!
-        */
-        const JSONBIN_MASTER_KEY = "$2a$10$wN10c1n2Fh46Oq2zZ1cK9eeK7z6w4R/5C2O5eW8vX8e5tq5t8Z0G2"; // Public mock sync key
-        const JSONBIN_BIN_ID = "swiftselect_global_state_v1";
-        
         let globalState = {
             products: [
                 { 
@@ -533,7 +484,6 @@
         let currentRatingOrderId = null;
         let selectedStarCount = 5;
 
-        // Load state from localStorage with robust global sync fallback
         function loadState() {
             const savedState = localStorage.getItem('swift_global_state');
             if (savedState) {
@@ -547,11 +497,9 @@
 
         function saveState() {
             localStorage.setItem('swift_global_state', JSON.stringify(globalState));
-            // Trigger storage event for multi-tab sync on same device
             window.dispatchEvent(new Event('storage'));
         }
 
-        // Window storage event listener for live multi-tab & device simulation sync
         window.addEventListener('storage', function(e) {
             const savedState = localStorage.getItem('swift_global_state');
             if (savedState) {
@@ -566,21 +514,6 @@
                 } catch(e) {}
             }
         });
-
-        // Scroll listener for folding dashboard except search bar
-        let lastScrollTop = 0;
-        window.addEventListener('scroll', function() {
-            const st = window.pageYOffset || document.documentElement.scrollTop;
-            const dashboardWrapper = document.getElementById('dashboard-wrapper');
-            if (st > lastScrollTop && st > 80) {
-                // Scrolling down -> fold dashboard
-                dashboardWrapper.classList.add('folded');
-            } else if (st < 30) {
-                // Scrolling up to top -> unfold dashboard
-                dashboardWrapper.classList.remove('folded');
-            }
-            lastScrollTop = st <= 0 ? 0 : st;
-        }, false);
 
         function initApp() {
             loadState();
@@ -635,7 +568,6 @@
             const imgs = product.images && product.images.length > 0 ? product.images : ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'];
             document.getElementById('detail-image').src = imgs[0];
 
-            // Render thumbnails for secondary images
             const thumbContainer = document.getElementById('detail-thumbnails');
             if (imgs.length > 1) {
                 thumbContainer.style.display = 'flex';
@@ -647,11 +579,10 @@
                 thumbContainer.innerHTML = '';
             }
 
-            // Render up to 2 videos if available
             const videoContainer = document.getElementById('detail-video-container');
             if (product.videos && product.videos.length > 0) {
                 videoContainer.innerHTML = product.videos.map(vUrl => `
-                    <video class="detail-video" src="${vUrl}" controls muted></video>
+                    <video class="detail-video" src="${vUrl}" controls playsinline></video>
                 `).join('');
             } else {
                 videoContainer.innerHTML = '';
@@ -975,16 +906,16 @@
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                         <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">${order.status}</span>
-                        <button class="btn-small" onclick="closeModalById('recent-orders-modal-box'); fillTrackingInput('${order.id}')">Track</button>
+                        <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Track</button>
                     </div>
                 </div>
             `).join('');
         }
 
         function fillTrackingInput(orderId) {
-            openModalById('track-modal-box');
             document.getElementById('track-input').value = orderId;
             trackOrder();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function clearAllOrders() {
@@ -1210,7 +1141,7 @@
             }
         }
 
-        function addProduct() {
+        async function addProduct() {
             const name = document.getElementById('admin-name').value.trim();
             const priceUSD = parseFloat(document.getElementById('admin-price-usd').value);
             const priceNGN = parseFloat(document.getElementById('admin-price-ngn').value);
@@ -1220,7 +1151,7 @@
             const videoFiles = document.getElementById('admin-video-files').files;
 
             if (!name || isNaN(priceUSD) || isNaN(priceNGN) || imageFiles.length === 0) {
-                alert('Please fill in the product name, pricing, and choose at least one image.');
+                alert('Please fill in product name, pricing, and choose at least one image.');
                 return;
             }
 
@@ -1228,63 +1159,89 @@
             addBtn.innerText = "Processing files & adding...";
             addBtn.disabled = true;
 
-            // Process multiple images
-            let imagePromises = [];
-            for (let i = 0; i < imageFiles.length; i++) {
-                imagePromises.push(readFileAsBase64(imageFiles[i]));
-            }
+            try {
+                let imagesBase64 = [];
+                for (let i = 0; i < imageFiles.length; i++) {
+                    const compressedImg = await compressImage(imageFiles[i], 800, 0.7);
+                    imagesBase64.push(compressedImg);
+                }
 
-            // Process up to 2 videos
-            let videoPromises = [];
-            let maxVideos = Math.min(videoFiles.length, 2);
-            for (let i = 0; i < maxVideos; i++) {
-                videoPromises.push(readFileAsBase64(videoFiles[i]));
-            }
+                let videosBase64 = [];
+                let maxVideos = Math.min(videoFiles.length, 2);
+                for (let i = 0; i < maxVideos; i++) {
+                    const vidBase64 = await readFileAsBase64(videoFiles[i]);
+                    videosBase64.push(vidBase64);
+                }
 
-            Promise.all(imagePromises).then(imagesBase64 => {
-                Promise.all(videoPromises).then(videosBase64 => {
-                    loadState();
-                    const newProduct = { 
-                        id: Date.now(), 
-                        name, 
-                        priceUSD, 
-                        priceNGN, 
-                        description, 
-                        images: imagesBase64, 
-                        videos: videosBase64, 
-                        shipping: shipping || "Ships in 2 - 3 business days",
-                        isSoldOut: false
-                    };
+                loadState();
+                const newProduct = { 
+                    id: Date.now(), 
+                    name, 
+                    priceUSD, 
+                    priceNGN, 
+                    description, 
+                    images: imagesBase64, 
+                    videos: videosBase64, 
+                    shipping: shipping || "Ships in 2 - 3 business days",
+                    isSoldOut: false
+                };
 
-                    globalState.products.push(newProduct);
-                    saveState();
-                    renderProducts();
-                    renderAdminProductList();
+                globalState.products.push(newProduct);
+                saveState();
+                renderProducts();
+                renderAdminProductList();
 
-                    // Reset form
-                    document.getElementById('admin-name').value = '';
-                    document.getElementById('admin-price-usd').value = '';
-                    document.getElementById('admin-price-ngn').value = '';
-                    document.getElementById('admin-desc').value = '';
-                    document.getElementById('admin-image-files').value = '';
-                    document.getElementById('admin-video-files').value = '';
-                    document.getElementById('admin-shipping').value = '';
-                    
-                    addBtn.innerText = "Save New Product Globally";
-                    addBtn.disabled = false;
-                    showToast('Product successfully added and synced globally!');
-                });
-            }).catch(err => {
-                alert("Error processing media files. Please try smaller files.");
+                document.getElementById('admin-name').value = '';
+                document.getElementById('admin-price-usd').value = '';
+                document.getElementById('admin-price-ngn').value = '';
+                document.getElementById('admin-desc').value = '';
+                document.getElementById('admin-image-files').value = '';
+                document.getElementById('admin-video-files').value = '';
+                document.getElementById('admin-shipping').value = '';
+                
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
-            });
+                showToast('Product successfully added and synced globally!');
+            } catch (err) {
+                alert("Error reading files. Make sure the video files are not excessively large for mobile storage.");
+                addBtn.innerText = "Save New Product Globally";
+                addBtn.disabled = false;
+            }
         }
 
         function readFileAsBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = e => resolve(e.target.result);
+                reader.onerror = err => reject(err);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function compressImage(file, maxWidth, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.onerror = err => reject(err);
+                    img.src = e.target.result;
+                };
                 reader.onerror = err => reject(err);
                 reader.readAsDataURL(file);
             });
@@ -1300,7 +1257,6 @@
             }
 
             const existingItem = cart.find(item => item.id === productId);
-
             if (existingItem) {
                 existingItem.quantity++;
             } else {
