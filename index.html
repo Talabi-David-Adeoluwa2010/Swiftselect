@@ -163,10 +163,12 @@
             <input type="number" id="admin-price-ngn" placeholder="Price in NGN (₦)">
             <textarea id="admin-desc" placeholder="Product Description & Recommendations..." rows="3"></textarea>
             
-            <label style="font-size: 0.85rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Image from Phone Gallery:</label>
+            <label style="font-size: 0.85rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Image from Gallery:</label>
             <input type="file" id="admin-image-file" accept="image/*">
 
-            <input type="text" id="admin-video" placeholder="Video URL (Optional)">
+            <label style="font-size: 0.85rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Video from Gallery (Optional):</label>
+            <input type="file" id="admin-video-file" accept="video/*">
+
             <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g. Ships in 24 hours)">
             <button class="btn-primary" onclick="addProduct()" style="width:100%; margin-bottom:0.5rem;">Save Product</button>
             <button class="btn-secondary" onclick="toggleAdminModal()" style="width:100%;">Close</button>
@@ -423,9 +425,9 @@
             const priceUSD = parseFloat(document.getElementById('admin-price-usd').value);
             const priceNGN = parseFloat(document.getElementById('admin-price-ngn').value);
             const description = document.getElementById('admin-desc').value;
-            const video = document.getElementById('admin-video').value;
             const shipping = document.getElementById('admin-shipping').value;
             const imageFile = document.getElementById('admin-image-file').files[0];
+            const videoFile = document.getElementById('admin-video-file').files[0];
 
             if (!name || isNaN(priceUSD) || isNaN(priceNGN) || !imageFile) {
                 alert('Please fill in the name, prices, and select an image from your gallery.');
@@ -436,32 +438,44 @@
             reader.onload = function(e) {
                 const imageBase64 = e.target.result;
 
-                const newProduct = { 
-                    id: Date.now(), 
-                    name, 
-                    priceUSD, 
-                    priceNGN, 
-                    description, 
-                    image: imageBase64, 
-                    video, 
-                    shipping: shipping || "Ships in 2 - 3 business days" 
-                };
-
-                products.push(newProduct);
-                localStorage.setItem('swift_products', JSON.stringify(products));
-                renderProducts();
-                toggleAdminModal();
-
-                document.getElementById('admin-name').value = '';
-                document.getElementById('admin-price-usd').value = '';
-                document.getElementById('admin-price-ngn').value = '';
-                document.getElementById('admin-desc').value = '';
-                document.getElementById('admin-image-file').value = '';
-                document.getElementById('admin-video').value = '';
-                document.getElementById('admin-shipping').value = '';
-                showToast('Professional product added successfully!');
+                if (videoFile) {
+                    const videoReader = new FileReader();
+                    videoReader.onload = function(ve) {
+                        saveProductData(name, priceUSD, priceNGN, description, imageBase64, ve.target.result, shipping);
+                    };
+                    videoReader.readAsDataURL(videoFile);
+                } else {
+                    saveProductData(name, priceUSD, priceNGN, description, imageBase64, "", shipping);
+                }
             };
             reader.readAsDataURL(imageFile);
+        }
+
+        function saveProductData(name, priceUSD, priceNGN, description, image, video, shipping) {
+            const newProduct = { 
+                id: Date.now(), 
+                name, 
+                priceUSD, 
+                priceNGN, 
+                description, 
+                image, 
+                video, 
+                shipping: shipping || "Ships in 2 - 3 business days" 
+            };
+
+            products.push(newProduct);
+            localStorage.setItem('swift_products', JSON.stringify(products));
+            renderProducts();
+            toggleAdminModal();
+
+            document.getElementById('admin-name').value = '';
+            document.getElementById('admin-price-usd').value = '';
+            document.getElementById('admin-price-ngn').value = '';
+            document.getElementById('admin-desc').value = '';
+            document.getElementById('admin-image-file').value = '';
+            document.getElementById('admin-video-file').value = '';
+            document.getElementById('admin-shipping').value = '';
+            showToast('Professional product added successfully!');
         }
 
         function addToCart(event, productId) {
