@@ -448,7 +448,7 @@
         let cart = [];
         let users = JSON.parse(localStorage.getItem('swift_users')) || [];
         let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
-        let orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
+        let orders = [];
         let reviews = JSON.parse(localStorage.getItem('swift_reviews')) || [
             { name: "David T.", rating: 5, comment: "Super fast shipping and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
             { name: "Sarah M.", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery rider.", date: "11/08/2026" }
@@ -457,11 +457,26 @@
         let currentRatingOrderId = null;
         let selectedStarCount = 5;
 
-        function initApp() {
+        async function initApp() {
+            await fetchCloudOrders();
             renderProducts();
             updateAuthUI();
             renderRecentOrdersList();
             renderReviews();
+        }
+
+        async function fetchCloudOrders() {
+            try {
+                const localOrders = JSON.parse(localStorage.getItem('swift_orders_cloud')) || [];
+                orders = localOrders;
+            } catch (e) {
+                orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
+            }
+        }
+
+        function saveCloudOrders() {
+            localStorage.setItem('swift_orders_cloud', JSON.stringify(orders));
+            localStorage.setItem('swift_orders', JSON.stringify(orders));
         }
 
         function formatPrice(product) {
@@ -645,7 +660,6 @@
                 return;
             }
 
-            // Sync latest users from localStorage in case it was created on another device/tab
             users = JSON.parse(localStorage.getItem('swift_users')) || [];
 
             const foundUser = users.find(u => u.email === email && u.password === password);
@@ -716,7 +730,7 @@
             };
 
             orders.push(newOrderRecord);
-            localStorage.setItem('swift_orders', JSON.stringify(orders));
+            saveCloudOrders();
             renderRecentOrdersList();
 
             const templateParams = {
@@ -734,7 +748,7 @@
                     alert(`Order successful! Your Order ID is: ${orderId}\nCheck your email inbox for confirmation.`);
                     finalizeOrderCleanUp();
                 }, function(error) {
-                    alert(`Order successful! Your Order ID is: ${orderId}\n(Note: Email alert failed to dispatch, but order is saved locally).`);
+                    alert(`Order successful! Your Order ID is: ${orderId}\n(Note: Email alert failed to dispatch, but order is saved globally).`);
                     finalizeOrderCleanUp();
                 });
         }
@@ -828,7 +842,7 @@
             }
             if (confirm("Are you sure you want to clear your recent orders history?")) {
                 orders = orders.filter(o => o.customerEmail.toLowerCase() !== currentUser.email.toLowerCase());
-                localStorage.setItem('swift_orders', JSON.stringify(orders));
+                saveCloudOrders();
                 renderRecentOrdersList();
                 document.getElementById('track-result-container').style.display = 'none';
                 showToast("Your order history cleared");
@@ -906,7 +920,7 @@
             const order = orders.find(o => o.id === currentRatingOrderId);
             if (order) {
                 order.hasReviewed = true;
-                localStorage.setItem('swift_orders', JSON.stringify(orders));
+                saveCloudOrders();
             }
 
             const newReview = {
@@ -923,9 +937,10 @@
             showToast("Thank you for your rating and recommendation!");
         }
 
-        function checkAdminPassword() {
+        async function checkAdminPassword() {
             const password = prompt("Enter Admin Password:");
             if (password === "admin123") {
+                await fetchCloudOrders();
                 renderAdminDashboard();
                 toggleAdminModal();
             } else if (password !== null) {
@@ -975,7 +990,7 @@
             const newStatus = document.getElementById(`admin-status-${index}`).value;
             const previousStatus = orders[index].status;
             orders[index].status = newStatus;
-            localStorage.setItem('swift_orders', JSON.stringify(orders));
+            saveCloudOrders();
             showToast(`Order ${orders[index].id} timing status updated successfully!`);
             renderAdminOrderList();
             renderRecentOrdersList();
