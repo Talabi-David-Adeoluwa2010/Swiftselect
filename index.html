@@ -9,7 +9,7 @@
     <script type="text/javascript">
         (function() {
             emailjs.init({
-                publicKey: "5viHIEbeZ90KuRrb3",
+                publicKey: "5viHlEbeZ90KuRrb3",
             });
         })();
     </script>
@@ -35,8 +35,6 @@
         .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.55rem 1.1rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .btn-danger { background: #fee2e2; color: #dc2626; border: none; padding: 0.55rem 1.1rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .btn-small { background: #fee2e2; color: #dc2626; border: none; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
-        
-        .currency-select { background: #f8fafc; color: #0f172a; border: 1px solid #cbd5e1; padding: 0.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
         
@@ -63,7 +61,8 @@
         .product-meta { margin-top: 0.75rem; }
         .product-stars { color: var(--accent); font-size: 0.85rem; margin-bottom: 0.3rem; }
         .product-title { font-size: 1.05rem; font-weight: 700; margin: 0 0 0.3rem; color: #0f172a; }
-        .product-price { color: var(--primary); font-weight: 700; font-size: 1.15rem; margin-bottom: 1rem; }
+        .product-price { color: var(--primary); font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.1rem; }
+        .product-price .ngn-sub { font-size: 0.85rem; color: #64748b; font-weight: 600; }
         
         .btn { background: var(--primary); color: white; border: none; padding: 0.7rem 1rem; cursor: pointer; border-radius: 8px; width: 100%; font-weight: 600; transition: background 0.2s; }
         .btn:hover { background: var(--primary-dark); }
@@ -112,7 +111,8 @@
         .cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; background: #f1f5f9; }
         .cart-item-details { flex-grow: 1; }
         .cart-footer { border-top: 1px solid #e2e8f0; padding-top: 1rem; }
-        .total-price { font-size: 1.2rem; font-weight: 800; margin-bottom: 1rem; display: flex; justify-content: space-between; color: #0f172a; }
+        .total-price { font-size: 1.2rem; font-weight: 800; margin-bottom: 1rem; display: flex; justify-content: space-between; color: #0f172a; flex-direction: column; gap: 0.25rem; }
+        .total-price .total-ngn { font-size: 0.95rem; color: #64748b; font-weight: 600; }
         #user-greeting { font-size: 0.9rem; color: #64748b; font-weight: 600; margin-right: 0.5rem; }
     </style>
 </head>
@@ -125,10 +125,6 @@
     <header>
         <div class="logo">SwiftSelect</div>
         <div class="nav-buttons">
-            <select id="currency-selector" class="currency-select" onchange="changeCurrency()">
-                <option value="USD">USD ($)</option>
-                <option value="NGN">NGN (₦)</option>
-            </select>
             <span id="user-greeting"></span>
             <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login</button>
             <button class="btn-primary" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</button>
@@ -189,7 +185,7 @@
             <img id="detail-image" class="detail-img" src="" alt="">
             <div id="detail-video-container"></div>
             <div class="product-stars" style="margin-bottom: 0.5rem;">⭐⭐⭐⭐⭐ (128 reviews)</div>
-            <div id="detail-price" style="font-size: 1.35rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem;"></div>
+            <div id="detail-price" style="font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.15rem;"></div>
             <div class="shipping-badge">
                 <span>📦</span> <span id="detail-shipping">Estimated delivery: 2 - 4 business days</span>
             </div>
@@ -277,17 +273,20 @@
         </div>
         <div class="cart-footer">
             <div class="total-price">
-                <span>Subtotal:</span>
-                <span id="cart-total">$0.00</span>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Subtotal (USD):</span>
+                    <span id="cart-total-usd">$0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;" class="total-ngn">
+                    <span>Subtotal (NGN):</span>
+                    <span id="cart-total-ngn">₦0</span>
+                </div>
             </div>
             <button class="btn-primary" style="width:100%;" onclick="proceedToCheckout()">Proceed to Secure Checkout</button>
         </div>
     </div>
 
     <script>
-        let currentCurrency = localStorage.getItem('swift_currency') || 'USD';
-        document.getElementById('currency-selector').value = currentCurrency;
-
         let products = JSON.parse(localStorage.getItem('swift_products')) || [
             { 
                 id: 1, 
@@ -321,18 +320,11 @@
             updateAuthUI();
         }
 
-        function changeCurrency() {
-            currentCurrency = document.getElementById('currency-selector').value;
-            localStorage.setItem('swift_currency', currentCurrency);
-            renderProducts();
-            updateCartUI();
-        }
-
         function formatPrice(product) {
-            if (currentCurrency === 'NGN') {
-                return `₦${product.priceNGN.toLocaleString()}`;
-            }
-            return `$${product.priceUSD.toFixed(2)}`;
+            return `
+                <span>$${product.priceUSD.toFixed(2)}</span>
+                <span class="ngn-sub">₦${product.priceNGN.toLocaleString()}</span>
+            `;
         }
 
         function renderProducts(filter = "") {
@@ -366,7 +358,7 @@
 
             document.getElementById('detail-name').innerText = product.name;
             document.getElementById('detail-image').src = product.image;
-            document.getElementById('detail-price').innerText = formatPrice(product);
+            document.getElementById('detail-price').innerHTML = formatPrice(product);
             document.getElementById('detail-desc').innerText = product.description || "No description provided.";
             document.getElementById('detail-shipping').innerText = product.shipping || "Estimated delivery: 2 - 4 business days";
 
@@ -496,7 +488,7 @@
                 return;
             }
 
-            const orderItemsText = cart.map(item => `${item.name} (x${item.quantity}) - ${currentCurrency === 'NGN' ? '₦' + (item.priceNGN * item.quantity).toLocaleString() : '$' + (item.priceUSD * item.quantity).toFixed(2)}`).join(', ');
+            const orderItemsText = cart.map(item => `${item.name} (x${item.quantity}) - $${(item.priceUSD * item.quantity).toFixed(2)} / ₦${(item.priceNGN * item.quantity).toLocaleString()}`).join(', ');
 
             const templateParams = {
                 customer_name: currentUser.name,
@@ -682,7 +674,8 @@
             const cartItemsContainer = document.getElementById('cart-items');
             if (cart.length === 0) {
                 cartItemsContainer.innerHTML = '<p style="color: #64748b; text-align: center; margin-top: 2rem;">Your cart is empty.</p>';
-                document.getElementById('cart-total').innerText = currentCurrency === 'NGN' ? '₦0' : '$0.00';
+                document.getElementById('cart-total-usd').innerText = '$0.00';
+                document.getElementById('cart-total-ngn').innerText = '₦0';
                 return;
             }
 
@@ -691,21 +684,20 @@
             cartItemsContainer.innerHTML = cart.map(item => {
                 totalPriceUSD += item.priceUSD * item.quantity;
                 totalPriceNGN += item.priceNGN * item.quantity;
-                const itemPriceDisplay = currentCurrency === 'NGN' ? `₦${(item.priceNGN * item.quantity).toLocaleString()}` : `$${(item.priceUSD * item.quantity).toFixed(2)}`;
                 return `
                     <div class="cart-item">
                         <img src="${item.image}" alt="${item.name}">
                         <div class="cart-item-details">
                             <strong>${item.name}</strong><br>
-                            <small style="color:#64748b;">${itemPriceDisplay} × ${item.quantity}</small>
+                            <small style="color:#64748b;">$${(item.priceUSD * item.quantity).toFixed(2)} / ₦${(item.priceNGN * item.quantity).toLocaleString()} × ${item.quantity}</small>
                         </div>
                         <button class="btn-small" onclick="removeFromCart(${item.id})">Remove</button>
                     </div>
                 `;
             }).join('');
 
-            const finalTotalDisplay = currentCurrency === 'NGN' ? `₦${totalPriceNGN.toLocaleString()}` : `$${totalPriceUSD.toFixed(2)}`;
-            document.getElementById('cart-total').innerText = finalTotalDisplay;
+            document.getElementById('cart-total-usd').innerText = `$${totalPriceUSD.toFixed(2)}`;
+            document.getElementById('cart-total-ngn').innerText = `₦${totalPriceNGN.toLocaleString()}`;
         }
 
         function toggleCart() {
