@@ -645,6 +645,9 @@
                 return;
             }
 
+            // Sync latest users from localStorage in case it was created on another device/tab
+            users = JSON.parse(localStorage.getItem('swift_users')) || [];
+
             const foundUser = users.find(u => u.email === email && u.password === password);
             if (!foundUser) {
                 alert("Invalid email or password. Please check your details or sign up.");
