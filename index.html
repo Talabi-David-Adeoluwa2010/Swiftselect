@@ -69,8 +69,8 @@
         .recent-order-item:hover { background: #f1f5f9; }
         .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
 
-        /* Sticky Search Bar Container */
-        .sticky-search-container { position: sticky; top: 73px; z-index: 90; background: var(--bg); padding: 1rem 0; margin-bottom: 1.5rem; }
+        /* Sticky Search Bar Container: Sticks right under header/announcement (top: 73px) */
+        .sticky-search-container { position: sticky; top: 73px; z-index: 90; background: var(--bg); padding: 1rem 0; margin-bottom: 1.5rem; transition: box-shadow 0.2s ease; }
         .search-input-wrapper { position: relative; }
         .search-input-wrapper span { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem; }
         .search-input { width: 100%; padding: 0.9rem 1rem 0.9rem 3rem; font-size: 1rem; border: 1px solid var(--border); border-radius: 14px; box-sizing: border-box; outline: none; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.2s; }
@@ -182,6 +182,16 @@
         </div>
     </header>
 
+    <!-- Sticky Search Bar placed directly under header/announcement bar -->
+    <div class="sticky-search-container">
+        <div class="container" style="margin: 0 auto; padding: 0 1rem;">
+            <div class="search-input-wrapper">
+                <span>🔍</span>
+                <input type="text" id="search-input" class="search-input" placeholder="Search catalog for smart gadgets, apparel, accessories..." oninput="handleSearch()">
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Hero Section -->
         <div class="hero-banner">
@@ -209,14 +219,6 @@
             <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.5rem;">Manage and view your account's order activity.</p>
             <div class="recent-orders-list" id="recent-orders-list">
                 <!-- Populated dynamically -->
-            </div>
-        </div>
-
-        <!-- Sticky Search Bar -->
-        <div class="sticky-search-container">
-            <div class="search-input-wrapper">
-                <span>🔍</span>
-                <input type="text" id="search-input" class="search-input" placeholder="Search catalog for smart gadgets, apparel, accessories..." oninput="handleSearch()">
             </div>
         </div>
 
@@ -308,10 +310,10 @@
     <div class="modal" id="reviews-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3 style="margin: 0;">⭐ Other users experience and ratings</h3>
+                <h3 style="margin: 0;">⭐ Global Customer Ratings & Recommendations</h3>
                 <button class="close-btn" onclick="openReviewsModal()">&times;</button>
             </div>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback and recommendations shared by verified customers.</p>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback shared globally by verified customers whose orders were fulfilled.</p>
             <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;">
                 <!-- Dynamically populated inside modal -->
             </div>
@@ -360,7 +362,7 @@
 
             <textarea id="review-comment" placeholder="Write a short review about your experience and the product quality..." rows="3"></textarea>
             
-            <button class="btn-primary" onclick="submitReview()" style="width:100%; margin-bottom:0.75rem;">Submit Recommendation</button>
+            <button class="btn-primary" onclick="submitReview()" style="width:100%; margin-bottom:0.75rem;">Submit Global Recommendation</button>
             <button class="btn-secondary" onclick="toggleRatingModal()" style="width:100%;">Skip for now</button>
         </div>
     </div>
@@ -376,7 +378,7 @@
             <!-- Complete Global Orders Tracker Management -->
             <div class="admin-section-box">
                 <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders Tracker</h4>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and accounts are shown below. Updating status here immediately reflects for the respective user account.</p>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and accounts are shown below. Setting status to <strong>"Delivered Successfully"</strong> unlocks the rating prompt globally for that specific customer account.</p>
                 <div id="admin-orders-list" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
                     <!-- Dynamically populated customer orders -->
                 </div>
@@ -905,6 +907,7 @@
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                         <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">${order.status}</span>
                         <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Track</button>
+                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.75rem;" onclick="triggerRatingModal('${order.id}')">Rate Now</button>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -935,7 +938,7 @@
             if (!modalGrid) return;
 
             if (globalState.reviews.length === 0) {
-                modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Be the first to review once your order is delivered!</p>';
+                modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Delivered orders can submit recommendations globally!</p>';
                 return;
             }
 
@@ -1009,7 +1012,8 @@
             saveStateToFirebase();
             renderReviews();
             toggleRatingModal();
-            showToast("Thank you for your rating and recommendation!");
+            renderRecentOrdersList();
+            showToast("Thank you! Your recommendation is now visible globally.");
         };
 
         window.checkAdminPassword = function() {
