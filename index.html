@@ -119,7 +119,7 @@
 <body>
 
     <div class="announcement-bar">
-        ⚡ Free Express Delivery on orders over $50 / ₦75,000 | 100% Secure Checkout Guaranteed
+        ⚡ Prepaid Orders Only (Dropshipping Verified) | 100% Secure Online Checkout
     </div>
 
     <header>
@@ -135,7 +135,7 @@
         <!-- Hero Section -->
         <div class="hero-banner">
             <h1>Discover Premium Quality Essentials</h1>
-            <p>Handpicked products delivered directly to your doorstep with guaranteed fast fulfillment and secure payment processing.</p>
+            <p>Handpicked products delivered directly to your doorstep with guaranteed fast fulfillment and prepaid online ordering.</p>
         </div>
 
         <div class="section-title">
@@ -155,7 +155,7 @@
         <div class="trust-strip">
             <div class="trust-item">
                 <h4>🔒 Secure Payments</h4>
-                <p>Protected checkout system</p>
+                <p>Protected online checkout</p>
             </div>
             <div class="trust-item">
                 <h4>🚀 Fast Shipping</h4>
@@ -209,16 +209,15 @@
     <!-- Billing & Checkout Modal -->
     <div class="modal" id="billing-modal">
         <div class="modal-content">
-            <h3>Checkout & Delivery</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Provide your accurate delivery information.</p>
+            <h3>Prepaid Checkout & Delivery</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Provide your accurate delivery information for online prepaid fulfillment.</p>
             <input type="text" id="bill-address" placeholder="Street Address">
             <input type="text" id="bill-city" placeholder="City">
             <input type="text" id="bill-phone" placeholder="Phone Number">
-            <select id="bill-payment">
-                <option value="card">Secure Credit Card / Paystack</option>
-                <option value="delivery">Cash on Delivery</option>
+            <select id="bill-payment" disabled style="background: #f1f5f9; cursor: not-allowed;">
+                <option value="card">Prepaid Online Payment (Required)</option>
             </select>
-            <button class="btn-primary" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">Pay & Place Order</button>
+            <button class="btn-primary" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">Proceed to Online Payment</button>
             <button class="btn-secondary" onclick="toggleBillingModal()" style="width:100%;">Cancel</button>
         </div>
     </div>
@@ -253,7 +252,7 @@
 
             <!-- Existing Products Inventory / Status Toggler -->
             <h4 style="margin-bottom: 0.5rem; font-size: 1rem; color: #0f172a;">Manage Inventory & Status</h4>
-            <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Toggle sold out states instantly or remove items from your store catalog.</p>
+            <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Toggle sold out states, delete unwanted items, or manage catalog.</p>
             <div id="admin-product-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem; background: white;">
                 <!-- Populated dynamically -->
             </div>
@@ -481,7 +480,6 @@
             const address = document.getElementById('bill-address').value;
             const city = document.getElementById('bill-city').value;
             const phone = document.getElementById('bill-phone').value;
-            const paymentMethod = document.getElementById('bill-payment').value;
 
             if (!address || !city || !phone) {
                 alert("Please fill in all delivery information fields.");
@@ -497,16 +495,12 @@
                 customer_address: address,
                 customer_city: city,
                 order_items: orderItemsText,
-                payment_method: paymentMethod === 'card' ? 'Secure Credit Card / Paystack' : 'Cash on Delivery'
+                payment_method: 'Prepaid Online Payment (Dropshipping Confirmed)'
             };
 
             emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams)
                 .then(function(response) {
-                    if (paymentMethod === 'card') {
-                        alert(`Redirecting ${currentUser.name} to Secure Gateway... Order placed & email notification sent successfully!`);
-                    } else {
-                        alert(`Success! Thank you for your order, ${currentUser.name}. Cash on delivery confirmed for ${address}, ${city}. Order notification sent!`);
-                    }
+                    alert(`Redirecting ${currentUser.name} to Secure Prepaid Gateway... Order placed & email notification sent successfully!`);
                     cart = [];
                     updateCartUI();
                     toggleBillingModal();
