@@ -8,7 +8,7 @@
         :root {
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
-            --bg: #f8fafc;
+            --bg: #f8fafc; 
             --text: #1e293b;
         }
         body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
@@ -162,7 +162,10 @@
             <input type="number" id="admin-price-usd" placeholder="Price in USD ($)">
             <input type="number" id="admin-price-ngn" placeholder="Price in NGN (₦)">
             <textarea id="admin-desc" placeholder="Product Description & Recommendations..." rows="3"></textarea>
-            <input type="text" id="admin-image" placeholder="Image URL">
+            
+            <label style="font-size: 0.85rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Image from Phone Gallery:</label>
+            <input type="file" id="admin-image-file" accept="image/*">
+
             <input type="text" id="admin-video" placeholder="Video URL (Optional)">
             <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g. Ships in 24 hours)">
             <button class="btn-primary" onclick="addProduct()" style="width:100%; margin-bottom:0.5rem;">Save Product</button>
@@ -420,38 +423,45 @@
             const priceUSD = parseFloat(document.getElementById('admin-price-usd').value);
             const priceNGN = parseFloat(document.getElementById('admin-price-ngn').value);
             const description = document.getElementById('admin-desc').value;
-            const image = document.getElementById('admin-image').value;
             const video = document.getElementById('admin-video').value;
             const shipping = document.getElementById('admin-shipping').value;
+            const imageFile = document.getElementById('admin-image-file').files[0];
 
-            if (!name || isNaN(priceUSD) || isNaN(priceNGN) || !image) {
-                alert('Please fill in the name, USD price, NGN price, and image URL.');
+            if (!name || isNaN(priceUSD) || isNaN(priceNGN) || !imageFile) {
+                alert('Please fill in the name, prices, and select an image from your gallery.');
                 return;
             }
 
-            const newProduct = { 
-                id: Date.now(), 
-                name, 
-                priceUSD, 
-                priceNGN, 
-                description, 
-                image, 
-                video, 
-                shipping: shipping || "Ships in 2 - 3 business days" 
-            };
-            products.push(newProduct);
-            localStorage.setItem('swift_products', JSON.stringify(products));
-            renderProducts();
-            toggleAdminModal();
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageBase64 = e.target.result;
 
-            document.getElementById('admin-name').value = '';
-            document.getElementById('admin-price-usd').value = '';
-            document.getElementById('admin-price-ngn').value = '';
-            document.getElementById('admin-desc').value = '';
-            document.getElementById('admin-image').value = '';
-            document.getElementById('admin-video').value = '';
-            document.getElementById('admin-shipping').value = '';
-            showToast('Professional product added successfully!');
+                const newProduct = { 
+                    id: Date.now(), 
+                    name, 
+                    priceUSD, 
+                    priceNGN, 
+                    description, 
+                    image: imageBase64, 
+                    video, 
+                    shipping: shipping || "Ships in 2 - 3 business days" 
+                };
+
+                products.push(newProduct);
+                localStorage.setItem('swift_products', JSON.stringify(products));
+                renderProducts();
+                toggleAdminModal();
+
+                document.getElementById('admin-name').value = '';
+                document.getElementById('admin-price-usd').value = '';
+                document.getElementById('admin-price-ngn').value = '';
+                document.getElementById('admin-desc').value = '';
+                document.getElementById('admin-image-file').value = '';
+                document.getElementById('admin-video').value = '';
+                document.getElementById('admin-shipping').value = '';
+                showToast('Professional product added successfully!');
+            };
+            reader.readAsDataURL(imageFile);
         }
 
         function addToCart(event, productId) {
