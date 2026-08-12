@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwiftSelect - Premium Online Store</title>
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init({
+                publicKey: "YOUR_PUBLIC_KEY",
+            });
+        })();
+    </script>
     <style>
         :root {
             --primary: #4f46e5;
@@ -49,6 +58,7 @@
         .product-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; background: #f1f5f9; }
         
         .product-badge { position: absolute; top: 1.25rem; left: 1.25rem; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); color: white; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .product-badge.sold-out { background: rgba(220, 38, 38, 0.85); }
         
         .product-meta { margin-top: 0.75rem; }
         .product-stars { color: var(--accent); font-size: 0.85rem; margin-bottom: 0.3rem; }
@@ -57,7 +67,9 @@
         
         .btn { background: var(--primary); color: white; border: none; padding: 0.7rem 1rem; cursor: pointer; border-radius: 8px; width: 100%; font-weight: 600; transition: background 0.2s; }
         .btn:hover { background: var(--primary-dark); }
-        
+        .btn.disabled { background: #cbd5e1; cursor: not-allowed; }
+        .btn.disabled:hover { background: #cbd5e1; }
+
         /* Trust Badges Strip */
         .trust-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 3rem 0 2rem; background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; }
         .trust-item h4 { margin: 0 0 0.2rem; font-size: 0.95rem; font-weight: 700; }
@@ -83,6 +95,12 @@
         .detail-img { width: 100%; height: 260px; object-fit: cover; border-radius: 12px; margin-bottom: 1rem; background: #f1f5f9; }
         .detail-video { width: 100%; height: 220px; object-fit: cover; border-radius: 12px; margin-bottom: 1rem; background: #f1f5f9; }
         .shipping-badge { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+
+        /* Admin Management Dashboard specific styling */
+        .admin-product-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; gap: 1rem; }
+        .admin-product-info { display: flex; align-items: center; gap: 0.75rem; flex-grow: 1; overflow: hidden; }
+        .admin-product-info img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; }
+        .admin-actions { display: flex; gap: 0.5rem; align-items: center; }
 
         /* Cart Drawer */
         .cart-modal { display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 420px; height: 100%; background: white; box-shadow: -10px 0 25px rgba(0,0,0,0.1); z-index: 1000; padding: 1.5rem; box-sizing: border-box; flex-direction: column; justify-content: space-between; }
@@ -211,22 +229,38 @@
 
     <!-- Admin Panel Modal -->
     <div class="modal" id="admin-modal">
-        <div class="modal-content">
-            <h3>Admin Product Manager</h3>
-            <input type="text" id="admin-name" placeholder="Product Name">
-            <input type="number" id="admin-price-usd" placeholder="Price in USD ($)">
-            <input type="number" id="admin-price-ngn" placeholder="Price in NGN (₦)">
-            <textarea id="admin-desc" placeholder="Product Description..." rows="3"></textarea>
+        <div class="modal-content" style="max-width: 650px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;">Admin Product Manager</h3>
+                <button class="close-btn" onclick="toggleAdminModal()">&times;</button>
+            </div>
             
-            <label style="font-size: 0.85rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Image (Gallery):</label>
-            <input type="file" id="admin-image-file" accept="image/*">
+            <!-- Add New Product Section -->
+            <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid #e2e8f0;">
+                <h4 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1rem; color: #0f172a;">Add New Product</h4>
+                <input type="text" id="admin-name" placeholder="Product Name">
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="number" id="admin-price-usd" placeholder="Price ($)">
+                    <input type="number" id="admin-price-ngn" placeholder="Price (₦)">
+                </div>
+                <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
+                
+                <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Image:</label>
+                <input type="file" id="admin-image-file" accept="image/*">
 
-            <label style="font-size: 0.85rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Video (Gallery - Optional):</label>
-            <input type="file" id="admin-video-file" accept="video/*">
+                <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Video (Optional):</label>
+                <input type="file" id="admin-video-file" accept="video/*">
 
-            <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g., Ships in 24 hours)">
-            <button class="btn-primary" onclick="addProduct()" style="width:100%; margin-bottom:0.75rem;">Save Product</button>
-            <button class="btn-secondary" onclick="toggleAdminModal()" style="width:100%;">Close</button>
+                <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g., Ships in 24 hours)">
+                <button class="btn-primary" onclick="addProduct()" style="width:100%;">Save New Product</button>
+            </div>
+
+            <!-- Existing Products Inventory / Status Toggler -->
+            <h4 style="margin-bottom: 0.5rem; font-size: 1rem; color: #0f172a;">Manage Inventory & Status</h4>
+            <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Toggle sold out states instantly or remove items from your store catalog.</p>
+            <div id="admin-product-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem; background: white;">
+                <!-- Populated dynamically -->
+            </div>
         </div>
     </div>
 
@@ -263,7 +297,8 @@
                 description: "The ultimate next-gen smart gadget designed for maximum productivity and long battery life. Highly recommended for daily wear and tech enthusiasts.", 
                 image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=80", 
                 video: "", 
-                shipping: "Ships within 24 hours from Logistics Hub" 
+                shipping: "Ships within 24 hours from Logistics Hub",
+                isSoldOut: false
             },
             { 
                 id: 2, 
@@ -273,7 +308,8 @@
                 description: "Clean aesthetic lines combined with premium strap durability. Water-resistant and crafted to match any formal or casual look.", 
                 image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=300&auto=format&fit=crop&q=80", 
                 video: "", 
-                shipping: "Ships within 2 business days" 
+                shipping: "Ships within 2 business days",
+                isSoldOut: false
             }
         ];
 
@@ -310,14 +346,16 @@
 
             grid.innerHTML = filteredProducts.map(product => `
                 <div class="product-card" onclick="openProductDetail(${product.id})">
-                    <div class="product-badge">In Stock</div>
+                    <div class="product-badge ${product.isSoldOut ? 'sold-out' : ''}">${product.isSoldOut ? 'Sold Out' : 'In Stock'}</div>
                     <img src="${product.image}" alt="${product.name}">
                     <div class="product-meta">
                         <div class="product-stars">⭐⭐⭐⭐⭐</div>
                         <div class="product-title">${product.name}</div>
                         <div class="product-price">${formatPrice(product)}</div>
                     </div>
-                    <button class="btn" onclick="addToCart(event, ${product.id})">Add to Cart</button>
+                    <button class="btn ${product.isSoldOut ? 'disabled' : ''}" onclick="addToCart(event, ${product.id})">
+                        ${product.isSoldOut ? 'Sold Out' : 'Add to Cart'}
+                    </button>
                 </div>
             `).join('');
         }
@@ -339,11 +377,20 @@
                 videoContainer.innerHTML = '';
             }
 
-            document.getElementById('detail-add-btn').onclick = function(e) {
-                e.stopPropagation();
-                addToCart(null, product.id);
-                toggleDetailModal();
-            };
+            const addBtn = document.getElementById('detail-add-btn');
+            if (product.isSoldOut) {
+                addBtn.innerText = "Sold Out";
+                addBtn.className = "btn disabled";
+                addBtn.onclick = function(e) { e.stopPropagation(); };
+            } else {
+                addBtn.innerText = "Add to Cart";
+                addBtn.className = "btn";
+                addBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    addToCart(null, product.id);
+                    toggleDetailModal();
+                };
+            }
 
             toggleDetailModal();
         }
@@ -449,24 +496,42 @@
                 return;
             }
 
-            if (paymentMethod === 'card') {
-                alert(`Redirecting ${currentUser.name} to Secure Gateway... Order placed successfully!`);
-            } else {
-                alert(`Success! Thank you for your order, ${currentUser.name}. Cash on delivery confirmed for ${address}, ${city}.`);
-            }
+            const orderItemsText = cart.map(item => `${item.name} (x${item.quantity}) - ${currentCurrency === 'NGN' ? '₦' + (item.priceNGN * item.quantity).toLocaleString() : '$' + (item.priceUSD * item.quantity).toFixed(2)}`).join(', ');
 
-            cart = [];
-            updateCartUI();
-            toggleBillingModal();
+            const templateParams = {
+                customer_name: currentUser.name,
+                customer_email: currentUser.email,
+                customer_phone: phone,
+                customer_address: address,
+                customer_city: city,
+                order_items: orderItemsText,
+                payment_method: paymentMethod === 'card' ? 'Secure Credit Card / Paystack' : 'Cash on Delivery'
+            };
 
-            document.getElementById('bill-address').value = '';
-            document.getElementById('bill-city').value = '';
-            document.getElementById('bill-phone').value = '';
+            emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams)
+                .then(function(response) {
+                    if (paymentMethod === 'card') {
+                        alert(`Redirecting ${currentUser.name} to Secure Gateway... Order placed & email notification sent successfully!`);
+                    } else {
+                        alert(`Success! Thank you for your order, ${currentUser.name}. Cash on delivery confirmed for ${address}, ${city}. Order notification sent!`);
+                    }
+                    cart = [];
+                    updateCartUI();
+                    toggleBillingModal();
+
+                    document.getElementById('bill-address').value = '';
+                    document.getElementById('bill-city').value = '';
+                    document.getElementById('bill-phone').value = '';
+                }, function(error) {
+                    alert('Order placed, but failed to send email notification. Please check console.');
+                    console.log('FAILED...', error);
+                });
         }
 
         function checkAdminPassword() {
             const password = prompt("Enter Admin Password:");
             if (password === "admin123") {
+                renderAdminProductList();
                 toggleAdminModal();
             } else if (password !== null) {
                 alert("Incorrect password!");
@@ -476,6 +541,53 @@
         function toggleAdminModal() {
             const modal = document.getElementById('admin-modal');
             modal.classList.toggle('active');
+        }
+
+        function renderAdminProductList() {
+            const listContainer = document.getElementById('admin-product-list');
+            if (products.length === 0) {
+                listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; margin: 1rem 0;">No products in inventory.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = products.map(product => `
+                <div class="admin-product-row">
+                    <div class="admin-product-info">
+                        <img src="${product.image}" alt="">
+                        <div style="overflow:hidden;">
+                            <strong style="font-size: 0.85rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${product.name}</strong>
+                            <small style="color: #64748b; font-size: 0.75rem;">$${product.priceUSD} / ₦${product.priceNGN.toLocaleString()}</small>
+                        </div>
+                    </div>
+                    <div class="admin-actions">
+                        <button class="${product.isSoldOut ? 'btn-primary' : 'btn-secondary'}" style="font-size:0.75rem; padding:0.35rem 0.6rem;" onclick="toggleSoldOut(${product.id})">
+                            ${product.isSoldOut ? 'Mark In Stock' : 'Mark Sold Out'}
+                        </button>
+                        <button class="btn-small" onclick="deleteProduct(${product.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleSoldOut(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                product.isSoldOut = !product.isSoldOut;
+                localStorage.setItem('swift_products', JSON.stringify(products));
+                renderProducts();
+                renderAdminProductList();
+                showToast(`Updated status for ${product.name}`);
+            }
+        }
+
+        function deleteProduct(productId) {
+            if (confirm("Are you sure you want to delete this product from the catalog?")) {
+                products = products.filter(p => p.id !== productId);
+                localStorage.setItem('swift_products', JSON.stringify(products));
+                renderProducts();
+                renderAdminProductList();
+                showToast("Product deleted successfully");
+            }
         }
 
         function addProduct() {
@@ -518,13 +630,14 @@
                 description, 
                 image, 
                 video, 
-                shipping: shipping || "Ships in 2 - 3 business days" 
+                shipping: shipping || "Ships in 2 - 3 business days",
+                isSoldOut: false
             };
 
             products.push(newProduct);
             localStorage.setItem('swift_products', JSON.stringify(products));
             renderProducts();
-            toggleAdminModal();
+            renderAdminProductList();
 
             document.getElementById('admin-name').value = '';
             document.getElementById('admin-price-usd').value = '';
@@ -539,6 +652,11 @@
         function addToCart(event, productId) {
             if (event) event.stopPropagation();
             const product = products.find(p => p.id === productId);
+            if (product.isSoldOut) {
+                alert("Sorry, this item is currently sold out.");
+                return;
+            }
+
             const existingItem = cart.find(item => item.id === productId);
 
             if (existingItem) {
