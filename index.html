@@ -61,6 +61,14 @@
         .recent-order-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 0.75rem 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; gap: 1rem; }
         .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: bold; }
 
+        /* Customer Reviews / Proof Section */
+        .reviews-section { background: white; border: 1px solid #e2e8f0; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .review-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 12px; font-size: 0.9rem; }
+        .review-card .stars { color: var(--accent); margin-bottom: 0.3rem; font-size: 0.85rem; }
+        .review-card p { margin: 0.3rem 0; color: #334155; }
+        .review-card .author { font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block; }
+
         /* Search Bar Styling */
         .search-bar-container { margin-bottom: 2rem; }
         .search-input { width: 100%; padding: 0.85rem 1.25rem; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 12px; box-sizing: border-box; outline: none; background: white; box-shadow: 0 1px 2px rgba(0,0,0,0.02); transition: all 0.2s; }
@@ -152,7 +160,8 @@
         </div>
         <div class="nav-buttons">
             <span id="user-greeting"></span>
-            <button class="btn-secondary" id="auth-btn" onclick="openAuthModal()">Login / Signup</button>
+            <button class="btn-nav-link" onclick="openReviewsModal()">Other users experience and ratings</button>
+            <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login</button>
             <button class="btn-primary" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</button>
         </div>
     </header>
@@ -242,63 +251,28 @@
         </div>
     </div>
 
-    <!-- User Account Authentication Modal (Login / Signup / Forgot Password) -->
+    <!-- User Account / Signup Modal -->
     <div class="modal" id="auth-modal">
         <div class="modal-content">
-            <!-- Login View -->
-            <div id="auth-login-view">
-                <h3>Welcome Back</h3>
-                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Sign in to access your saved details and order history across devices.</p>
-                <input type="email" id="login-email" placeholder="Email Address">
-                <input type="password" id="login-password" placeholder="Account Password">
-                <button class="btn-primary" onclick="handleLogin()" style="width:100%; margin-bottom:0.75rem;">Login</button>
-                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 1rem;">
-                    <a href="javascript:void(0)" onclick="switchAuthTab('signup')" style="color: var(--primary); text-decoration: none; font-weight: 600;">Create an account</a>
-                    <a href="javascript:void(0)" onclick="switchAuthTab('forgot')" style="color: #64748b; text-decoration: none;">Forgot password?</a>
-                </div>
-                <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
+            <h3>Customer Account</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Enter your details to create an account or sign in securely.</p>
+            <input type="text" id="auth-name" placeholder="Full Name">
+            <input type="email" id="auth-email" placeholder="Email Address">
+            <button class="btn-primary" onclick="loginUser()" style="width:100%; margin-bottom:0.75rem;">Continue</button>
+            <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Recommendations / Customer Success Stories Modal -->
+    <div class="modal" id="reviews-modal">
+        <div class="modal-content" style="max-width: 650px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;">⭐ Other users experience and ratings</h3>
+                <button class="close-btn" onclick="openReviewsModal()">&times;</button>
             </div>
-
-            <!-- Signup View -->
-            <div id="auth-signup-view" style="display: none;">
-                <h3>Create Account</h3>
-                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Sign up to keep all your orders and details safely saved.</p>
-                <input type="text" id="signup-name" placeholder="Full Name">
-                <input type="email" id="signup-email" placeholder="Email Address">
-                <input type="password" id="signup-password" placeholder="Create Access Password">
-                
-                <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Security Question (for recovery):</label>
-                <select id="signup-question">
-                    <option value="What is your pet's name?">What is your pet's name?</option>
-                    <option value="What is your favorite city?">What is your favorite city?</option>
-                    <option value="What was your first school?">What was your first school?</option>
-                </select>
-                <input type="text" id="signup-answer" placeholder="Security Answer">
-
-                <button class="btn-primary" onclick="handleSignup()" style="width:100%; margin-bottom:0.75rem;">Sign Up</button>
-                <div style="text-align: center; font-size: 0.85rem; margin-bottom: 1rem;">
-                    <a href="javascript:void(0)" onclick="switchAuthTab('login')" style="color: var(--primary); text-decoration: none; font-weight: 600;">Already have an account? Login</a>
-                </div>
-                <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
-            </div>
-
-            <!-- Forgot Password View -->
-            <div id="auth-forgot-view" style="display: none;">
-                <h3>Reset Password</h3>
-                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Enter your account email to answer your security question and set a new password.</p>
-                <input type="email" id="forgot-email" placeholder="Account Email" onblur="fetchSecurityQuestion()">
-                
-                <div id="forgot-question-box" style="display: none; background: #f8fafc; padding: 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 1rem; font-size: 0.85rem;">
-                    <p style="margin: 0 0 0.5rem; font-weight: 600; color: #0f172a;" id="display-security-question"></p>
-                    <input type="text" id="forgot-answer" placeholder="Your Security Answer" style="margin-bottom: 0.5rem;">
-                    <input type="password" id="forgot-new-password" placeholder="New Access Password" style="margin-bottom: 0;">
-                </div>
-
-                <button class="btn-primary" onclick="handlePasswordReset()" style="width:100%; margin-bottom:0.75rem;" id="reset-btn">Reset Password</button>
-                <div style="text-align: center; font-size: 0.85rem; margin-bottom: 1rem;">
-                    <a href="javascript:void(0)" onclick="switchAuthTab('login')" style="color: var(--primary); text-decoration: none; font-weight: 600;">Back to Login</a>
-                </div>
-                <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback and recommendations shared by verified customers.</p>
+            <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto;">
+                <!-- Dynamically populated inside modal -->
             </div>
         </div>
     </div>
@@ -328,6 +302,28 @@
         </div>
     </div>
 
+    <!-- Customer Rating & Review Modal (Triggered on Delivered) -->
+    <div class="modal" id="rating-modal">
+        <div class="modal-content">
+            <h3>⭐ Rate Your Delivered Order</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;" id="rating-order-info"></p>
+            
+            <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Rating Stars:</label>
+            <div class="rating-stars-input" id="star-container">
+                <span onclick="setRating(1)">★</span>
+                <span onclick="setRating(2)">★</span>
+                <span onclick="setRating(3)">★</span>
+                <span onclick="setRating(4)">★</span>
+                <span onclick="setRating(5)">★</span>
+            </div>
+
+            <textarea id="review-comment" placeholder="Write a short review about your experience and the product quality..." rows="3"></textarea>
+            
+            <button class="btn-primary" onclick="submitReview()" style="width:100%; margin-bottom:0.75rem;">Submit Recommendation</button>
+            <button class="btn-secondary" onclick="toggleRatingModal()" style="width:100%;">Skip for now</button>
+        </div>
+    </div>
+
     <!-- Admin Panel Modal -->
     <div class="modal" id="admin-modal">
         <div class="modal-content" style="max-width: 650px;">
@@ -336,7 +332,7 @@
                 <button class="close-btn" onclick="toggleAdminModal()">&times;</button>
             </div>
             
-            <!-- Manual Order Status Manager Section -->
+            <!-- Manual Order Status Manager Section (All orders updatable without restriction) -->
             <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid #e2e8f0;">
                 <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1rem; color: #0f172a;">Customer Orders Tracker Management</h4>
                 <p style="font-size: 0.75rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders below are fully active and updatable.</p>
@@ -426,15 +422,21 @@
         ];
 
         let cart = [];
-        // Use localStorage for persistence across browser refreshes and different devices (if credentials match)
-        let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
-        let users = JSON.parse(localStorage.getItem('swift_users')) || [];
+        let currentUser = JSON.parse(sessionStorage.getItem('swift_current_user')) || null;
         let orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
+        let reviews = JSON.parse(localStorage.getItem('swift_reviews')) || [
+            { name: "David T.", rating: 5, comment: "Super fast shipping and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
+            { name: "Sarah M.", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery rider.", date: "11/08/2026" }
+        ];
+        
+        let currentRatingOrderId = null;
+        let selectedStarCount = 5;
 
         function initApp() {
             renderProducts();
             updateAuthUI();
             renderRecentOrdersList();
+            renderReviews();
         }
 
         function formatPrice(product) {
@@ -532,22 +534,21 @@
                 authBtn.className = "btn-danger";
             } else {
                 greeting.innerText = "";
-                authBtn.innerText = "Login / Signup";
+                authBtn.innerText = "Login";
                 authBtn.className = "btn-secondary";
             }
             renderRecentOrdersList();
         }
 
-        function openAuthModal() {
+        function handleAuthClick() {
             if (currentUser) {
                 if (confirm("Are you sure you want to log out?")) {
-                    localStorage.removeItem('swift_current_user');
+                    sessionStorage.removeItem('swift_current_user');
                     currentUser = null;
                     updateAuthUI();
                     alert("You have been logged out.");
                 }
             } else {
-                switchAuthTab('login');
                 toggleAuthModal();
             }
         }
@@ -557,117 +558,23 @@
             modal.classList.toggle('active');
         }
 
-        function switchAuthTab(tab) {
-            document.getElementById('auth-login-view').style.display = tab === 'login' ? 'block' : 'none';
-            document.getElementById('auth-signup-view').style.display = tab === 'signup' ? 'block' : 'none';
-            document.getElementById('auth-forgot-view').style.display = tab === 'forgot' ? 'block' : 'none';
-        }
+        function loginUser() {
+            const name = document.getElementById('auth-name').value.trim();
+            const email = document.getElementById('auth-email').value.trim();
 
-        function handleSignup() {
-            const name = document.getElementById('signup-name').value.trim();
-            const email = document.getElementById('signup-email').value.trim().toLowerCase();
-            const password = document.getElementById('signup-password').value;
-            const question = document.getElementById('signup-question').value;
-            const answer = document.getElementById('signup-answer').value.trim().toLowerCase();
-
-            if (!name || !email || !password || !answer) {
-                alert("Please fill in all signup fields and security recovery details.");
+            if (!name || !email) {
+                alert("Please fill in your name and email.");
                 return;
             }
-
-            const existingUser = users.find(u => u.email === email);
-            if (existingUser) {
-                alert("An account with this email already exists. Please log in.");
-                switchAuthTab('login');
-                return;
-            }
-
-            const newUser = { name, email, password, question, answer };
-            users.push(newUser);
-            localStorage.setItem('swift_users', JSON.stringify(users));
 
             currentUser = { name, email };
-            localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
-
-            updateAuthUI();
-            toggleAuthModal();
-            showToast(`Account created successfully! Welcome, ${name}`);
-        }
-
-        function handleLogin() {
-            const email = document.getElementById('login-email').value.trim().toLowerCase();
-            const password = document.getElementById('login-password').value;
-
-            if (!email || !password) {
-                alert("Please enter both email and password.");
-                return;
-            }
-
-            const foundUser = users.find(u => u.email === email && u.password === password);
-            if (!foundUser) {
-                alert("Invalid email or password. Please check your credentials.");
-                return;
-            }
-
-            currentUser = { name: foundUser.name, email: foundUser.email };
-            localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
-
+            sessionStorage.setItem('swift_current_user', JSON.stringify(currentUser));
             updateAuthUI();
             toggleAuthModal();
 
-            document.getElementById('login-email').value = '';
-            document.getElementById('login-password').value = '';
-            showToast(`Welcome back, ${currentUser.name}!`);
-        }
-
-        function fetchSecurityQuestion() {
-            const email = document.getElementById('forgot-email').value.trim().toLowerCase();
-            const questionBox = document.getElementById('forgot-question-box');
-            
-            if (!email) {
-                questionBox.style.display = 'none';
-                return;
-            }
-
-            const foundUser = users.find(u => u.email === email);
-            if (foundUser) {
-                document.getElementById('display-security-question').innerText = `Security Question: ${foundUser.question}`;
-                questionBox.style.display = 'block';
-            } else {
-                questionBox.style.display = 'none';
-            }
-        }
-
-        function handlePasswordReset() {
-            const email = document.getElementById('forgot-email').value.trim().toLowerCase();
-            const answer = document.getElementById('forgot-answer').value.trim().toLowerCase();
-            const newPassword = document.getElementById('forgot-new-password').value;
-
-            if (!email || !answer || !newPassword) {
-                alert("Please fill in all fields to complete the password reset.");
-                return;
-            }
-
-            const user = users.find(u => u.email === email);
-            if (!user) {
-                alert("Email address not found in our records.");
-                return;
-            }
-
-            if (user.answer !== answer) {
-                alert("Incorrect security answer. Please try again.");
-                return;
-            }
-
-            user.password = newPassword;
-            localStorage.setItem('swift_users', JSON.stringify(users));
-
-            alert("Password updated successfully! You can now log in with your new password.");
-            switchAuthTab('login');
-            document.getElementById('forgot-email').value = '';
-            document.getElementById('forgot-answer').value = '';
-            document.getElementById('forgot-new-password').value = '';
-            document.getElementById('forgot-question-box').style.display = 'none';
+            document.getElementById('auth-name').value = '';
+            document.getElementById('auth-email').value = '';
+            showToast(`Welcome back, ${name}!`);
         }
 
         function proceedToCheckout() {
@@ -678,7 +585,7 @@
             if (!currentUser) {
                 alert("Please sign in or create an account to continue.");
                 toggleCart();
-                openAuthModal();
+                toggleAuthModal();
                 return;
             }
             toggleCart();
@@ -839,6 +746,94 @@
             }
         }
 
+        function renderReviews() {
+            const modalGrid = document.getElementById('modal-reviews-grid');
+
+            if (reviews.length === 0) {
+                const emptyMsg = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Be the first to review once your order is delivered!</p>';
+                if (modalGrid) modalGrid.innerHTML = emptyMsg;
+                return;
+            }
+
+            const reviewsHTML = reviews.map(r => `
+                <div class="review-card">
+                    <div class="stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                    <p>"${r.comment}"</p>
+                    <span class="author">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
+                </div>
+            `).join('');
+
+            if (modalGrid) modalGrid.innerHTML = reviewsHTML;
+        }
+
+        function openReviewsModal() {
+            const modal = document.getElementById('reviews-modal');
+            modal.classList.toggle('active');
+            renderReviews();
+        }
+
+        function triggerRatingModal(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order || order.hasReviewed) return;
+
+            currentRatingOrderId = orderId;
+            selectedStarCount = 5;
+            highlightStars(5);
+            document.getElementById('rating-order-info').innerText = `Order: ${order.id} (${order.items})`;
+            document.getElementById('review-comment').value = '';
+            
+            const modal = document.getElementById('rating-modal');
+            modal.classList.add('active');
+        }
+
+        function toggleRatingModal() {
+            const modal = document.getElementById('rating-modal');
+            modal.classList.remove('active');
+        }
+
+        function setRating(count) {
+            selectedStarCount = count;
+            highlightStars(count);
+        }
+
+        function highlightStars(count) {
+            const stars = document.getElementById('star-container').children;
+            for (let i = 0; i < stars.length; i++) {
+                if (i < count) {
+                    stars[i].classList.add('selected');
+                } else {
+                    stars[i].classList.remove('selected');
+                }
+            }
+        }
+
+        function submitReview() {
+            const comment = document.getElementById('review-comment').value.trim();
+            if (!comment) {
+                alert("Please write a short review comment.");
+                return;
+            }
+
+            const order = orders.find(o => o.id === currentRatingOrderId);
+            if (order) {
+                order.hasReviewed = true;
+                localStorage.setItem('swift_orders', JSON.stringify(orders));
+            }
+
+            const newReview = {
+                name: currentUser ? currentUser.name : "Verified Customer",
+                rating: selectedStarCount,
+                comment: comment,
+                date: new Date().toLocaleDateString()
+            };
+
+            reviews.unshift(newReview);
+            localStorage.setItem('swift_reviews', JSON.stringify(reviews));
+            renderReviews();
+            toggleRatingModal();
+            showToast("Thank you for your rating and recommendation!");
+        }
+
         function checkAdminPassword() {
             const password = prompt("Enter Admin Password:");
             if (password === "admin123") {
@@ -889,11 +884,17 @@
 
         function updateOrderStatus(index) {
             const newStatus = document.getElementById(`admin-status-${index}`).value;
+            const previousStatus = orders[index].status;
             orders[index].status = newStatus;
             localStorage.setItem('swift_orders', JSON.stringify(orders));
             showToast(`Order ${orders[index].id} status updated successfully!`);
             renderAdminOrderList();
             renderRecentOrdersList();
+
+            if (newStatus === "Delivered Successfully" && !previousStatus.includes('Delivered') && !orders[index].hasReviewed) {
+                toggleAdminModal();
+                triggerRatingModal(orders[index].id);
+            }
         }
 
         function renderAdminProductList() {
