@@ -36,7 +36,8 @@
         .btn-primary:hover { background: var(--primary-dark); }
         .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.55rem 1.1rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .btn-danger { background: #fee2e2; color: #dc2626; border: none; padding: 0.55rem 1.1rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .btn-small { background: #fee2e2; color: #dc2626; border: none; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
+        .btn-small { background: #e0e7ff; color: #4f46e5; border: none; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
+        .btn-danger-small { background: #fee2e2; color: #dc2626; border: none; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
         
@@ -51,6 +52,20 @@
         .track-row { display: flex; gap: 0.5rem; }
         .track-row input { flex-grow: 1; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; }
         .track-result-box { margin-top: 1rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 0.95rem; }
+
+        /* Recent Orders Section */
+        .recent-orders-box { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #e2e8f0; }
+        .recent-orders-list { display: flex; flex-direction: column; gap: 0.75rem; max-height: 220px; overflow-y: auto; margin-top: 0.75rem; }
+        .recent-order-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 0.75rem 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; gap: 1rem; }
+        .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: bold; }
+
+        /* Customer Reviews / Proof Section */
+        .reviews-section { background: white; border: 1px solid #e2e8f0; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .review-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 12px; font-size: 0.9rem; }
+        .review-card .stars { color: var(--accent); margin-bottom: 0.3rem; font-size: 0.85rem; }
+        .review-card p { margin: 0.3rem 0; color: #334155; }
+        .review-card .author { font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block; }
 
         /* Search Bar Styling */
         .search-bar-container { margin-bottom: 2rem; }
@@ -111,6 +126,10 @@
         .admin-product-info img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; }
         .admin-actions { display: flex; gap: 0.5rem; align-items: center; }
 
+        /* Rating Stars Style */
+        .rating-stars-input { display: flex; gap: 0.5rem; font-size: 1.5rem; cursor: pointer; color: #cbd5e1; margin-bottom: 1rem; }
+        .rating-stars-input span.selected { color: var(--accent); }
+
         /* Cart Drawer */
         .cart-modal { display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 420px; height: 100%; background: white; box-shadow: -10px 0 25px rgba(0,0,0,0.1); z-index: 1000; padding: 1.5rem; box-sizing: border-box; flex-direction: column; justify-content: space-between; }
         .cart-modal.active { display: flex; }
@@ -151,15 +170,35 @@
             <p>Handpicked products delivered directly to your doorstep with guaranteed fast fulfillment and prepaid online ordering.</p>
         </div>
 
-        <!-- Track Your Order Box -->
+        <!-- Track Your Order Box & Recent Orders Feed -->
         <div class="track-section">
             <h3>📦 Track Your Order Status</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.75rem;">Enter your Order ID (sent to your email upon checkout) to check live progress.</p>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.75rem;">Enter your Order ID below to check live progress.</p>
             <div class="track-row">
                 <input type="text" id="track-input" placeholder="e.g., SWIFT-483920">
                 <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
             </div>
             <div id="track-result-container" style="display: none;" class="track-result-box"></div>
+
+            <!-- Recent Store Orders Lookup Feed -->
+            <div class="recent-orders-box">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h4 style="margin: 0; font-size: 0.95rem; color: #0f172a;">Recent Store Orders (Forgot your ID? Find it here)</h4>
+                    <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
+                </div>
+                <div class="recent-orders-list" id="recent-orders-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Proof & Recommendation Testimonials Section -->
+        <div class="reviews-section">
+            <h3 style="margin-top: 0; margin-bottom: 0.3rem; color: #0f172a;">⭐ Customer Success Stories & Proof</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0;">Verified ratings and reviews from customers who received their orders.</p>
+            <div class="reviews-grid" id="reviews-grid">
+                <!-- Dynamically populated customer reviews -->
+            </div>
         </div>
 
         <div class="section-title">
@@ -255,6 +294,28 @@
         </div>
     </div>
 
+    <!-- Customer Rating & Review Modal (Triggered on Delivered) -->
+    <div class="modal" id="rating-modal">
+        <div class="modal-content">
+            <h3>⭐ Rate Your Delivered Order</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;" id="rating-order-info"></p>
+            
+            <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Rating Stars:</label>
+            <div class="rating-stars-input" id="star-container">
+                <span onclick="setRating(1)">★</span>
+                <span onclick="setRating(2)">★</span>
+                <span onclick="setRating(3)">★</span>
+                <span onclick="setRating(4)">★</span>
+                <span onclick="setRating(5)">★</span>
+            </div>
+
+            <textarea id="review-comment" placeholder="Write a short review about your experience and the product quality..." rows="3"></textarea>
+            
+            <button class="btn-primary" onclick="submitReview()" style="width:100%; margin-bottom:0.75rem;">Submit Recommendation</button>
+            <button class="btn-secondary" onclick="toggleRatingModal()" style="width:100%;">Skip for now</button>
+        </div>
+    </div>
+
     <!-- Admin Panel Modal -->
     <div class="modal" id="admin-modal">
         <div class="modal-content" style="max-width: 650px;">
@@ -266,7 +327,7 @@
             <!-- Manual Order Status Manager Section -->
             <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid #e2e8f0;">
                 <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1rem; color: #0f172a;">Customer Orders Tracker Management</h4>
-                <p style="font-size: 0.75rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Update order states as you process them or see changes from AliExpress.</p>
+                <p style="font-size: 0.75rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Only the most recent/latest order is active and updatable below.</p>
                 <div id="admin-orders-list" style="max-height: 200px; overflow-y: auto;">
                     <!-- Dynamically populated customer orders -->
                 </div>
@@ -355,10 +416,19 @@
         let cart = [];
         let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
         let orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
+        let reviews = JSON.parse(localStorage.getItem('swift_reviews')) || [
+            { name: "David T.", rating: 5, comment: "Super fast shipping and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
+            { name: "Sarah M.", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery rider.", date: "11/08/2026" }
+        ];
+        
+        let currentRatingOrderId = null;
+        let selectedStarCount = 5;
 
         function initApp() {
             renderProducts();
             updateAuthUI();
+            renderRecentOrdersList();
+            renderReviews();
         }
 
         function formatPrice(product) {
@@ -545,11 +615,13 @@
                 address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 items: orderItemsText,
                 status: "Order Placed - Processing",
-                date: new Date().toLocaleDateString()
+                date: new Date().toLocaleDateString(),
+                hasReviewed: false
             };
 
             orders.push(newOrderRecord);
             localStorage.setItem('swift_orders', JSON.stringify(orders));
+            renderRecentOrdersList();
 
             const templateParams = {
                 order_id: orderId,
@@ -608,6 +680,123 @@
             }
         }
 
+        function renderRecentOrdersList() {
+            const listContainer = document.getElementById('recent-orders-list');
+            if (orders.length === 0) {
+                listContainer.innerHTML = '<p style="color: #64748b; font-size: 0.8rem; margin: 0; text-align: center;">No orders placed yet in this session.</p>';
+                return;
+            }
+
+            // Show recent orders in reverse chronological order
+            listContainer.innerHTML = [...orders].reverse().slice(0, 5).map(order => `
+                <div class="recent-order-item">
+                    <div>
+                        <span class="order-pill">${order.id}</span>
+                        <span style="font-weight: 600; margin-left: 0.25rem;">${order.customerName}</span>
+                        <div style="color: #64748b; font-size: 0.75rem; margin-top: 0.15rem;">${order.items}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 0.75rem; color: var(--primary); font-weight: 600;">${order.status}</span>
+                        <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Copy & Track</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function fillTrackingInput(orderId) {
+            document.getElementById('track-input').value = orderId;
+            trackOrder();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function clearAllOrders() {
+            if (confirm("Are you sure you want to clear recent orders history?")) {
+                orders = [];
+                localStorage.removeItem('swift_orders');
+                renderRecentOrdersList();
+                document.getElementById('track-result-container').style.display = 'none';
+                showToast("Order history cleared");
+            }
+        }
+
+        function renderReviews() {
+            const grid = document.getElementById('reviews-grid');
+            if (reviews.length === 0) {
+                grid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Be the first to review once your order is delivered!</p>';
+                return;
+            }
+
+            grid.innerHTML = reviews.map(r => `
+                <div class="review-card">
+                    <div class="stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                    <p>"${r.comment}"</p>
+                    <span class="author">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
+                </div>
+            `).join('');
+        }
+
+        function triggerRatingModal(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order || order.hasReviewed) return;
+
+            currentRatingOrderId = orderId;
+            selectedStarCount = 5;
+            highlightStars(5);
+            document.getElementById('rating-order-info').innerText = `Order: ${order.id} (${order.items})`;
+            document.getElementById('review-comment').value = '';
+            
+            const modal = document.getElementById('rating-modal');
+            modal.classList.add('active');
+        }
+
+        function toggleRatingModal() {
+            const modal = document.getElementById('rating-modal');
+            modal.classList.remove('active');
+        }
+
+        function setRating(count) {
+            selectedStarCount = count;
+            highlightStars(count);
+        }
+
+        function highlightStars(count) {
+            const stars = document.getElementById('star-container').children;
+            for (let i = 0; i < stars.length; i++) {
+                if (i < count) {
+                    stars[i].classList.add('selected');
+                } else {
+                    stars[i].classList.remove('selected');
+                }
+            }
+        }
+
+        function submitReview() {
+            const comment = document.getElementById('review-comment').value.trim();
+            if (!comment) {
+                alert("Please write a short review comment.");
+                return;
+            }
+
+            const order = orders.find(o => o.id === currentRatingOrderId);
+            if (order) {
+                order.hasReviewed = true;
+                localStorage.setItem('swift_orders', JSON.stringify(orders));
+            }
+
+            const newReview = {
+                name: currentUser ? currentUser.name : "Verified Customer",
+                rating: selectedStarCount,
+                comment: comment,
+                date: new Date().toLocaleDateString()
+            };
+
+            reviews.unshift(newReview);
+            localStorage.setItem('swift_reviews', JSON.stringify(reviews));
+            renderReviews();
+            toggleRatingModal();
+            showToast("Thank you for your rating and recommendation!");
+        }
+
         function checkAdminPassword() {
             const password = prompt("Enter Admin Password:");
             if (password === "admin123") {
@@ -635,25 +824,48 @@
                 return;
             }
 
-            listContainer.innerHTML = orders.map((order, index) => `
-                <div class="admin-order-card">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
-                        <strong>${order.id} (${order.customerName})</strong>
-                        <span style="color:#64748b;">${order.date}</span>
+            // ONLY the very last (most recent) order is updatable. Previous orders are locked/blocked.
+            const latestIndex = orders.length - 1;
+            const latestOrder = orders[latestIndex];
+
+            let html = '';
+            // Render previous locked orders first (if any)
+            for (let i = 0; i < orders.length - 1; i++) {
+                const ord = orders[i];
+                html += `
+                    <div class="admin-order-card" style="opacity: 0.65; background: #f1f5f9;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
+                            <strong>${ord.id} (${ord.customerName})</strong>
+                            <span style="color:#64748b;">${ord.date}</span>
+                        </div>
+                        <div style="color:#475569; margin-bottom:0.3rem;">Items: ${ord.items}</div>
+                        <div style="font-size: 0.75rem; color: #dc2626; font-weight: 600;">🔒 Locked (Previous Order - Only latest order can be updated)</div>
                     </div>
-                    <div style="color:#475569; margin-bottom:0.5rem;">Items: ${order.items}</div>
+                `;
+            }
+
+            // Render the active/updatable latest order
+            html += `
+                <div class="admin-order-card" style="border: 2px solid var(--primary);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
+                        <strong>${latestOrder.id} (${latestOrder.customerName})</strong>
+                        <span style="color:#64748b;">${latestOrder.date}</span>
+                    </div>
+                    <div style="color:#475569; margin-bottom:0.5rem;">Items: ${latestOrder.items}</div>
                     <div style="display:flex; gap:0.5rem; align-items:center;">
-                        <select id="admin-status-${index}" style="margin:0; padding:0.3rem; font-size:0.8rem;">
-                            <option value="Order Placed - Processing" ${order.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
-                            <option value="Ordered from AliExpress / Supplier" ${order.status.includes('AliExpress') ? 'selected' : ''}>Ordered from AliExpress / Supplier</option>
-                            <option value="Shipped / In Transit" ${order.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
-                            <option value="Out for Delivery" ${order.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
-                            <option value="Delivered Successfully" ${order.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
+                        <select id="admin-status-${latestIndex}" style="margin:0; padding:0.3rem; font-size:0.8rem;">
+                            <option value="Order Placed - Processing" ${latestOrder.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
+                            <option value="Ordered from AliExpress / Supplier" ${latestOrder.status.includes('AliExpress') ? 'selected' : ''}>Ordered from AliExpress / Supplier</option>
+                            <option value="Shipped / In Transit" ${latestOrder.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
+                            <option value="Out for Delivery" ${latestOrder.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
+                            <option value="Delivered Successfully" ${latestOrder.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
                         </select>
-                        <button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.8rem;" onclick="updateOrderStatus(${index})">Update</button>
+                        <button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.8rem;" onclick="updateOrderStatus(${latestIndex})">Update</button>
                     </div>
                 </div>
-            `).join('');
+            `;
+
+            listContainer.innerHTML = html;
         }
 
         function updateOrderStatus(index) {
@@ -662,6 +874,13 @@
             localStorage.setItem('swift_orders', JSON.stringify(orders));
             showToast("Order status updated successfully!");
             renderAdminOrderList();
+            renderRecentOrdersList();
+
+            // If status is updated to Delivered Successfully, trigger rating prompt if not already reviewed
+            if (newStatus === "Delivered Successfully" && !orders[index].hasReviewed) {
+                toggleAdminModal();
+                triggerRatingModal(orders[index].id);
+            }
         }
 
         function renderAdminProductList() {
