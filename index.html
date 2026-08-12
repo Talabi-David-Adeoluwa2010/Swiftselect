@@ -9,7 +9,7 @@
     <script type="text/javascript">
         (function() {
             emailjs.init({
-                publicKey: "5viHIEbeZ90KuRrb3",
+                publicKey: "5viHlEbeZ90KuRrb3",
             });
         })();
     </script>
@@ -510,6 +510,7 @@
                 payment_method: paymentMethod
             };
 
+            // Replace "template_tuq2hhk" with your exact Template ID from your EmailJS dashboard
             emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams)
                 .then(function(response) {
                     alert(`Order successful! Redirecting to secure ${paymentMethod} gateway...`);
@@ -523,7 +524,6 @@
                     document.getElementById('bill-postal').value = '';
                     document.getElementById('bill-phone').value = '';
                 }, function(error) {
-                    // Fallback so checkout still succeeds even if emailjs public key/template needs adjustment
                     alert(`Order placed successfully via ${paymentMethod}! (Note: Email alert notification failed to dispatch — check EmailJS dashboard settings).`);
                     cart = [];
                     updateCartUI();
