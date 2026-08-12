@@ -324,11 +324,11 @@
                 <button class="close-btn" onclick="toggleAdminModal()">&times;</button>
             </div>
             
-            <!-- Manual Order Status Manager Section -->
+            <!-- Manual Order Status Manager Section (All orders updatable without restriction) -->
             <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid #e2e8f0;">
                 <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1rem; color: #0f172a;">Customer Orders Tracker Management</h4>
-                <p style="font-size: 0.75rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Only the most recent/latest order is active and updatable below.</p>
-                <div id="admin-orders-list" style="max-height: 200px; overflow-y: auto;">
+                <p style="font-size: 0.75rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders below are fully active and updatable.</p>
+                <div id="admin-orders-list" style="max-height: 220px; overflow-y: auto;">
                     <!-- Dynamically populated customer orders -->
                 </div>
             </div>
@@ -414,7 +414,11 @@
         ];
 
         let cart = [];
-        let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
+        
+        // Fixed account for Talabi Emmanuel Okunola using sessionStorage so that it stays logged in 
+        // only on his specific browser tab/device session, and automatically starts logged out on any new device.
+        let currentUser = JSON.parse(sessionStorage.getItem('swift_current_user')) || null;
+
         let orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
         let reviews = JSON.parse(localStorage.getItem('swift_reviews')) || [
             { name: "David T.", rating: 5, comment: "Super fast shipping and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
@@ -534,7 +538,7 @@
         function handleAuthClick() {
             if (currentUser) {
                 if (confirm("Are you sure you want to log out?")) {
-                    localStorage.removeItem('swift_current_user');
+                    sessionStorage.removeItem('swift_current_user');
                     currentUser = null;
                     updateAuthUI();
                     alert("You have been logged out.");
@@ -550,8 +554,8 @@
         }
 
         function loginUser() {
-            const name = document.getElementById('auth-name').value;
-            const email = document.getElementById('auth-email').value;
+            const name = document.getElementById('auth-name').value.trim();
+            const email = document.getElementById('auth-email').value.trim();
 
             if (!name || !email) {
                 alert("Please fill in your name and email.");
@@ -559,7 +563,7 @@
             }
 
             currentUser = { name, email };
-            localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
+            sessionStorage.setItem('swift_current_user', JSON.stringify(currentUser));
             updateAuthUI();
             toggleAuthModal();
 
@@ -602,11 +606,9 @@
                 return;
             }
 
-            // Generate unique Order ID
             const orderId = "SWIFT-" + Math.floor(100000 + Math.random() * 900000);
             const orderItemsText = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
 
-            // Save order locally for user tracking and admin panel
             const newOrderRecord = {
                 id: orderId,
                 customerName: currentUser.name,
@@ -687,7 +689,6 @@
                 return;
             }
 
-            // Show recent orders in reverse chronological order
             listContainer.innerHTML = [...orders].reverse().slice(0, 5).map(order => `
                 <div class="recent-order-item">
                     <div>
@@ -824,60 +825,39 @@
                 return;
             }
 
-            // ONLY the very last (most recent) order is updatable. Previous orders are locked/blocked.
-            const latestIndex = orders.length - 1;
-            const latestOrder = orders[latestIndex];
-
-            let html = '';
-            // Render previous locked orders first (if any)
-            for (let i = 0; i < orders.length - 1; i++) {
-                const ord = orders[i];
-                html += `
-                    <div class="admin-order-card" style="opacity: 0.65; background: #f1f5f9;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
-                            <strong>${ord.id} (${ord.customerName})</strong>
-                            <span style="color:#64748b;">${ord.date}</span>
-                        </div>
-                        <div style="color:#475569; margin-bottom:0.3rem;">Items: ${ord.items}</div>
-                        <div style="font-size: 0.75rem; color: #dc2626; font-weight: 600;">🔒 Locked (Previous Order - Only latest order can be updated)</div>
-                    </div>
-                `;
-            }
-
-            // Render the active/updatable latest order
-            html += `
-                <div class="admin-order-card" style="border: 2px solid var(--primary);">
+            // ALL orders are fully active and updatable without any blocking or locking
+            listContainer.innerHTML = orders.map((ord, index) => `
+                <div class="admin-order-card">
                     <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
-                        <strong>${latestOrder.id} (${latestOrder.customerName})</strong>
-                        <span style="color:#64748b;">${latestOrder.date}</span>
+                        <strong>${ord.id} (${ord.customerName})</strong>
+                        <span style="color:#64748b;">${ord.date}</span>
                     </div>
-                    <div style="color:#475569; margin-bottom:0.5rem;">Items: ${latestOrder.items}</div>
+                    <div style="color:#475569; margin-bottom:0.5rem;">Items: ${ord.items}</div>
                     <div style="display:flex; gap:0.5rem; align-items:center;">
-                        <select id="admin-status-${latestIndex}" style="margin:0; padding:0.3rem; font-size:0.8rem;">
-                            <option value="Order Placed - Processing" ${latestOrder.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
-                            <option value="Ordered from AliExpress / Supplier" ${latestOrder.status.includes('AliExpress') ? 'selected' : ''}>Ordered from AliExpress / Supplier</option>
-                            <option value="Shipped / In Transit" ${latestOrder.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
-                            <option value="Out for Delivery" ${latestOrder.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
-                            <option value="Delivered Successfully" ${latestOrder.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
+                        <select id="admin-status-${index}" style="margin:0; padding:0.3rem; font-size:0.8rem;">
+                            <option value="Order Placed - Processing" ${ord.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
+                            <option value="Ordered from AliExpress / Supplier" ${ord.status.includes('AliExpress') ? 'selected' : ''}>Ordered from AliExpress / Supplier</option>
+                            <option value="Shipped / In Transit" ${ord.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
+                            <option value="Out for Delivery" ${ord.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
+                            <option value="Delivered Successfully" ${ord.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
                         </select>
-                        <button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.8rem;" onclick="updateOrderStatus(${latestIndex})">Update</button>
+                        <button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.8rem;" onclick="updateOrderStatus(${index})">Update</button>
                     </div>
                 </div>
-            `;
-
-            listContainer.innerHTML = html;
+            `).join('');
         }
 
         function updateOrderStatus(index) {
             const newStatus = document.getElementById(`admin-status-${index}`).value;
+            const previousStatus = orders[index].status;
             orders[index].status = newStatus;
             localStorage.setItem('swift_orders', JSON.stringify(orders));
-            showToast("Order status updated successfully!");
+            showToast(`Order ${orders[index].id} status updated successfully!`);
             renderAdminOrderList();
             renderRecentOrdersList();
 
-            // If status is updated to Delivered Successfully, trigger rating prompt if not already reviewed
-            if (newStatus === "Delivered Successfully" && !orders[index].hasReviewed) {
+            // If status is newly updated to Delivered Successfully, trigger rating prompt if not already reviewed
+            if (newStatus === "Delivered Successfully" && !previousStatus.includes('Delivered') && !orders[index].hasReviewed) {
                 toggleAdminModal();
                 triggerRatingModal(orders[index].id);
             }
