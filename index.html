@@ -45,6 +45,13 @@
         .hero-banner h1 { margin: 0; font-size: 2rem; font-weight: 800; }
         .hero-banner p { margin: 0; color: #c7d2fe; font-size: 1rem; max-width: 600px; line-height: 1.5; }
 
+        /* Track Order Banner Section */
+        .track-section { background: white; border: 1px solid #e2e8f0; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .track-section h3 { margin-top: 0; margin-bottom: 0.5rem; color: #0f172a; }
+        .track-row { display: flex; gap: 0.5rem; }
+        .track-row input { flex-grow: 1; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; }
+        .track-result-box { margin-top: 1rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 0.95rem; }
+
         /* Search Bar Styling */
         .search-bar-container { margin-bottom: 2rem; }
         .search-input { width: 100%; padding: 0.85rem 1.25rem; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 12px; box-sizing: border-box; outline: none; background: white; box-shadow: 0 1px 2px rgba(0,0,0,0.02); transition: all 0.2s; }
@@ -98,6 +105,7 @@
         .shipping-badge { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
 
         /* Admin Management Dashboard specific styling */
+        .admin-order-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; font-size: 0.85rem; }
         .admin-product-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; gap: 1rem; }
         .admin-product-info { display: flex; align-items: center; gap: 0.75rem; flex-grow: 1; overflow: hidden; }
         .admin-product-info img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; }
@@ -141,6 +149,17 @@
         <div class="hero-banner">
             <h1>Discover Premium Quality Essentials</h1>
             <p>Handpicked products delivered directly to your doorstep with guaranteed fast fulfillment and prepaid online ordering.</p>
+        </div>
+
+        <!-- Track Your Order Box -->
+        <div class="track-section">
+            <h3>📦 Track Your Order Status</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.75rem;">Enter your Order ID (sent to your email upon checkout) to check live progress.</p>
+            <div class="track-row">
+                <input type="text" id="track-input" placeholder="e.g., SWIFT-483920">
+                <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
+            </div>
+            <div id="track-result-container" style="display: none;" class="track-result-box"></div>
         </div>
 
         <div class="section-title">
@@ -240,10 +259,19 @@
     <div class="modal" id="admin-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3 style="margin: 0;">Admin Product Manager</h3>
+                <h3 style="margin: 0;">Admin Order & Product Manager</h3>
                 <button class="close-btn" onclick="toggleAdminModal()">&times;</button>
             </div>
             
+            <!-- Manual Order Status Manager Section -->
+            <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid #e2e8f0;">
+                <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1rem; color: #0f172a;">Customer Orders Tracker Management</h4>
+                <p style="font-size: 0.75rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Update order states as you process them or see changes from AliExpress.</p>
+                <div id="admin-orders-list" style="max-height: 200px; overflow-y: auto;">
+                    <!-- Dynamically populated customer orders -->
+                </div>
+            </div>
+
             <!-- Add New Product Section -->
             <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid #e2e8f0;">
                 <h4 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1rem; color: #0f172a;">Add New Product</h4>
@@ -265,9 +293,8 @@
             </div>
 
             <!-- Existing Products Inventory / Status Toggler -->
-            <h4 style="margin-bottom: 0.5rem; font-size: 1rem; color: #0f172a;">Manage Inventory & Status</h4>
-            <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Toggle sold out states, delete unwanted items, or manage catalog.</p>
-            <div id="admin-product-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem; background: white;">
+            <h4 style="margin-bottom: 0.5rem; font-size: 1rem; color: #0f172a;">Manage Catalog Inventory & Status</h4>
+            <div id="admin-product-list" style="max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem; background: white;">
                 <!-- Populated dynamically -->
             </div>
         </div>
@@ -327,6 +354,7 @@
 
         let cart = [];
         let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
+        let orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
 
         function initApp() {
             renderProducts();
@@ -504,9 +532,27 @@
                 return;
             }
 
-            const orderItemsText = cart.map(item => `${item.name} (x${item.quantity}) - $${(item.priceUSD * item.quantity).toFixed(2)} / ₦${(item.priceNGN * item.quantity).toLocaleString()}`).join(', ');
+            // Generate unique Order ID
+            const orderId = "SWIFT-" + Math.floor(100000 + Math.random() * 900000);
+            const orderItemsText = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
+
+            // Save order locally for user tracking and admin panel
+            const newOrderRecord = {
+                id: orderId,
+                customerName: currentUser.name,
+                customerEmail: currentUser.email,
+                phone: phone,
+                address: `${address}, ${city}, ${state} ${postal}, ${country}`,
+                items: orderItemsText,
+                status: "Order Placed - Processing",
+                date: new Date().toLocaleDateString()
+            };
+
+            orders.push(newOrderRecord);
+            localStorage.setItem('swift_orders', JSON.stringify(orders));
 
             const templateParams = {
+                order_id: orderId,
                 customer_name: currentUser.name,
                 customer_email: currentUser.email,
                 customer_phone: phone,
@@ -517,36 +563,55 @@
 
             emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams)
                 .then(function(response) {
-                    alert(`Order successful! Redirecting to secure ${paymentMethod} gateway...`);
-                    cart = [];
-                    updateCartUI();
-                    toggleBillingModal();
-
-                    document.getElementById('bill-address').value = '';
-                    document.getElementById('bill-city').value = '';
-                    document.getElementById('bill-state').value = '';
-                    document.getElementById('bill-postal').value = '';
-                    document.getElementById('bill-country').value = '';
-                    document.getElementById('bill-phone').value = '';
+                    alert(`Order successful! Your Order ID is: ${orderId}\nCheck your email inbox for confirmation.`);
+                    finalizeOrderCleanUp();
                 }, function(error) {
-                    alert(`Order placed successfully via ${paymentMethod}! (Note: Email alert notification failed to dispatch — check EmailJS dashboard settings).`);
-                    cart = [];
-                    updateCartUI();
-                    toggleBillingModal();
-
-                    document.getElementById('bill-address').value = '';
-                    document.getElementById('bill-city').value = '';
-                    document.getElementById('bill-state').value = '';
-                    document.getElementById('bill-postal').value = '';
-                    document.getElementById('bill-country').value = '';
-                    document.getElementById('bill-phone').value = '';
+                    alert(`Order successful! Your Order ID is: ${orderId}\n(Note: Email alert failed to dispatch, but order is saved locally).`);
+                    finalizeOrderCleanUp();
                 });
+        }
+
+        function finalizeOrderCleanUp() {
+            cart = [];
+            updateCartUI();
+            toggleBillingModal();
+
+            document.getElementById('bill-address').value = '';
+            document.getElementById('bill-city').value = '';
+            document.getElementById('bill-state').value = '';
+            document.getElementById('bill-postal').value = '';
+            document.getElementById('bill-country').value = '';
+            document.getElementById('bill-phone').value = '';
+        }
+
+        function trackOrder() {
+            const query = document.getElementById('track-input').value.trim();
+            const resultBox = document.getElementById('track-result-container');
+
+            if (!query) {
+                alert("Please enter a valid Order ID.");
+                return;
+            }
+
+            const found = orders.find(o => o.id.toLowerCase() === query.toLowerCase() || o.customerEmail.toLowerCase() === query.toLowerCase());
+            resultBox.style.display = 'block';
+
+            if (found) {
+                resultBox.innerHTML = `
+                    <p style="margin: 0 0 0.5rem;"><strong>Order ID:</strong> ${found.id}</p>
+                    <p style="margin: 0 0 0.5rem;"><strong>Items:</strong> ${found.items}</p>
+                    <p style="margin: 0 0 0.5rem;"><strong>Delivery Status:</strong> <span style="color: var(--primary); font-weight: 700;">${found.status}</span></p>
+                    <p style="margin: 0; font-size: 0.8rem; color: #64748b;">Placed on: ${found.date}</p>
+                `;
+            } else {
+                resultBox.innerHTML = `<p style="color: #dc2626; margin: 0;">No order found matching "${query}". Check your ID or email.</p>`;
+            }
         }
 
         function checkAdminPassword() {
             const password = prompt("Enter Admin Password:");
             if (password === "admin123") {
-                renderAdminProductList();
+                renderAdminDashboard();
                 toggleAdminModal();
             } else if (password !== null) {
                 alert("Incorrect password!");
@@ -556,6 +621,47 @@
         function toggleAdminModal() {
             const modal = document.getElementById('admin-modal');
             modal.classList.toggle('active');
+        }
+
+        function renderAdminDashboard() {
+            renderAdminOrderList();
+            renderAdminProductList();
+        }
+
+        function renderAdminOrderList() {
+            const listContainer = document.getElementById('admin-orders-list');
+            if (orders.length === 0) {
+                listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.8rem;">No customer orders logged yet.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = orders.map((order, index) => `
+                <div class="admin-order-card">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
+                        <strong>${order.id} (${order.customerName})</strong>
+                        <span style="color:#64748b;">${order.date}</span>
+                    </div>
+                    <div style="color:#475569; margin-bottom:0.5rem;">Items: ${order.items}</div>
+                    <div style="display:flex; gap:0.5rem; align-items:center;">
+                        <select id="admin-status-${index}" style="margin:0; padding:0.3rem; font-size:0.8rem;">
+                            <option value="Order Placed - Processing" ${order.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
+                            <option value="Ordered from AliExpress / Supplier" ${order.status.includes('AliExpress') ? 'selected' : ''}>Ordered from AliExpress / Supplier</option>
+                            <option value="Shipped / In Transit" ${order.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
+                            <option value="Out for Delivery" ${order.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
+                            <option value="Delivered Successfully" ${order.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
+                        </select>
+                        <button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.8rem;" onclick="updateOrderStatus(${index})">Update</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateOrderStatus(index) {
+            const newStatus = document.getElementById(`admin-status-${index}`).value;
+            orders[index].status = newStatus;
+            localStorage.setItem('swift_orders', JSON.stringify(orders));
+            showToast("Order status updated successfully!");
+            renderAdminOrderList();
         }
 
         function renderAdminProductList() {
