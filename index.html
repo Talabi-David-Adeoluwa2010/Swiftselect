@@ -216,13 +216,13 @@
         <div class="modal-content">
             <h3>Prepaid Checkout & Delivery</h3>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Provide your accurate delivery information for online prepaid fulfillment.</p>
-            <input type="text" id="bill-address" placeholder="Street Address (e.g. Fashakin)">
-            <input type="text" id="bill-city" placeholder="City (e.g. Akute)">
+            <input type="text" id="bill-address" placeholder="Street Address">
+            <input type="text" id="bill-city" placeholder="City">
             <div style="display: flex; gap: 0.5rem;">
                 <input type="text" id="bill-state" placeholder="State / Province">
                 <input type="text" id="bill-postal" placeholder="Postal / Zip Code">
             </div>
-            <input type="text" id="bill-country" placeholder="Country" value="Nigeria">
+            <input type="text" id="bill-country" placeholder="Country">
             <input type="text" id="bill-phone" placeholder="Phone Number (for delivery rider)">
             
             <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Payment Method:</label>
@@ -499,7 +499,7 @@
             const phone = document.getElementById('bill-phone').value;
             const paymentMethod = document.getElementById('bill-payment').value;
 
-            if (!address || !city || !state || !postal || !phone) {
+            if (!address || !city || !state || !postal || !country || !phone) {
                 alert("Please fill in all required delivery information fields.");
                 return;
             }
@@ -526,6 +526,7 @@
                     document.getElementById('bill-city').value = '';
                     document.getElementById('bill-state').value = '';
                     document.getElementById('bill-postal').value = '';
+                    document.getElementById('bill-country').value = '';
                     document.getElementById('bill-phone').value = '';
                 }, function(error) {
                     alert(`Order placed successfully via ${paymentMethod}! (Note: Email alert notification failed to dispatch — check EmailJS dashboard settings).`);
@@ -537,6 +538,7 @@
                     document.getElementById('bill-city').value = '';
                     document.getElementById('bill-state').value = '';
                     document.getElementById('bill-postal').value = '';
+                    document.getElementById('bill-country').value = '';
                     document.getElementById('bill-phone').value = '';
                 });
         }
