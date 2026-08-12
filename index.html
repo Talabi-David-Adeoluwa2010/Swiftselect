@@ -446,7 +446,6 @@
         ];
 
         let cart = [];
-        // Using localStorage for persistent login across page refreshes and browser sessions
         let users = JSON.parse(localStorage.getItem('swift_users')) || [];
         let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
         let orders = JSON.parse(localStorage.getItem('swift_orders')) || [];
@@ -613,7 +612,6 @@
                 return;
             }
 
-            // Check if user already exists
             const existingUser = users.find(u => u.email === email);
             if (existingUser) {
                 alert("An account with this email already exists. Please log in.");
@@ -625,14 +623,12 @@
             users.push(newUser);
             localStorage.setItem('swift_users', JSON.stringify(users));
 
-            // Automatically log in the user upon successful signup
             currentUser = { name: newUser.name, email: newUser.email };
             localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
 
             updateAuthUI();
             toggleAuthModal();
 
-            // Clear inputs
             document.getElementById('signup-name').value = '';
             document.getElementById('signup-email').value = '';
             document.getElementById('signup-password').value = '';
@@ -661,7 +657,6 @@
             updateAuthUI();
             toggleAuthModal();
 
-            // Clear inputs
             document.getElementById('login-email').value = '';
             document.getElementById('login-password').value = '';
 
@@ -708,7 +703,7 @@
             const newOrderRecord = {
                 id: orderId,
                 customerName: currentUser.name,
-                customerEmail: currentUser.email, // Bound directly to logged-in user email
+                customerEmail: currentUser.email,
                 phone: phone,
                 address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 items: orderItemsText,
@@ -795,7 +790,6 @@
 
             titleElement.innerText = `Your Recent Orders (${currentUser.name})`;
 
-            // Strictly filter orders by currently logged-in account email to keep accounts separate
             const userOrders = orders.filter(o => o.customerEmail.toLowerCase() === currentUser.email.toLowerCase());
 
             if (userOrders.length === 0) {
@@ -953,7 +947,6 @@
                 return;
             }
 
-            // Admin can view and update the timing/status process of any user's order
             listContainer.innerHTML = orders.map((ord, index) => `
                 <div class="admin-order-card">
                     <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
