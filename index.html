@@ -11,22 +11,35 @@
             --bg: #f8fafc;
             --text: #1e293b;
         }
-        body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--text); }
-        header { background: #0f172a; color: #fff; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
+        header { background: #0f172a; color: #fff; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 1rem; }
         .logo { font-size: 1.25rem; font-weight: bold; letter-spacing: 0.5px; }
         .nav-buttons { display: flex; gap: 0.5rem; align-items: center; }
         .btn-primary { background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .btn-secondary { background: #475569; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .btn-danger { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
-        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
-        h2 { margin-bottom: 1.5rem; }
+        
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
+        
+        /* Search Bar Styling */
+        .search-bar-container { margin-bottom: 1.5rem; }
+        .search-input { width: 100%; padding: 0.75rem 1rem; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
+        .search-input:focus { border-color: var(--primary); }
+
+        h2 { margin-bottom: 1rem; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
-        .product-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .product-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; }
         .product-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 6px; background: #e2e8f0; }
+        .product-card video { width: 100%; height: 180px; object-fit: cover; border-radius: 6px; background: #e2e8f0; margin-top: 0.5rem; }
         .product-title { font-size: 1rem; font-weight: 600; margin: 0.75rem 0 0.5rem; }
         .product-price { color: #64748b; font-weight: 500; margin-bottom: 1rem; }
         .btn { background: var(--primary); color: white; border: none; padding: 0.6rem 1rem; cursor: pointer; border-radius: 6px; width: 100%; font-weight: 600; }
         
+        /* Footer Styling */
+        footer { text-align: center; padding: 1.5rem; background: #0f172a; color: #64748b; font-size: 0.85rem; margin-top: auto; }
+        .secret-admin { cursor: pointer; opacity: 0.15; user-select: none; transition: opacity 0.2s; }
+        .secret-admin:hover { opacity: 1; color: #fff; }
+
         /* Modals Common Style */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
@@ -52,17 +65,26 @@
         <div class="nav-buttons">
             <span id="user-greeting"></span>
             <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login</button>
-            <button class="btn-secondary" onclick="checkAdminPassword()">Admin</button>
             <button class="btn-primary" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</button>
         </div>
     </header>
 
     <div class="container">
         <h2>Featured Products</h2>
+        
+        <!-- Search Bar -->
+        <div class="search-bar-container">
+            <input type="text" id="search-input" class="search-input" placeholder="Search for products..." oninput="handleSearch()">
+        </div>
+
         <div class="product-grid" id="product-grid">
             <!-- Dynamic Products -->
         </div>
     </div>
+
+    <footer>
+        <p>&copy; 2026 SwiftSelect. All rights reserved. <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
+    </footer>
 
     <!-- User Account / Signup Modal -->
     <div class="modal" id="auth-modal">
@@ -100,6 +122,7 @@
             <input type="text" id="admin-name" placeholder="Product Name">
             <input type="number" id="admin-price" placeholder="Price ($)">
             <input type="text" id="admin-image" placeholder="Image URL">
+            <input type="text" id="admin-video" placeholder="Video URL (Optional)">
             <button class="btn-primary" onclick="addProduct()" style="width:100%; margin-bottom:0.5rem;">Save Product</button>
             <button class="btn-secondary" onclick="toggleAdminModal()" style="width:100%;">Close</button>
         </div>
@@ -127,8 +150,8 @@
 
     <script>
         let products = JSON.parse(localStorage.getItem('swift_products')) || [
-            { id: 1, name: "Smart Gadget Pro", price: 49.99, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=80" },
-            { id: 2, name: "Minimalist Watch", price: 29.99, image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=300&auto=format&fit=crop&q=80" }
+            { id: 1, name: "Smart Gadget Pro", price: 49.99, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=80", video: "" },
+            { id: 2, name: "Minimalist Watch", price: 29.99, image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=300&auto=format&fit=crop&q=80", video: "" }
         ];
 
         let cart = [];
@@ -139,16 +162,31 @@
             updateAuthUI();
         }
 
-        function renderProducts() {
+        function renderProducts(filter = "") {
             const grid = document.getElementById('product-grid');
-            grid.innerHTML = products.map(product => `
+            const filteredProducts = products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
+
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = '<p style="color: #64748b; grid-column: 1/-1; text-align: center;">No products found.</p>';
+                return;
+            }
+
+            grid.innerHTML = filteredProducts.map(product => `
                 <div class="product-card">
-                    <img src="${product.image}" alt="${product.name}">
-                    <div class="product-title">${product.name}</div>
-                    <div class="product-price">$${product.price.toFixed(2)}</div>
+                    <div>
+                        <img src="${product.image}" alt="${product.name}">
+                        ${product.video ? `<video src="${product.video}" controls muted></video>` : ''}
+                        <div class="product-title">${product.name}</div>
+                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                    </div>
                     <button class="btn" onclick="addToCart(${product.id})">Add to Cart</button>
                 </div>
             `).join('');
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('search-input').value;
+            renderProducts(query);
         }
 
         function updateAuthUI() {
@@ -260,13 +298,14 @@
             const name = document.getElementById('admin-name').value;
             const price = parseFloat(document.getElementById('admin-price').value);
             const image = document.getElementById('admin-image').value;
+            const video = document.getElementById('admin-video').value;
 
             if (!name || isNaN(price) || !image) {
-                alert('Please fill in all fields correctly.');
+                alert('Please fill in the name, price, and image fields.');
                 return;
             }
 
-            const newProduct = { id: Date.now(), name, price, image };
+            const newProduct = { id: Date.now(), name, price, image, video };
             products.push(newProduct);
             localStorage.setItem('swift_products', JSON.stringify(products));
             renderProducts();
@@ -275,6 +314,7 @@
             document.getElementById('admin-name').value = '';
             document.getElementById('admin-price').value = '';
             document.getElementById('admin-image').value = '';
+            document.getElementById('admin-video').value = '';
             alert('Product added successfully!');
         }
 
