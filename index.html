@@ -264,7 +264,7 @@
         <div class="trust-strip">
             <div class="trust-item">
                 <h4>🔒 Secure Payments</h4>
-                <p>Card via Paystack & Bank Transfer ($ & ₦)</p>
+                <p>Card via Paystack ($ & ₦)</p>
             </div>
             <div class="trust-item">
                 <h4>🚀 Fast Shipping</h4>
@@ -373,8 +373,7 @@
 
             <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Payment Method:</label>
             <select id="bill-payment">
-                <option value="Card Payment">Debit / Credit Card (Paystack - USD / NGN)</option>
-                <option value="Bank Transfer">Direct Bank Transfer</option>
+                <option value="Card Payment">Secure Online Payment via Paystack (Card, USSD, etc.)</option>
             </select>
 
             <button class="btn-primary" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">Proceed to Payment</button>
@@ -415,7 +414,7 @@
             <!-- Complete Global Orders Tracker Management -->
             <div class="admin-section-box">
                 <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders Tracker</h4>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and countries are shown below. Setting status to <strong>"Delivered Successfully"</strong> unlocks the rating prompt globally for that specific customer account.</p>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and countries are shown below. Setting status to <strong>"Delivered Successfully"</strong> unlocks the rating prompt for the recipient user to submit their own feedback.</p>
                 <div id="admin-orders-list" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
                     <!-- Dynamically populated customer orders -->
                 </div>
@@ -547,14 +546,24 @@
                 { name: "@david_t", rating: 5, comment: "Super fast shipping to the US and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
                 { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery.", date: "11/08/2026" }
             ],
-            promoCodes: ["SWIFT5"] // Admin default promo code for 5% discount
+            promoCodes: ["SWIFT5"] 
         };
+
+        // --- LOCAL CACHING LOAD ---
+        const cachedState = localStorage.getItem('swift_cached_state');
+        if (cachedState) {
+            try {
+                globalState = JSON.parse(cachedState);
+            } catch (e) {
+                console.error("Cache load error:", e);
+            }
+        }
 
         let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
         let cart = [];
         let currentRatingOrderId = null;
         let selectedStarCount = 5;
-        let appliedDiscountPercent = 0; // 0% or 5%
+        let appliedDiscountPercent = 0; 
 
         // Sync with Firebase Realtime Database
         const stateRef = ref(db, 'swiftStoreState');
@@ -568,6 +577,9 @@
                 if (!globalState.orders) globalState.orders = [];
                 if (!globalState.reviews) globalState.reviews = [];
                 if (!globalState.promoCodes) globalState.promoCodes = ["SWIFT5"];
+                
+                // Save updated state to local cache for fast mobile access
+                localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
             } else {
                 set(stateRef, globalState);
             }
@@ -581,7 +593,9 @@
         });
 
         function saveStateToFirebase() {
-            set(stateRef, globalState).catch((error) => {
+            set(stateRef, globalState).then(() => {
+                localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
+            }).catch((error) => {
                 console.error("Firebase sync error:", error);
             });
         }
@@ -594,7 +608,6 @@
             setupStickySearchScrollObserver();
         }
 
-        // Observer or scroll listener to toggle visual shadow/background when search bar sticks right under header
         function setupStickySearchScrollObserver() {
             const stickySearchEl = document.getElementById('sticky-search');
             window.addEventListener('scroll', () => {
@@ -606,12 +619,10 @@
             });
         }
 
-        // Toggle collapsible utility boxes (Track & Recent orders)
         window.toggleSection = function(boxId) {
             const box = document.getElementById(boxId);
             const isActive = box.classList.contains('active');
             
-            // Close both first
             document.getElementById('track-box').classList.remove('active');
             document.getElementById('recent-box').classList.remove('active');
 
@@ -621,7 +632,6 @@
         };
 
         function formatMarketplacePrice(product) {
-            // Dual currency formatting displaying both USD and NGN side-by-side with original strikethrough price
             const originalUSD = (product.priceUSD * 1.4).toFixed(2);
             const originalNGN = Math.round(product.priceNGN * 1.4);
             return `
@@ -883,7 +893,7 @@
             }
 
             if (globalState.promoCodes && globalState.promoCodes.includes(codeInput)) {
-                appliedDiscountPercent = 5; // 5% discount
+                appliedDiscountPercent = 5; 
                 feedbackEl.style.color = "#166534";
                 feedbackEl.innerText = "✓ Promo code applied successfully (5% off)!";
                 updateCartUI();
@@ -902,7 +912,6 @@
             const postal = document.getElementById('bill-postal').value;
             const country = document.getElementById('bill-country').value;
             const phone = document.getElementById('bill-phone').value;
-            const paymentMethod = document.getElementById('bill-payment').value;
 
             if (!address || !city || !state || !postal || !country || !phone) {
                 alert("Please fill in all required delivery information fields.");
@@ -919,23 +928,20 @@
             const orderId = "SWIFT-" + Math.floor(100000 + Math.random() * 900000);
             const orderItemsText = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
 
-            if (paymentMethod === "Card Payment") {
-                const paystack = new PaystackPop();
-                paystack.newTransaction({
-                    key: 'pk_test_b768f85592c28ec510ea3a542003f10be15a0ab8',
-                    email: currentUser.email,
-                    amount: Math.round(subtotalNGN * 100), // Amount in kobo
-                    currency: 'NGN',
-                    onSuccess: function(transaction) {
-                        finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, paymentMethod, transaction.reference);
-                    },
-                    onCancel: function() {
-                        showToast("Payment canceled.");
-                    }
-                });
-            } else {
-                finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, paymentMethod, "DIRECT-TRANSFER");
-            }
+            // Integrated via Paystack popup (Paystack handles card, transfer, USSD options)
+            const paystack = new PaystackPop();
+            paystack.newTransaction({
+                key: 'pk_test_b768f85592c28ec510ea3a542003f10be15a0ab8',
+                email: currentUser.email,
+                amount: Math.round(subtotalNGN * 100), 
+                currency: 'NGN',
+                onSuccess: function(transaction) {
+                    finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, "Paystack Secure Checkout", transaction.reference);
+                },
+                onCancel: function() {
+                    showToast("Payment canceled.");
+                }
+            });
         };
 
         function finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, paymentMethod, reference) {
@@ -1052,7 +1058,7 @@
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                         <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">${order.status}</span>
                         <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Track</button>
-                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.75rem;" onclick="triggerRatingModal('${order.id}')">Rate Now</button>` : ''}
+                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.75rem;" onclick="triggerRatingModal('${order.id}')">Rate & Review</button>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -1215,17 +1221,11 @@
 
         window.updateOrderStatus = function(index) {
             const newStatus = document.getElementById(`admin-status-${index}`).value;
-            const previousStatus = globalState.orders[index].status;
             globalState.orders[index].status = newStatus;
             saveStateToFirebase();
             showToast(`Order ${globalState.orders[index].id} status updated globally!`);
             renderAdminOrderList();
             renderRecentOrdersList();
-
-            if (newStatus === "Delivered Successfully" && !previousStatus.includes('Delivered') && !globalState.orders[index].hasReviewed) {
-                toggleAdminModal();
-                triggerRatingModal(globalState.orders[index].id);
-            }
         };
 
         window.adminCreatePromoCode = function() {
