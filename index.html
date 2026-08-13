@@ -597,7 +597,10 @@
         const cachedState = localStorage.getItem('swift_cached_state');
         if (cachedState) {
             try {
-                globalState = JSON.parse(cachedState);
+                const parsed = JSON.parse(cachedState);
+                if (parsed && parsed.products) {
+                    globalState = parsed;
+                }
             } catch (e) {
                 console.error("Cache load error:", e);
             }
@@ -660,12 +663,12 @@
         onValue(stateRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                globalState = data;
-                if (!globalState.products) globalState.products = [];
-                if (!globalState.users) globalState.users = [];
-                if (!globalState.orders) globalState.orders = [];
-                if (!globalState.reviews) globalState.reviews = [];
-                if (!globalState.promoCodes) globalState.promoCodes = ["SWIFT5"];
+                // Merge cleanly to ensure local storage cache stays stable and never flickers out on refresh
+                if (data.products) globalState.products = data.products;
+                if (data.users) globalState.users = data.users;
+                if (data.orders) globalState.orders = data.orders;
+                if (data.reviews) globalState.reviews = data.reviews;
+                if (data.promoCodes) globalState.promoCodes = data.promoCodes;
                 
                 try {
                     localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
