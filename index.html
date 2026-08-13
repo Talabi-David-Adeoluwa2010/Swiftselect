@@ -480,9 +480,9 @@
                     </div>
                     <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
                     
-                    <!-- Product Pictures (Accepts JPEG, PNG, JPG, and all other picture types) -->
+                    <!-- Product Pictures (Accepts JPEG, PNG, JPG, HEIC, etc.) -->
                     <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Pictures (Add 3 to 5 pictures):</label>
-                    <input type="file" id="admin-image-input" multiple style="margin-bottom: 0.5rem;">
+                    <input type="file" id="admin-image-input" multiple accept="image/*" style="margin-bottom: 0.5rem;">
                     <div id="admin-image-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;"></div>
 
                     <!-- Product Videos (Max 2 videos, 10s max each with delete buttons) -->
@@ -733,6 +733,11 @@
                                 adminSelectedVideos.push(file);
                                 renderAdminVideoPreviews();
                             }
+                        };
+                        videoEl.onerror = () => {
+                            // Fallback if metadata fails on iOS MOV container
+                            adminSelectedVideos.push(file);
+                            renderAdminVideoPreviews();
                         };
                     }
                     videoInput.value = '';
@@ -1510,14 +1515,24 @@
             try {
                 let imagesBase64 = [];
                 for (let i = 0; i < adminSelectedImages.length; i++) {
-                    const compressedImg = await compressImage(adminSelectedImages[i], 800, 0.7);
-                    imagesBase64.push(compressedImg);
+                    try {
+                        const compressedImg = await compressImage(adminSelectedImages[i], 800, 0.7);
+                        imagesBase64.push(compressedImg);
+                    } catch (imgErr) {
+                        console.warn("Image compression fallback triggered:", imgErr);
+                        const fallbackBase64 = await readFileAsBase64(adminSelectedImages[i]);
+                        imagesBase64.push(fallbackBase64);
+                    }
                 }
 
                 let videosBase64 = [];
                 for (let i = 0; i < adminSelectedVideos.length; i++) {
-                    const vidBase64 = await readFileAsBase64(adminSelectedVideos[i]);
-                    videosBase64.push(vidBase64);
+                    try {
+                        const vidBase64 = await readFileAsBase64(adminSelectedVideos[i]);
+                        videosBase64.push(vidBase64);
+                    } catch (vidErr) {
+                        console.warn("Video read warning:", vidErr);
+                    }
                 }
 
                 const newProduct = { 
@@ -1552,6 +1567,7 @@
                 addBtn.disabled = false;
                 showToast('Product successfully added and synced globally!');
             } catch (err) {
+                console.error("Add product error:", err);
                 alert("Error reading files. Make sure the video/image files are valid.");
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
@@ -1568,7 +1584,7 @@
         }
 
         function compressImage(file, maxWidth, quality) {
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const img = new Image();
@@ -1589,16 +1605,16 @@
                             ctx.drawImage(img, 0, 0, width, height);
                             resolve(canvas.toDataURL('image/jpeg', quality));
                         } catch (err) {
-                            resolve(e.target.result);
+                            reject(err);
                         }
                     };
-                    img.onerror = function() {
-                        resolve(e.target.result);
+                    img.onerror = function(err) {
+                        reject(err);
                     };
                     img.src = e.target.result;
                 };
-                reader.onerror = function() {
-                    resolve(e.target.result);
+                reader.onerror = function(err) {
+                    reject(err);
                 };
                 reader.readAsDataURL(file);
             });
