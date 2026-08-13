@@ -13,6 +13,8 @@
             });
         })();
     </script>
+    <!-- Paystack SDK -->
+    <script src="https://js.paystack.co/v2/inline.js"></script>
     <style>
         :root {
             --primary: #4f46e5;
@@ -180,7 +182,7 @@
 <body>
 
     <div class="announcement-bar">
-        ⚡ Firebase Cloud Sync Active | Global Real-Time Reviews & Multi-Currency Sync ($ & ₦)
+        ⚡ Firebase Cloud Sync Active | Global Real-Time Reviews & Paystack Integration ($ & ₦)
     </div>
 
     <header>
@@ -262,7 +264,7 @@
         <div class="trust-strip">
             <div class="trust-item">
                 <h4>🔒 Secure Payments</h4>
-                <p>Card & Bank Transfer options ($ & ₦)</p>
+                <p>Card via Paystack & Bank Transfer ($ & ₦)</p>
             </div>
             <div class="trust-item">
                 <h4>🚀 Fast Shipping</h4>
@@ -352,7 +354,7 @@
     <div class="modal" id="billing-modal">
         <div class="modal-content">
             <h3>Prepaid Checkout & Delivery</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Provide your accurate delivery information for online prepaid fulfillment (USD / NGN).</p>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Provide your accurate delivery information for online prepaid fulfillment (USD / NGN via Paystack).</p>
             <input type="text" id="bill-address" placeholder="Street Address">
             <input type="text" id="bill-city" placeholder="City">
             <div style="display: flex; gap: 0.5rem;">
@@ -371,7 +373,7 @@
 
             <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Payment Method:</label>
             <select id="bill-payment">
-                <option value="Card Payment">Debit / Credit Card (USD / NGN)</option>
+                <option value="Card Payment">Debit / Credit Card (Paystack - USD / NGN)</option>
                 <option value="Bank Transfer">Direct Bank Transfer</option>
             </select>
 
@@ -907,9 +909,6 @@
                 return;
             }
 
-            const orderId = "SWIFT-" + Math.floor(100000 + Math.random() * 900000);
-            const orderItemsText = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
-
             let subtotalUSD = cart.reduce((sum, item) => sum + (item.priceUSD * item.quantity), 0);
             let subtotalNGN = cart.reduce((sum, item) => sum + (item.priceNGN * item.quantity), 0);
             if (appliedDiscountPercent === 5) {
@@ -917,6 +916,29 @@
                 subtotalNGN *= 0.95;
             }
 
+            const orderId = "SWIFT-" + Math.floor(100000 + Math.random() * 900000);
+            const orderItemsText = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
+
+            if (paymentMethod === "Card Payment") {
+                const paystack = new PaystackPop();
+                paystack.newTransaction({
+                    key: 'pk_test_your_public_key_here', // Replace with your actual Paystack Public Key
+                    email: currentUser.email,
+                    amount: Math.round(subtotalNGN * 100), // Amount in kobo
+                    currency: 'NGN',
+                    onSuccess: function(transaction) {
+                        finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, paymentMethod, transaction.reference);
+                    },
+                    onCancel: function() {
+                        showToast("Payment canceled.");
+                    }
+                });
+            } else {
+                finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, paymentMethod, "DIRECT-TRANSFER");
+            }
+        };
+
+        function finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, paymentMethod, reference) {
             const newOrderRecord = {
                 id: orderId,
                 customerUsername: currentUser.username,
@@ -925,7 +947,7 @@
                 phone: phone,
                 address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 items: orderItemsText,
-                totalPaid: `$${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()}`,
+                totalPaid: `$${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()} (Ref: ${reference})`,
                 status: "Order Placed - Processing",
                 date: new Date().toLocaleDateString(),
                 hasReviewed: false
@@ -942,7 +964,7 @@
                 customer_phone: phone,
                 customer_address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 order_items: orderItemsText,
-                payment_method: paymentMethod
+                payment_method: paymentMethod + ` (Ref: ${reference})`
             };
 
             emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams)
@@ -953,7 +975,7 @@
                     alert(`Order successful! Your Order ID is: ${orderId}\n(Note: Email alert failed to dispatch, but order is saved globally).`);
                     finalizeOrderCleanUp();
                 });
-        };
+        }
 
         function finalizeOrderCleanUp() {
             cart = [];
