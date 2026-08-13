@@ -723,22 +723,8 @@
                             alert('You can upload a maximum of 2 videos.');
                             break;
                         }
-
-                        const videoEl = document.createElement('video');
-                        videoEl.src = URL.createObjectURL(file);
-                        videoEl.onloadedmetadata = () => {
-                            if (videoEl.duration > 15.5) {
-                                alert(`Video "${file.name}" exceeds the maximum duration limit.`);
-                            } else {
-                                adminSelectedVideos.push(file);
-                                renderAdminVideoPreviews();
-                            }
-                        };
-                        videoEl.onerror = () => {
-                            // Fallback if metadata fails on iOS MOV container
-                            adminSelectedVideos.push(file);
-                            renderAdminVideoPreviews();
-                        };
+                        adminSelectedVideos.push(file);
+                        renderAdminVideoPreviews();
                     }
                     videoInput.value = '';
                 });
@@ -1568,7 +1554,7 @@
                 showToast('Product successfully added and synced globally!');
             } catch (err) {
                 console.error("Add product error:", err);
-                alert("Error reading files. Make sure the video/image files are valid.");
+                alert("Error reading files. Make sure the video/image files are valid or smaller in size.");
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
             }
