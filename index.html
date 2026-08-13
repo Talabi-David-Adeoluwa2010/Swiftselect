@@ -486,7 +486,7 @@
                     <div id="admin-image-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;"></div>
 
                     <!-- Product Videos -->
-                    <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Videos (Max 2 videos, 10 seconds max each):</label>
+                    <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Videos (Max 2 short videos, under 2MB each):</label>
                     <input type="file" id="admin-video-input" accept="video/*,.mov,.mp4,.m4v,.quicktime" multiple style="margin-bottom: 0.5rem;">
                     <div id="admin-video-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.1rem;"></div>
 
@@ -663,7 +663,6 @@
         onValue(stateRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                // Merge cleanly to ensure local storage cache stays stable and never flickers out on refresh
                 if (data.products) globalState.products = data.products;
                 if (data.users) globalState.users = data.users;
                 if (data.orders) globalState.orders = data.orders;
@@ -733,6 +732,10 @@
                         if (adminSelectedVideos.length >= 2) {
                             alert('You can upload a maximum of 2 videos.');
                             break;
+                        }
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert(`Video "${file.name}" is too large (>2MB). Please upload a smaller video clip to ensure instant sync.`);
+                            continue;
                         }
                         adminSelectedVideos.push(file);
                         renderAdminVideoPreviews();
@@ -1532,11 +1535,14 @@
 
                 let videosBase64 = [];
                 for (let i = 0; i < adminSelectedVideos.length; i++) {
+                    if (adminSelectedVideos[i].size > 2 * 1024 * 1024) {
+                        throw new Error(`Video "${adminSelectedVideos[i].name}" exceeds 2MB limit. Please select a smaller video clip.`);
+                    }
                     try {
                         const vidBase64 = await readFileAsBase64(adminSelectedVideos[i]);
                         videosBase64.push(vidBase64);
                     } catch (vidErr) {
-                        console.warn("Video read warning or file too large, skipping video:", vidErr);
+                        console.warn("Video read warning, skipping video:", vidErr);
                     }
                 }
 
