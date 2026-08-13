@@ -25,7 +25,7 @@
             --card-bg: #ffffff;
             --border: #e2e8f0;
         }
-        body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 45px; /* Prevents content from being hidden behind fixed Paystack badge */ }
+        body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 45px; }
         
         /* Announcement Bar */
         .announcement-bar { background: linear-gradient(90deg, #4f46e5, #9333ea); color: white; text-align: center; padding: 0.5rem; font-size: 0.85rem; font-weight: 500; }
@@ -49,7 +49,7 @@
 
         .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
         
-        /* Hero Banner (Dashboard) */
+        /* Hero Banner */
         .hero-banner { background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; padding: 1.5rem 2rem; border-radius: 20px; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.2); position: relative; overflow: hidden; }
         .hero-banner h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
         .hero-banner p { margin: 0; color: #c7d2fe; font-size: 0.9rem; max-width: 600px; line-height: 1.4; }
@@ -78,7 +78,7 @@
         .recent-order-item:hover { background: #f1f5f9; }
         .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
 
-        /* Sticky Search Bar Container */
+        /* Sticky Search Bar */
         .search-container-wrapper { margin-bottom: 1.25rem; }
         .sticky-search-container { position: sticky; top: 73px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
         .sticky-search-container.is-stuck { box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(8px); }
@@ -90,7 +90,7 @@
 
         .section-title { font-size: 1.35rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; color: #0f172a; }
         
-        /* Marketplace Feed Product Grid */
+        /* Product Grid */
         .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem; }
         @media(min-width: 768px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; } }
 
@@ -113,7 +113,7 @@
         .btn-marketplace:hover { background: #ea580c; }
         .btn-marketplace.disabled { background: #cbd5e1; cursor: not-allowed; }
 
-        /* Trust Badges Strip */
+        /* Trust Strip */
         .trust-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 3rem 0 2rem; background: white; padding: 2rem; border-radius: 16px; border: 1px solid var(--border); text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
         .trust-item h4 { margin: 0 0 0.3rem; font-size: 1rem; font-weight: 700; color: #0f172a; }
         .trust-item p { margin: 0; font-size: 0.85rem; color: #64748b; }
@@ -144,7 +144,7 @@
         .detail-video { width: 100%; height: 220px; object-fit: cover; border-radius: 12px; background: #f1f5f9; }
         .shipping-badge { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.9rem; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
 
-        /* Admin Management Dashboard Modernized */
+        /* Admin Management Dashboard */
         .admin-modal-content { max-width: 800px !important; }
         .admin-section-box { background: #f8fafc; padding: 1.25rem; border-radius: 14px; margin-bottom: 1.5rem; border: 1px solid var(--border); }
         .admin-order-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; font-size: 0.9rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
@@ -173,12 +173,12 @@
         .total-price .total-sub { font-size: 0.95rem; color: #64748b; font-weight: 600; }
         #user-greeting { font-size: 0.9rem; color: #64748b; font-weight: 600; margin-right: 0.5rem; }
 
-        /* Tabs inside Auth Modal */
+        /* Auth Tabs */
         .auth-tabs { display: flex; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
         .auth-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: 700; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; }
         .auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-        /* Permanent Paystack Trust Tag CSS */
+        /* Permanent Paystack Trust Tag */
         .permanent-paystack-tag {
             position: fixed;
             bottom: 0;
@@ -216,7 +216,7 @@
     </header>
 
     <div class="container">
-        <!-- Hero Section (Dashboard) -->
+        <!-- Hero Section -->
         <div class="hero-banner">
             <h1>Discover Premium Quality Essentials</h1>
             <p>Handpicked products delivered globally with fast fulfillment and prepaid online ordering in USD ($) and NGN (₦).</p>
@@ -254,12 +254,10 @@
                 <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
             </div>
             <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.5rem;">Manage and view your account's order activity.</p>
-            <div class="recent-orders-list" id="recent-orders-list">
-                <!-- Populated dynamically -->
-            </div>
+            <div class="recent-orders-list" id="recent-orders-list"></div>
         </div>
 
-        <!-- Sticky Search Bar Container -->
+        <!-- Sticky Search Bar -->
         <div class="search-container-wrapper" id="search-wrapper">
             <div class="sticky-search-container" id="sticky-search">
                 <div class="search-input-wrapper">
@@ -273,9 +271,7 @@
             <span>Trending Products</span>
         </div>
 
-        <div class="product-grid" id="product-grid">
-            <!-- Dynamic Products -->
-        </div>
+        <div class="product-grid" id="product-grid"></div>
 
         <!-- Trust Badges Strip -->
         <div class="trust-strip">
@@ -327,9 +323,7 @@
                 <em>Select a category or question above to get an instant automated response.</em>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 0.5rem;" id="faq-questions-list">
-                <!-- Populated dynamically based on category -->
-            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;" id="faq-questions-list"></div>
             
             <button class="btn-secondary" onclick="toggleHelpModal()" style="width:100%; margin-top: 1rem;">Close</button>
         </div>
@@ -387,7 +381,7 @@
         </div>
     </div>
 
-    <!-- Recommendations / Customer Success Stories Modal -->
+    <!-- Recommendations Modal -->
     <div class="modal" id="reviews-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -395,9 +389,7 @@
                 <button class="close-btn" onclick="openReviewsModal()">&times;</button>
             </div>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback shared globally by verified international and local customers whose orders were fulfilled. Visible across all devices instantly.</p>
-            <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;">
-                <!-- Dynamically populated inside modal -->
-            </div>
+            <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;"></div>
         </div>
     </div>
 
@@ -415,7 +407,6 @@
             <input type="text" id="bill-country" placeholder="Country (e.g. United States, Nigeria, UK)">
             <input type="text" id="bill-phone" placeholder="Phone Number (for delivery rider)">
             
-            <!-- Optional Promo Code Section -->
             <div style="display: flex; gap: 0.5rem; margin-bottom: 1.1rem;">
                 <input type="text" id="bill-promo" placeholder="Promo Code (Optional)" style="margin-bottom: 0; text-transform: uppercase;">
                 <button class="btn-secondary" onclick="applyPromoCode()" style="width: auto; padding: 0 1rem; margin-bottom:0;">Apply</button>
@@ -462,16 +453,12 @@
                 <button class="close-btn" onclick="toggleAdminModal()">&times;</button>
             </div>
             
-            <!-- Complete Global Orders Tracker Management -->
             <div class="admin-section-box">
                 <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders Tracker</h4>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and countries are shown below. Setting status to <strong>"Delivered Successfully"</strong> unlocks the rating prompt for the recipient user to submit their own feedback.</p>
-                <div id="admin-orders-list" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
-                    <!-- Dynamically populated customer orders -->
-                </div>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and countries are shown below. Setting status to <strong>"Delivered Successfully"</strong> unlocks the rating prompt for the recipient user.</p>
+                <div id="admin-orders-list" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;"></div>
             </div>
 
-            <!-- Promo Code Management Section (5% Discount Creator) -->
             <div class="admin-section-box">
                 <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Promo Code Management (5% Discount)</h4>
                 <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Create active promotional codes that grant customers a 5% discount at checkout.</p>
@@ -479,12 +466,9 @@
                     <input type="text" id="admin-new-promo" placeholder="Enter promo code (e.g. SWIFT5)" style="margin-bottom:0; text-transform: uppercase;">
                     <button class="btn-primary" onclick="adminCreatePromoCode()" style="width: auto; padding: 0 1.25rem;">Create Promo</button>
                 </div>
-                <div id="admin-promo-list" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                    <!-- Populated dynamically -->
-                </div>
+                <div id="admin-promo-list" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
             </div>
 
-            <!-- Add New Product Section -->
             <div class="admin-section-box">
                 <h4 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1.05rem; color: #0f172a;">Add New Product (Global Catalog)</h4>
                 <div id="add-product-form-container">
@@ -506,11 +490,8 @@
                 </div>
             </div>
 
-            <!-- Existing Products Inventory / Status Toggler -->
             <h4 style="margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Manage Catalog Inventory & Status (Global Sync)</h4>
-            <div id="admin-product-list" style="max-height: 220px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem; background: white;">
-                <!-- Populated dynamically -->
-            </div>
+            <div id="admin-product-list" style="max-height: 220px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem; background: white;"></div>
         </div>
     </div>
 
@@ -605,7 +586,6 @@
             promoCodes: ["SWIFT5"] 
         };
 
-        // --- LOCAL CACHING LOAD ---
         const cachedState = localStorage.getItem('swift_cached_state');
         if (cachedState) {
             try {
@@ -621,7 +601,6 @@
         let selectedStarCount = 5;
         let appliedDiscountPercent = 0; 
 
-        // AI FAQ Pre-programmed Database
         const faqData = {
             shipping: [
                 { q: "How long does shipping take?", a: "Standard international priority delivery usually takes between 2 to 4 business days depending on your destination." },
@@ -664,7 +643,6 @@
             answerBox.innerHTML = `<strong>Q: ${item.q}</strong><br><br><span style="color: #0f172a; line-height: 1.5;">A: ${item.a}</span>`;
         };
 
-        // Sync with Firebase Realtime Database
         const stateRef = ref(db, 'swiftStoreState');
         
         onValue(stateRef, (snapshot) => {
