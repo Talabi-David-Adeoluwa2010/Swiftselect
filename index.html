@@ -480,11 +480,15 @@
                     </div>
                     <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
                     
-                    <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Images (Select multiple images):</label>
-                    <input type="file" id="admin-image-files" accept="image/*" multiple>
+                    <!-- Product Images (3-5 pictures with delete buttons) -->
+                    <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Pictures (Add 3 to 5 pictures):</label>
+                    <input type="file" id="admin-image-input" accept="image/*" multiple style="margin-bottom: 0.5rem;">
+                    <div id="admin-image-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;"></div>
 
-                    <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Videos (Select up to 2 videos):</label>
-                    <input type="file" id="admin-video-files" accept="video/*" multiple>
+                    <!-- Product Videos (Max 2 videos, 10s max each with delete buttons) -->
+                    <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Videos (Max 2 videos, 10 seconds max each):</label>
+                    <input type="file" id="admin-video-input" accept="video/*" multiple style="margin-bottom: 0.5rem;">
+                    <div id="admin-video-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.1rem;"></div>
 
                     <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g., International Express Hub)">
                     <button class="btn-primary" id="admin-add-btn" onclick="addProduct()" style="width:100%;">Save New Product Globally</button>
@@ -556,7 +560,8 @@
                     description: "The ultimate next-gen smart gadget designed for maximum productivity and long battery life. Highly recommended for daily wear and international tech enthusiasts.", 
                     images: [
                         "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80",
-                        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80"
+                        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80"
                     ], 
                     videos: [], 
                     shipping: "Ships within 24 hours from International Hub",
@@ -569,7 +574,9 @@
                     priceNGN: 45000, 
                     description: "Clean aesthetic lines combined with premium strap durability. Water-resistant and crafted to match any formal or casual look worldwide.", 
                     images: [
-                        "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600&auto=format&fit=crop&q=80"
+                        "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80"
                     ], 
                     videos: [], 
                     shipping: "Ships within 2 business days",
@@ -587,7 +594,6 @@
             promoCodes: ["SWIFT5"] 
         };
 
-        // INSTANT CACHE LOAD: Read from localStorage immediately so there's zero 10-second wait on refresh
         const cachedState = localStorage.getItem('swift_cached_state');
         if (cachedState) {
             try {
@@ -602,6 +608,10 @@
         let currentRatingOrderId = null;
         let selectedStarCount = 5;
         let appliedDiscountPercent = 0; 
+
+        // Admin Media Selection States
+        let adminSelectedImages = [];
+        let adminSelectedVideos = [];
 
         const faqData = {
             shipping: [
@@ -647,7 +657,6 @@
 
         const stateRef = ref(db, 'swiftStoreState');
         
-        // Background Real-Time Firebase Sync listener
         onValue(stateRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -658,7 +667,6 @@
                 if (!globalState.reviews) globalState.reviews = [];
                 if (!globalState.promoCodes) globalState.promoCodes = ["SWIFT5"];
                 
-                // Update local storage cache in background
                 localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
             } else {
                 set(stateRef, globalState);
@@ -673,10 +681,7 @@
         });
 
         function saveStateToFirebase() {
-            // Instantly update local cache first for responsiveness
             localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
-            
-            // Push globally to Firebase
             set(stateRef, globalState).catch((error) => {
                 console.error("Firebase sync error:", error);
             });
@@ -688,7 +693,84 @@
             renderRecentOrdersList();
             renderReviews();
             setupStickySearchScrollObserver();
+            setupAdminMediaUploadHandlers();
         }
+
+        function setupAdminMediaUploadHandlers() {
+            const imageInput = document.getElementById('admin-image-input');
+            const videoInput = document.getElementById('admin-video-input');
+
+            if (imageInput) {
+                imageInput.addEventListener('change', (e) => {
+                    const files = Array.from(e.target.files);
+                    for (let file of files) {
+                        if (adminSelectedImages.length >= 5) {
+                            alert('You can upload a maximum of 5 pictures.');
+                            break;
+                        }
+                        adminSelectedImages.push(file);
+                    }
+                    imageInput.value = '';
+                    renderAdminImagePreviews();
+                });
+            }
+
+            if (videoInput) {
+                videoInput.addEventListener('change', (e) => {
+                    const files = Array.from(e.target.files);
+                    for (let file of files) {
+                        if (adminSelectedVideos.length >= 2) {
+                            alert('You can upload a maximum of 2 videos.');
+                            break;
+                        }
+
+                        const videoEl = document.createElement('video');
+                        videoEl.src = URL.createObjectURL(file);
+                        videoEl.onloadedmetadata = () => {
+                            if (videoEl.duration > 10.5) {
+                                alert(`Video "${file.name}" exceeds the 10 seconds maximum limit.`);
+                            } else {
+                                adminSelectedVideos.push(file);
+                                renderAdminVideoPreviews();
+                            }
+                        };
+                    }
+                    videoInput.value = '';
+                });
+            }
+        }
+
+        window.renderAdminImagePreviews = function() {
+            const container = document.getElementById('admin-image-preview');
+            if (!container) return;
+            container.innerHTML = adminSelectedImages.map((file, idx) => `
+                <div style="position: relative; width: 60px; height: 60px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
+                    <img src="${URL.createObjectURL(file)}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <button type="button" onclick="removeAdminImage(${idx})" style="position: absolute; top: 2px; right: 2px; background: #dc2626; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+                </div>
+            `).join('');
+        };
+
+        window.removeAdminImage = function(index) {
+            adminSelectedImages.splice(index, 1);
+            renderAdminImagePreviews();
+        };
+
+        window.renderAdminVideoPreviews = function() {
+            const container = document.getElementById('admin-video-preview');
+            if (!container) return;
+            container.innerHTML = adminSelectedVideos.map((file, idx) => `
+                <div style="position: relative; width: 80px; height: 60px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: #000;">
+                    <video src="${URL.createObjectURL(file)}" style="width: 100%; height: 100%; object-fit: cover;"></video>
+                    <button type="button" onclick="removeAdminVideo(${idx})" style="position: absolute; top: 2px; right: 2px; background: #dc2626; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+                </div>
+            `).join('');
+        };
+
+        window.removeAdminVideo = function(index) {
+            adminSelectedVideos.splice(index, 1);
+            renderAdminVideoPreviews();
+        };
 
         function setupStickySearchScrollObserver() {
             const stickySearchEl = document.getElementById('sticky-search');
@@ -1410,11 +1492,14 @@
             const priceNGN = parseFloat(document.getElementById('admin-price-ngn').value);
             const description = document.getElementById('admin-desc').value.trim();
             const shipping = document.getElementById('admin-shipping').value.trim();
-            const imageFiles = document.getElementById('admin-image-files').files;
-            const videoFiles = document.getElementById('admin-video-files').files;
 
-            if (!name || isNaN(priceUSD) || isNaN(priceNGN) || imageFiles.length === 0) {
-                alert('Please fill in product name, pricing ($ and ₦), and choose at least one image.');
+            if (!name || isNaN(priceUSD) || isNaN(priceNGN)) {
+                alert('Please fill in product name and pricing ($ and ₦).');
+                return;
+            }
+
+            if (adminSelectedImages.length < 3 || adminSelectedImages.length > 5) {
+                alert('Please select between 3 to 5 pictures for the product.');
                 return;
             }
 
@@ -1424,15 +1509,14 @@
 
             try {
                 let imagesBase64 = [];
-                for (let i = 0; i < imageFiles.length; i++) {
-                    const compressedImg = await compressImage(imageFiles[i], 800, 0.7);
+                for (let i = 0; i < adminSelectedImages.length; i++) {
+                    const compressedImg = await compressImage(adminSelectedImages[i], 800, 0.7);
                     imagesBase64.push(compressedImg);
                 }
 
                 let videosBase64 = [];
-                let maxVideos = Math.min(videoFiles.length, 2);
-                for (let i = 0; i < maxVideos; i++) {
-                    const vidBase64 = await readFileAsBase64(videoFiles[i]);
+                for (let i = 0; i < adminSelectedVideos.length; i++) {
+                    const vidBase64 = await readFileAsBase64(adminSelectedVideos[i]);
                     videosBase64.push(vidBase64);
                 }
 
@@ -1449,25 +1533,26 @@
                 };
 
                 globalState.products.push(newProduct);
-                
-                // Immediately update local cache & global Firebase database
                 saveStateToFirebase();
                 renderProducts();
                 renderAdminProductList();
 
+                // Reset form fields and media selection arrays
                 document.getElementById('admin-name').value = '';
                 document.getElementById('admin-price-usd').value = '';
                 document.getElementById('admin-price-ngn').value = '';
                 document.getElementById('admin-desc').value = '';
-                document.getElementById('admin-image-files').value = '';
-                document.getElementById('admin-video-files').value = '';
                 document.getElementById('admin-shipping').value = '';
+                adminSelectedImages = [];
+                adminSelectedVideos = [];
+                renderAdminImagePreviews();
+                renderAdminVideoPreviews();
                 
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
                 showToast('Product successfully added and synced globally!');
             } catch (err) {
-                alert("Error reading files. Make sure the video files are not excessively large for mobile storage.");
+                alert("Error reading files. Make sure the video/image files are valid.");
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
             }
