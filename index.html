@@ -90,7 +90,7 @@
 
         .section-title { font-size: 1.35rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; color: #0f172a; }
         
-        /* Marketplace Jumia-Style Feed Product Grid */
+        /* Marketplace Feed Product Grid */
         .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem; }
         @media(min-width: 768px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; } }
 
@@ -193,6 +193,7 @@
         <div class="nav-buttons">
             <span id="user-greeting"></span>
             <button class="btn-nav-link" onclick="openReviewsModal()">⭐ Ratings & Reviews</button>
+            <button class="btn-secondary" onclick="toggleHelpModal()">🤖 Help / AI Assistant</button>
             <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login / Signup</button>
             <button class="btn-primary" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
         </div>
@@ -283,6 +284,40 @@
     <footer>
         <p>&copy; 2026 SwiftSelect. All rights reserved. <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
     </footer>
+
+    <!-- AI Help & FAQ Modal -->
+    <div class="modal" id="help-modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;">🤖 SwiftSelect AI Assistant & Support</h3>
+                <button class="close-btn" onclick="toggleHelpModal()">&times;</button>
+            </div>
+            
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; font-size: 0.9rem; color: #166534;">
+                <strong>Customer Care Hotline:</strong> <a href="tel:08024300891" style="color: #166534; font-weight: bold; text-decoration: underline;">08024300891</a><br>
+                <span style="font-size: 0.8rem; color: #15803d;">Tap the number to call directly or select a category below for instant AI responses.</span>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label style="font-size: 0.85rem; font-weight: 700; color: #0f172a; display: block; margin-bottom: 0.5rem;">Select Support Category:</label>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                    <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('shipping')">📦 Shipping & Delivery</button>
+                    <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('payment')">💳 Payments & Paystack</button>
+                    <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('orders')">📋 Order Tracking</button>
+                </div>
+            </div>
+
+            <div id="faq-answer-box" style="background: #f8fafc; border: 1px solid var(--border); padding: 1.25rem; border-radius: 12px; font-size: 0.9rem; color: #334155; min-height: 80px; margin-bottom: 1.25rem;">
+                <em>Select a category or question above to get an instant automated response.</em>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;" id="faq-questions-list">
+                <!-- Populated dynamically based on category -->
+            </div>
+            
+            <button class="btn-secondary" onclick="toggleHelpModal()" style="width:100%; margin-top: 1rem;">Close</button>
+        </div>
+    </div>
 
     <!-- Product Detail Modal -->
     <div class="modal" id="detail-modal">
@@ -565,6 +600,49 @@
         let selectedStarCount = 5;
         let appliedDiscountPercent = 0; 
 
+        // AI FAQ Pre-programmed Database
+        const faqData = {
+            shipping: [
+                { q: "How long does shipping take?", a: "Standard international priority delivery usually takes between 2 to 4 business days depending on your destination." },
+                { q: "Do you ship worldwide?", a: "Yes, we fulfill orders globally with fast priority delivery hubs." }
+            ],
+            payment: [
+                { q: "What payment methods are accepted?", a: "We accept secure online payments via Paystack supporting cards, USSD, and bank transfers in USD ($) and NGN (₦)." },
+                { q: "Is my payment secure?", a: "Yes! All payments are processed securely through Paystack with high-grade encryption." }
+            ],
+            orders: [
+                { q: "How do I track my order?", a: "You can use the 'Track Order Status' section on the main dashboard by entering your unique Order ID (e.g., SWIFT-XXXXXX)." },
+                { q: "Can I cancel or change my order?", a: "Orders are processed quickly. If you need immediate assistance, please call our customer care hotline at 08024300891." }
+            ]
+        };
+
+        window.toggleHelpModal = function() {
+            document.getElementById('help-modal').classList.toggle('active');
+            if (document.getElementById('help-modal').classList.contains('active')) {
+                filterFaqCategory('shipping');
+            }
+        };
+
+        window.filterFaqCategory = function(category) {
+            const answerBox = document.getElementById('faq-answer-box');
+            const questionsList = document.getElementById('faq-questions-list');
+            
+            answerBox.innerHTML = `<em>Please select a specific question below related to <strong>${category.toUpperCase()}</strong>.</em>`;
+            
+            const questions = faqData[category] || [];
+            questionsList.innerHTML = questions.map((item, idx) => `
+                <button class="btn-secondary" style="text-align: left; font-size: 0.85rem; padding: 0.6rem 1rem; width: 100%; justify-content: flex-start;" onclick="showFaqAnswer('${category}', ${idx})">
+                    ❓ ${item.q}
+                </button>
+            `).join('');
+        };
+
+        window.showFaqAnswer = function(category, index) {
+            const item = faqData[category][index];
+            const answerBox = document.getElementById('faq-answer-box');
+            answerBox.innerHTML = `<strong>Q: ${item.q}</strong><br><br><span style="color: #0f172a; line-height: 1.5;">A: ${item.a}</span>`;
+        };
+
         // Sync with Firebase Realtime Database
         const stateRef = ref(db, 'swiftStoreState');
         
@@ -578,7 +656,6 @@
                 if (!globalState.reviews) globalState.reviews = [];
                 if (!globalState.promoCodes) globalState.promoCodes = ["SWIFT5"];
                 
-                // Save updated state to local cache for fast mobile access
                 localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
             } else {
                 set(stateRef, globalState);
@@ -928,7 +1005,6 @@
             const orderId = "SWIFT-" + Math.floor(100000 + Math.random() * 900000);
             const orderItemsText = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
 
-            // Integrated via Paystack popup (Paystack handles card, transfer, USSD options)
             const paystack = new PaystackPop();
             paystack.newTransaction({
                 key: 'pk_test_b768f85592c28ec510ea3a542003f10be15a0ab8',
