@@ -104,8 +104,8 @@
         .product-stars { color: var(--accent); font-size: 0.75rem; margin-bottom: 0.2rem; }
         .product-title { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.3rem; color: #0f172a; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
         .product-price { color: #0f172a; font-weight: 800; font-size: 1.05rem; margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.05rem; }
-        .product-price .ngn-sub { font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-decoration: line-through; }
-        .product-price .current-ngn { color: #0f172a; font-size: 1.05rem; font-weight: 800; }
+        .product-price .price-sub { font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-decoration: line-through; }
+        .product-price .current-price { color: #0f172a; font-size: 1.05rem; font-weight: 800; }
         
         .btn-marketplace { background: #f97316; color: white; border: none; padding: 0.6rem 0.75rem; cursor: pointer; border-radius: 8px; width: 100%; font-weight: 700; font-size: 0.85rem; transition: background 0.2s; text-align: center; box-sizing: border-box; }
         .btn-marketplace:hover { background: #ea580c; }
@@ -168,7 +168,7 @@
         .cart-item-details { flex-grow: 1; }
         .cart-footer { border-top: 1px solid var(--border); padding-top: 1.25rem; }
         .total-price { font-size: 1.25rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; justify-content: space-between; color: #0f172a; flex-direction: column; gap: 0.3rem; }
-        .total-price .total-ngn { font-size: 0.95rem; color: #64748b; font-weight: 600; }
+        .total-price .total-sub { font-size: 0.95rem; color: #64748b; font-weight: 600; }
         #user-greeting { font-size: 0.9rem; color: #64748b; font-weight: 600; margin-right: 0.5rem; }
 
         /* Tabs inside Auth Modal */
@@ -180,7 +180,7 @@
 <body>
 
     <div class="announcement-bar">
-        ⚡ Firebase Cloud Sync Active | Global Real-Time Reviews & Sync
+        ⚡ Firebase Cloud Sync Active | Global Real-Time Reviews & Multi-Currency Sync ($ & ₦)
     </div>
 
     <header>
@@ -200,7 +200,7 @@
         <!-- Hero Section (Dashboard) -->
         <div class="hero-banner">
             <h1>Discover Premium Quality Essentials</h1>
-            <p>Handpicked products delivered directly to your doorstep with guaranteed fast fulfillment and prepaid online ordering.</p>
+            <p>Handpicked products delivered globally with fast fulfillment and prepaid online ordering in USD ($) and NGN (₦).</p>
         </div>
 
         <!-- Utilities Action Buttons Bar -->
@@ -262,15 +262,15 @@
         <div class="trust-strip">
             <div class="trust-item">
                 <h4>🔒 Secure Payments</h4>
-                <p>Card & Bank Transfer options</p>
+                <p>Card & Bank Transfer options ($ & ₦)</p>
             </div>
             <div class="trust-item">
                 <h4>🚀 Fast Shipping</h4>
-                <p>Direct priority delivery</p>
+                <p>Direct global priority delivery</p>
             </div>
             <div class="trust-item">
                 <h4>⭐ Verified Quality</h4>
-                <p>Hand-tested inventory</p>
+                <p>Hand-tested global inventory</p>
             </div>
         </div>
     </div>
@@ -341,7 +341,7 @@
                 <h3 style="margin: 0;">⭐ Global Customer Ratings & Recommendations</h3>
                 <button class="close-btn" onclick="openReviewsModal()">&times;</button>
             </div>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback shared globally by verified customers whose orders were fulfilled and rated. Visible across all devices instantly.</p>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback shared globally by verified international and local customers whose orders were fulfilled. Visible across all devices instantly.</p>
             <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;">
                 <!-- Dynamically populated inside modal -->
             </div>
@@ -352,14 +352,14 @@
     <div class="modal" id="billing-modal">
         <div class="modal-content">
             <h3>Prepaid Checkout & Delivery</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Provide your accurate delivery information for online prepaid fulfillment.</p>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Provide your accurate delivery information for online prepaid fulfillment (USD / NGN).</p>
             <input type="text" id="bill-address" placeholder="Street Address">
             <input type="text" id="bill-city" placeholder="City">
             <div style="display: flex; gap: 0.5rem;">
                 <input type="text" id="bill-state" placeholder="State / Province">
                 <input type="text" id="bill-postal" placeholder="Postal / Zip Code">
             </div>
-            <input type="text" id="bill-country" placeholder="Country">
+            <input type="text" id="bill-country" placeholder="Country (e.g. United States, Nigeria, UK)">
             <input type="text" id="bill-phone" placeholder="Phone Number (for delivery rider)">
             
             <!-- Optional Promo Code Section -->
@@ -371,7 +371,7 @@
 
             <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Payment Method:</label>
             <select id="bill-payment">
-                <option value="Card Payment">Debit / Credit Card</option>
+                <option value="Card Payment">Debit / Credit Card (USD / NGN)</option>
                 <option value="Bank Transfer">Direct Bank Transfer</option>
             </select>
 
@@ -413,7 +413,7 @@
             <!-- Complete Global Orders Tracker Management -->
             <div class="admin-section-box">
                 <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders Tracker</h4>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and accounts are shown below. Setting status to <strong>"Delivered Successfully"</strong> unlocks the rating prompt globally for that specific customer account.</p>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and countries are shown below. Setting status to <strong>"Delivered Successfully"</strong> unlocks the rating prompt globally for that specific customer account.</p>
                 <div id="admin-orders-list" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
                     <!-- Dynamically populated customer orders -->
                 </div>
@@ -438,8 +438,8 @@
                 <div id="add-product-form-container">
                     <input type="text" id="admin-name" placeholder="Product Name">
                     <div style="display: flex; gap: 0.5rem;">
-                        <input type="number" id="admin-price-usd" placeholder="Price ($)">
-                        <input type="number" id="admin-price-ngn" placeholder="Price (₦)">
+                        <input type="number" step="0.01" id="admin-price-usd" placeholder="Price ($USD)">
+                        <input type="number" id="admin-price-ngn" placeholder="Price (₦NGN)">
                     </div>
                     <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
                     
@@ -449,7 +449,7 @@
                     <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Videos (Select up to 2 videos):</label>
                     <input type="file" id="admin-video-files" accept="video/*" multiple>
 
-                    <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g., Ships in 24 hours from hub)">
+                    <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g., International Express Hub)">
                     <button class="btn-primary" id="admin-add-btn" onclick="addProduct()" style="width:100%;">Save New Product Globally</button>
                 </div>
             </div>
@@ -476,11 +476,11 @@
         <div class="cart-footer">
             <div class="total-price">
                 <div style="display: flex; justify-content: space-between;">
-                    <span>Subtotal (USD):</span>
+                    <span>Subtotal ($):</span>
                     <span id="cart-total-usd">$0.00</span>
                 </div>
-                <div style="display: flex; justify-content: space-between;" class="total-ngn">
-                    <span>Subtotal (NGN):</span>
+                <div style="display: flex; justify-content: space-between;" class="total-sub">
+                    <span>Subtotal (₦):</span>
                     <span id="cart-total-ngn">₦0</span>
                 </div>
             </div>
@@ -514,13 +514,13 @@
                     name: "Smart Gadget Pro", 
                     priceUSD: 49.99, 
                     priceNGN: 75000, 
-                    description: "The ultimate next-gen smart gadget designed for maximum productivity and long battery life. Highly recommended for daily wear and tech enthusiasts.", 
+                    description: "The ultimate next-gen smart gadget designed for maximum productivity and long battery life. Highly recommended for daily wear and international tech enthusiasts.", 
                     images: [
                         "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80",
                         "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80"
                     ], 
                     videos: [], 
-                    shipping: "Ships within 24 hours from Logistics Hub",
+                    shipping: "Ships within 24 hours from International Hub",
                     isSoldOut: false
                 },
                 { 
@@ -528,7 +528,7 @@
                     name: "Minimalist Watch", 
                     priceUSD: 29.99, 
                     priceNGN: 45000, 
-                    description: "Clean aesthetic lines combined with premium strap durability. Water-resistant and crafted to match any formal or casual look.", 
+                    description: "Clean aesthetic lines combined with premium strap durability. Water-resistant and crafted to match any formal or casual look worldwide.", 
                     images: [
                         "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600&auto=format&fit=crop&q=80"
                     ], 
@@ -542,8 +542,8 @@
             ],
             orders: [],
             reviews: [
-                { name: "@david_t", rating: 5, comment: "Super fast shipping and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
-                { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery rider.", date: "11/08/2026" }
+                { name: "@david_t", rating: 5, comment: "Super fast shipping to the US and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
+                { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery.", date: "11/08/2026" }
             ],
             promoCodes: ["SWIFT5"] // Admin default promo code for 5% discount
         };
@@ -619,11 +619,12 @@
         };
 
         function formatMarketplacePrice(product) {
-            // Jumia style formatting with simulated list price strike-through
+            // Dual currency formatting displaying both USD and NGN side-by-side with original strikethrough price
+            const originalUSD = (product.priceUSD * 1.4).toFixed(2);
             const originalNGN = Math.round(product.priceNGN * 1.4);
             return `
-                <span class="ngn-sub">₦${originalNGN.toLocaleString()}</span>
-                <span class="current-ngn">₦${product.priceNGN.toLocaleString()}</span>
+                <span class="price-sub">$${originalUSD} / ₦${originalNGN.toLocaleString()}</span>
+                <span class="current-price">$${product.priceUSD.toFixed(2)} / ₦${product.priceNGN.toLocaleString()}</span>
             `;
         }
 
@@ -990,6 +991,7 @@
                 resultBox.innerHTML = `
                     <p style="margin: 0 0 0.5rem;"><strong>Order ID:</strong> ${found.id}</p>
                     <p style="margin: 0 0 0.5rem;"><strong>Items:</strong> ${found.items}</p>
+                    <p style="margin: 0 0 0.5rem;"><strong>Total Paid:</strong> ${found.totalPaid}</p>
                     <p style="margin: 0 0 0.5rem;"><strong>Delivery Status:</strong> <span style="color: var(--primary); font-weight: 700;">${found.status}</span></p>
                     <p style="margin: 0; font-size: 0.8rem; color: #64748b;">Placed on: ${found.date}</p>
                 `;
@@ -1023,7 +1025,7 @@
                     <div>
                         <span class="order-pill">${order.id}</span>
                         <span style="font-weight: 600; margin-left: 0.25rem;">${order.customerName}</span>
-                        <div style="color: #64748b; font-size: 0.75rem; margin-top: 0.15rem;">${order.items}</div>
+                        <div style="color: #64748b; font-size: 0.75rem; margin-top: 0.15rem;">${order.items} (${order.totalPaid})</div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                         <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">${order.status}</span>
@@ -1174,11 +1176,11 @@
                         <strong>${ord.id} (@${ord.customerUsername || 'user'} - ${ord.customerName})</strong>
                         <span style="color:#64748b;">${ord.date}</span>
                     </div>
-                    <div style="color:#475569; margin-bottom:0.5rem;">Items: ${ord.items} | Total: ${ord.totalPaid || 'N/A'} | Phone: ${ord.phone}</div>
+                    <div style="color:#475569; margin-bottom:0.5rem;">Items: ${ord.items} | Total Paid: ${ord.totalPaid || 'N/A'} | Phone: ${ord.phone}</div>
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
                         <select id="admin-status-${index}" style="margin:0; padding:0.4rem; font-size:0.85rem; flex-grow:1;">
                             <option value="Order Placed - Processing" ${ord.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
-                            <option value="Ordered from AliExpress / Supplier" ${ord.status.includes('AliExpress') ? 'selected' : ''}>Ordered from AliExpress / Supplier</option>
+                            <option value="Ordered from Supplier / Hub" ${ord.status.includes('Supplier') || ord.status.includes('AliExpress') ? 'selected' : ''}>Ordered from Supplier / Hub</option>
                             <option value="Shipped / In Transit" ${ord.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
                             <option value="Out for Delivery" ${ord.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
                             <option value="Delivered Successfully" ${ord.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
@@ -1308,7 +1310,7 @@
             const videoFiles = document.getElementById('admin-video-files').files;
 
             if (!name || isNaN(priceUSD) || isNaN(priceNGN) || imageFiles.length === 0) {
-                alert('Please fill in product name, pricing, and choose at least one image.');
+                alert('Please fill in product name, pricing ($ and ₦), and choose at least one image.');
                 return;
             }
 
