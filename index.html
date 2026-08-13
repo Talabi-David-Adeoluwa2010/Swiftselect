@@ -102,7 +102,6 @@
         .product-badge { position: absolute; top: 0.85rem; right: 0.85rem; background: #fee2e2; color: #dc2626; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.3px; z-index: 2; }
         .product-badge.sold-out { background: rgba(220, 38, 38, 0.9); color: white; }
         
-        /* Free Shipping Badge styling */
         .free-shipping-tag { background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.2rem; margin-bottom: 0.4rem; width: fit-content; }
         
         .product-meta { margin-top: 0.75rem; flex-grow: 1; display: flex; flex-direction: column; }
@@ -181,7 +180,7 @@
         .auth-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: 700; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; }
         .auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-        /* Fixed Paystack Badge CSS (Orange background, curved edges, bottom-left corner) */
+        /* Fixed Paystack Badge CSS */
         .paystack-badge-fixed {
           position: fixed;
           bottom: 20px;
@@ -200,7 +199,7 @@
 <body>
 
     <div class="announcement-bar">
-        ⚡ Firebase Cloud Sync Active | Global Real-Time Reviews & Paystack Integration ($ & ₦)
+        ⚡ Instant Global Firebase Cloud Sync Active | Real-Time Reviews & Paystack Integration ($ & ₦)
     </div>
 
     <header>
@@ -523,7 +522,7 @@
         </div>
     </div>
 
-    <!-- Fixed Paystack Badge HTML with Padlock and Rounded Orange Background -->
+    <!-- Fixed Paystack Badge HTML -->
     <div class="paystack-badge-fixed">
       🔒 Secured and Trusted by Paystack
     </div>
@@ -531,7 +530,7 @@
     <!-- Firebase SDK & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCM4YAyJ7Fcuvdkoy-vKkyU-cPrC79lmdg",
@@ -588,6 +587,7 @@
             promoCodes: ["SWIFT5"] 
         };
 
+        // INSTANT CACHE LOAD: Read from localStorage immediately so there's zero 10-second wait on refresh
         const cachedState = localStorage.getItem('swift_cached_state');
         if (cachedState) {
             try {
@@ -647,6 +647,7 @@
 
         const stateRef = ref(db, 'swiftStoreState');
         
+        // Background Real-Time Firebase Sync listener
         onValue(stateRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -657,6 +658,7 @@
                 if (!globalState.reviews) globalState.reviews = [];
                 if (!globalState.promoCodes) globalState.promoCodes = ["SWIFT5"];
                 
+                // Update local storage cache in background
                 localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
             } else {
                 set(stateRef, globalState);
@@ -671,9 +673,11 @@
         });
 
         function saveStateToFirebase() {
-            set(stateRef, globalState).then(() => {
-                localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
-            }).catch((error) => {
+            // Instantly update local cache first for responsiveness
+            localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
+            
+            // Push globally to Firebase
+            set(stateRef, globalState).catch((error) => {
                 console.error("Firebase sync error:", error);
             });
         }
@@ -1445,6 +1449,8 @@
                 };
 
                 globalState.products.push(newProduct);
+                
+                // Immediately update local cache & global Firebase database
                 saveStateToFirebase();
                 renderProducts();
                 renderAdminProductList();
