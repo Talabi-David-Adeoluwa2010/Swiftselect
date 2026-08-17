@@ -120,7 +120,7 @@
         .trust-item h4 { margin: 0 0 0.3rem; font-size: 1rem; font-weight: 700; color: #0f172a; }
         .trust-item p { margin: 0; font-size: 0.85rem; color: #64748b; }
 
-        /* Toast Notification - Fixed with max-width and ellipsis to prevent giant multiline boxes */
+        /* Toast Notification */
         #toast { position: fixed; bottom: 45px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 0.85rem 1.75rem; border-radius: 35px; box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); max-width: 90vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
@@ -199,7 +199,7 @@
 <body>
 
     <div class="announcement-bar">
-        ⚡ Instant Global Firebase Cloud Sync Active | Real-Time Reviews & Paystack Integration ($ & ₦)
+        ⚡ Instant Global Firebase Cloud Sync & IndexedDB Storage Active | Paystack ($ & ₦)
     </div>
 
     <header>
@@ -531,10 +531,53 @@
       🔒 Secured and Trusted by Paystack
     </div>
 
-    <!-- Firebase SDK & App Logic -->
+    <!-- IndexedDB Helper & Firebase App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // IndexedDB Helper Implementation
+        const IDB_CONFIG = {
+            dbName: "SwiftSelectDB",
+            storeName: "storeState",
+            version: 1
+        };
+
+        const dbHelper = {
+            openDB() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(IDB_CONFIG.dbName, IDB_CONFIG.version);
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains(IDB_CONFIG.storeName)) {
+                            db.createObjectStore(IDB_CONFIG.storeName);
+                        }
+                    };
+                });
+            },
+            async save(key, value) {
+                const db = await this.openDB();
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction(IDB_CONFIG.storeName, "readwrite");
+                    const store = transaction.objectStore(IDB_CONFIG.storeName);
+                    const request = store.put(value, key);
+                    request.onsuccess = () => resolve(true);
+                    request.onerror = () => reject(request.error);
+                });
+            },
+            async get(key) {
+                const db = await this.openDB();
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction(IDB_CONFIG.storeName, "readonly");
+                    const store = transaction.objectStore(IDB_CONFIG.storeName);
+                    const request = store.get(key);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            }
+        };
 
         const firebaseConfig = {
             apiKey: "AIzaSyCM4YAyJ7Fcuvdkoy-vKkyU-cPrC79lmdg",
@@ -594,16 +637,14 @@
             promoCodes: ["SWIFT5"] 
         };
 
-        const cachedState = localStorage.getItem('swift_cached_state');
-        if (cachedState) {
-            try {
-                const parsed = JSON.parse(cachedState);
-                if (parsed && parsed.products) {
-                    globalState = parsed;
-                }
-            } catch (e) {
-                console.error("Cache load error:", e);
+        // Load cached state from IndexedDB on startup
+        try {
+            const cached = await dbHelper.get('swift_cached_state');
+            if (cached && cached.products) {
+                globalState = cached;
             }
+        } catch (e) {
+            console.error("IndexedDB cache load error:", e);
         }
 
         let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
@@ -660,7 +701,7 @@
 
         const stateRef = ref(db, 'swiftStoreState');
         
-        onValue(stateRef, (snapshot) => {
+        onValue(stateRef, async (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 if (data.products) globalState.products = data.products;
@@ -670,9 +711,9 @@
                 if (data.promoCodes) globalState.promoCodes = data.promoCodes;
                 
                 try {
-                    localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
+                    await dbHelper.save('swift_cached_state', globalState);
                 } catch (e) {
-                    console.warn("LocalStorage quota exceeded, skipping local cache update.");
+                    console.warn("IndexedDB save error during sync:", e);
                 }
             } else {
                 set(stateRef, globalState);
@@ -686,11 +727,11 @@
             }
         });
 
-        function saveStateToFirebase() {
+        async function saveStateToFirebase() {
             try {
-                localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
+                await dbHelper.save('swift_cached_state', globalState);
             } catch (e) {
-                console.warn("LocalStorage quota exceeded, skipping local cache update.");
+                console.warn("IndexedDB save error:", e);
             }
             set(stateRef, globalState).catch((error) => {
                 console.error("Firebase sync error:", error);
