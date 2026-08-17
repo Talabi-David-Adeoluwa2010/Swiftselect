@@ -185,7 +185,7 @@
         .auth-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: 700; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; }
         .auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-        /* Paystack Secure Badge inside Cart Footer */
+        /* Paystack Secure Badge Styling */
         .paystack-badge-footer {
           margin-top: 0.75rem;
           background-color: #f97316;
@@ -196,6 +196,33 @@
           font-size: 0.85rem;
           font-weight: 700;
           box-shadow: 0 2px 6px rgba(249, 115, 22, 0.25);
+        }
+
+        /* Floating Paystack Badge (Visible on all pages, hidden when cart drawer is active) */
+        .paystack-floating-badge {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background-color: #f97316;
+          color: white;
+          padding: 0.6rem 1rem;
+          border-radius: 30px;
+          font-size: 0.8rem;
+          font-weight: 700;
+          box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+          z-index: 1100;
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          cursor: pointer;
+          transition: transform 0.2s ease;
+        }
+        .paystack-floating-badge:hover {
+          transform: translateY(-2px);
+        }
+        /* Hide floating badge when cart drawer is open to prevent overlapping */
+        body.cart-open .paystack-floating-badge {
+          display: none;
         }
     </style>
 </head>
@@ -292,6 +319,11 @@
                 <p>Hand-tested global inventory</p>
             </div>
         </div>
+    </div>
+
+    <!-- Floating Global Paystack Badge -->
+    <div class="paystack-floating-badge" onclick="toggleCart()">
+        🔒 Secured & Trusted by Paystack
     </div>
 
     <!-- Toast Notification Popup -->
@@ -1738,7 +1770,15 @@
         }
 
         window.toggleCart = function() {
-            document.getElementById('cart-modal').classList.toggle('active');
+            const cartModal = document.getElementById('cart-modal');
+            cartModal.classList.toggle('active');
+            
+            // Toggle body class so the floating badge hides automatically when the cart drawer is open
+            if (cartModal.classList.contains('active')) {
+                document.body.classList.add('cart-open');
+            } else {
+                document.body.classList.remove('cart-open');
+            }
         };
 
         initApp();
