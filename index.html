@@ -120,8 +120,8 @@
         .trust-item h4 { margin: 0 0 0.3rem; font-size: 1rem; font-weight: 700; color: #0f172a; }
         .trust-item p { margin: 0; font-size: 0.85rem; color: #64748b; }
 
-        /* Toast Notification */
-        #toast { position: fixed; bottom: 45px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 0.85rem 1.75rem; border-radius: 35px; box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); }
+        /* Toast Notification - Fixed with max-width and ellipsis to prevent giant multiline boxes */
+        #toast { position: fixed; bottom: 45px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 0.85rem 1.75rem; border-radius: 35px; box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); max-width: 90vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
         /* Footer */
