@@ -120,7 +120,7 @@
         .trust-item h4 { margin: 0 0 0.3rem; font-size: 1rem; font-weight: 700; color: #0f172a; }
         .trust-item p { margin: 0; font-size: 0.85rem; color: #64748b; }
 
-        /* Toast Notification - Fixed with max-width and ellipsis to prevent giant multiline boxes */
+        /* Toast Notification */
         #toast { position: fixed; bottom: 45px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 0.85rem 1.75rem; border-radius: 35px; box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); max-width: 90vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
@@ -594,15 +594,17 @@
             promoCodes: ["SWIFT5"] 
         };
 
+        // Safe LocalStorage Cache Loading
         const cachedState = localStorage.getItem('swift_cached_state');
         if (cachedState) {
             try {
                 const parsed = JSON.parse(cachedState);
-                if (parsed && parsed.products) {
+                if (parsed && Array.isArray(parsed.products) && parsed.products.length > 0) {
                     globalState = parsed;
                 }
             } catch (e) {
                 console.error("Cache load error:", e);
+                localStorage.removeItem('swift_cached_state');
             }
         }
 
@@ -672,7 +674,7 @@
                 try {
                     localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
                 } catch (e) {
-                    console.warn("LocalStorage quota exceeded, skipping local cache update.");
+                    console.warn("LocalStorage quota exceeded.");
                 }
             } else {
                 set(stateRef, globalState);
@@ -690,7 +692,7 @@
             try {
                 localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
             } catch (e) {
-                console.warn("LocalStorage quota exceeded, skipping local cache update.");
+                console.warn("LocalStorage quota exceeded.");
             }
             set(stateRef, globalState).catch((error) => {
                 console.error("Firebase sync error:", error);
@@ -734,7 +736,7 @@
                             break;
                         }
                         if (file.size > 2 * 1024 * 1024) {
-                            alert(`Video "${file.name}" is too large (>2MB). Please upload a smaller video clip to ensure instant sync.`);
+                            alert(`Video "${file.name}" is too large (>2MB). Please upload a smaller video clip.`);
                             continue;
                         }
                         adminSelectedVideos.push(file);
@@ -1012,7 +1014,7 @@
 
             const foundUser = globalState.users.find(u => (u.username === identifier || u.email === identifier) && u.password === password);
             if (!foundUser) {
-                alert("Invalid username/email or password. Please check your credentials or sign up first.");
+                alert("Invalid username/email or password.");
                 return;
             }
 
@@ -1260,7 +1262,7 @@
             if (!modalGrid) return;
 
             if (globalState.reviews.length === 0) {
-                modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Delivered orders can submit recommendations globally!</p>';
+                modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet.</p>';
                 return;
             }
 
@@ -1335,7 +1337,7 @@
             renderReviews();
             toggleRatingModal();
             renderRecentOrdersList();
-            showToast("Thank you! Your recommendation is now visible globally across all devices.");
+            showToast("Thank you! Your recommendation is now visible globally.");
         };
 
         window.checkAdminPassword = function() {
@@ -1363,7 +1365,7 @@
             if (!listContainer) return;
 
             if (globalState.orders.length === 0) {
-                listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; padding: 1rem;">No customer orders logged yet across any device.</p>';
+                listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; padding: 1rem;">No customer orders logged yet.</p>';
                 return;
             }
 
@@ -1377,7 +1379,7 @@
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
                         <select id="admin-status-${index}" style="margin:0; padding:0.4rem; font-size:0.85rem; flex-grow:1;">
                             <option value="Order Placed - Processing" ${ord.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
-                            <option value="Ordered from Supplier / Hub" ${ord.status.includes('Supplier') || ord.status.includes('AliExpress') ? 'selected' : ''}>Ordered from Supplier / Hub</option>
+                            <option value="Ordered from Supplier / Hub" ${ord.status.includes('Supplier') ? 'selected' : ''}>Ordered from Supplier / Hub</option>
                             <option value="Shipped / In Transit" ${ord.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
                             <option value="Out for Delivery" ${ord.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
                             <option value="Delivered Successfully" ${ord.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
@@ -1392,7 +1394,7 @@
             const newStatus = document.getElementById(`admin-status-${index}`).value;
             globalState.orders[index].status = newStatus;
             saveStateToFirebase();
-            showToast(`Order ${globalState.orders[index].id} status updated globally!`);
+            showToast(`Order status updated globally!`);
             renderAdminOrderList();
             renderRecentOrdersList();
         };
@@ -1413,7 +1415,7 @@
             saveStateToFirebase();
             document.getElementById('admin-new-promo').value = '';
             renderAdminPromoList();
-            showToast(`Promo code ${code} created successfully (5% off)!`);
+            showToast(`Promo code ${code} created successfully!`);
         };
 
         window.adminDeletePromoCode = function(code) {
@@ -1519,7 +1521,6 @@
                         const compressedImg = await compressImage(adminSelectedImages[i], 800, 0.65);
                         imagesBase64.push(compressedImg);
                     } catch (imgErr) {
-                        console.warn("Image compression fallback triggered:", imgErr);
                         try {
                             const fallbackBase64 = await readFileAsBase64(adminSelectedImages[i]);
                             imagesBase64.push(fallbackBase64);
@@ -1530,19 +1531,19 @@
                 }
 
                 if (imagesBase64.length === 0) {
-                    throw new Error("Could not process any of the selected images. Please try smaller files.");
+                    throw new Error("Could not process any of the selected images.");
                 }
 
                 let videosBase64 = [];
                 for (let i = 0; i < adminSelectedVideos.length; i++) {
                     if (adminSelectedVideos[i].size > 2 * 1024 * 1024) {
-                        throw new Error(`Video "${adminSelectedVideos[i].name}" exceeds 2MB limit. Please select a smaller video clip.`);
+                        throw new Error(`Video "${adminSelectedVideos[i].name}" exceeds 2MB limit.`);
                     }
                     try {
                         const vidBase64 = await readFileAsBase64(adminSelectedVideos[i]);
                         videosBase64.push(vidBase64);
                     } catch (vidErr) {
-                        console.warn("Video read warning, skipping video:", vidErr);
+                        console.warn("Video read warning:", vidErr);
                     }
                 }
 
@@ -1563,7 +1564,6 @@
                 renderProducts();
                 renderAdminProductList();
 
-                // Reset form fields and media selection arrays
                 document.getElementById('admin-name').value = '';
                 document.getElementById('admin-price-usd').value = '';
                 document.getElementById('admin-price-ngn').value = '';
@@ -1579,7 +1579,7 @@
                 showToast('Product successfully added and synced globally!');
             } catch (err) {
                 console.error("Add product error:", err);
-                alert(err.message || "Error reading files. Make sure the video/image files are valid or smaller in size.");
+                alert(err.message || "Error reading files.");
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
             }
@@ -1619,14 +1619,10 @@
                             reject(err);
                         }
                     };
-                    img.onerror = function(err) {
-                        reject(err);
-                    };
+                    img.onerror = function(err) { reject(err); };
                     img.src = e.target.result;
                 };
-                reader.onerror = function(err) {
-                    reject(err);
-                };
+                reader.onerror = function(err) { reject(err); };
                 reader.readAsDataURL(file);
             });
         }
