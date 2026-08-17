@@ -1,3 +1,6 @@
+Below are the code check it correct it and give me the full code so that it will stop the crashing we talked about and also check the local storage if it saves well on android and iphone to prevent dissapear and appear of products when web page is reloaded 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -120,8 +123,8 @@
         .trust-item h4 { margin: 0 0 0.3rem; font-size: 1rem; font-weight: 700; color: #0f172a; }
         .trust-item p { margin: 0; font-size: 0.85rem; color: #64748b; }
 
-        /* Toast Notification */
-        #toast { position: fixed; bottom: 45px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 0.85rem 1.75rem; border-radius: 35px; box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3000; font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); max-width: 90vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
+        /* Toast Notification - Fixed with max-width and ellipsis to prevent giant multiline boxes */
+        #toast { position: fixed; bottom: 45px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 0.85rem 1.75rem; border-radius: 35px; box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); max-width: 90vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
         /* Footer */
@@ -130,7 +133,7 @@
         .secret-admin:hover { opacity: 1; color: #fff; }
 
         /* Modals Common Style */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 2500; justify-content: center; align-items: center; padding: 1rem; box-sizing: border-box; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 1rem; box-sizing: border-box; }
         .modal.active { display: flex; }
         .modal-content { background: white; padding: 2.25rem; border-radius: 20px; width: 100%; max-width: 520px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -160,17 +163,17 @@
         .rating-stars-input span.selected { color: var(--accent); }
 
         /* Cart Drawer */
-        .cart-modal { display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 440px; height: 100%; background: white; box-shadow: -15px 0 35px rgba(0,0,0,0.15); z-index: 2500; padding: 1.75rem; box-sizing: border-box; flex-direction: column; justify-content: space-between; animation: slideInRight 0.3s ease; }
+        .cart-modal { display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 440px; height: 100%; background: white; box-shadow: -15px 0 35px rgba(0,0,0,0.15); z-index: 1000; padding: 1.75rem; box-sizing: border-box; flex-direction: column; justify-content: space-between; animation: slideInRight 0.3s ease; }
         @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
         .cart-modal.active { display: flex; }
-        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1.25rem; flex-shrink: 0; }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1.25rem; }
         .close-btn { background: none; border: none; font-size: 1.75rem; cursor: pointer; color: #64748b; transition: color 0.2s; }
         .close-btn:hover { color: #0f172a; }
-        .cart-items { flex: 1; overflow-y: auto; margin: 1.25rem 0; min-height: 0; padding-right: 4px; }
+        .cart-items { flex-grow: 1; overflow-y: auto; margin: 1.25rem 0; }
         .cart-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; }
-        .cart-item img { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; background: #f1f5f9; flex-shrink: 0; }
+        .cart-item img { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; background: #f1f5f9; }
         .cart-item-details { flex-grow: 1; }
-        .cart-footer { border-top: 1px solid var(--border); padding-top: 1.25rem; flex-shrink: 0; background: white; }
+        .cart-footer { border-top: 1px solid var(--border); padding-top: 1.25rem; }
         .total-price { font-size: 1.25rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; justify-content: space-between; color: #0f172a; flex-direction: column; gap: 0.3rem; }
         .total-price .total-sub { font-size: 0.95rem; color: #64748b; font-weight: 600; }
         #user-greeting { font-size: 0.9rem; color: #64748b; font-weight: 600; margin-right: 0.5rem; }
@@ -189,7 +192,7 @@
           color: white;
           padding: 0.5rem 0.9rem;
           border-radius: 12px;
-          z-index: 900;
+          z-index: 1000;
           font-size: 0.85rem;
           font-weight: 700;
           box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
@@ -502,12 +505,14 @@
 
     <!-- Slide-out Cart Drawer -->
     <div class="cart-modal" id="cart-modal">
-        <div class="cart-header">
-            <h3 style="margin:0;">Your Shopping Cart</h3>
-            <button class="close-btn" onclick="toggleCart()">&times;</button>
-        </div>
-        <div class="cart-items" id="cart-items">
-            <p style="color: #64748b; text-align: center; margin-top: 2rem;">Your cart is empty.</p>
+        <div>
+            <div class="cart-header">
+                <h3 style="margin:0;">Your Shopping Cart</h3>
+                <button class="close-btn" onclick="toggleCart()">&times;</button>
+            </div>
+            <div class="cart-items" id="cart-items">
+                <p style="color: #64748b; text-align: center; margin-top: 2rem;">Your cart is empty.</p>
+            </div>
         </div>
         <div class="cart-footer">
             <div class="total-price">
@@ -592,17 +597,15 @@
             promoCodes: ["SWIFT5"] 
         };
 
-        // Safe LocalStorage Cache Loading
         const cachedState = localStorage.getItem('swift_cached_state');
         if (cachedState) {
             try {
                 const parsed = JSON.parse(cachedState);
-                if (parsed && Array.isArray(parsed.products) && parsed.products.length > 0) {
+                if (parsed && parsed.products) {
                     globalState = parsed;
                 }
             } catch (e) {
                 console.error("Cache load error:", e);
-                localStorage.removeItem('swift_cached_state');
             }
         }
 
@@ -672,7 +675,7 @@
                 try {
                     localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
                 } catch (e) {
-                    console.warn("LocalStorage quota exceeded.");
+                    console.warn("LocalStorage quota exceeded, skipping local cache update.");
                 }
             } else {
                 set(stateRef, globalState);
@@ -690,7 +693,7 @@
             try {
                 localStorage.setItem('swift_cached_state', JSON.stringify(globalState));
             } catch (e) {
-                console.warn("LocalStorage quota exceeded.");
+                console.warn("LocalStorage quota exceeded, skipping local cache update.");
             }
             set(stateRef, globalState).catch((error) => {
                 console.error("Firebase sync error:", error);
@@ -734,7 +737,7 @@
                             break;
                         }
                         if (file.size > 2 * 1024 * 1024) {
-                            alert(`Video "${file.name}" is too large (>2MB). Please upload a smaller video clip.`);
+                            alert(`Video "${file.name}" is too large (>2MB). Please upload a smaller video clip to ensure instant sync.`);
                             continue;
                         }
                         adminSelectedVideos.push(file);
@@ -1012,7 +1015,7 @@
 
             const foundUser = globalState.users.find(u => (u.username === identifier || u.email === identifier) && u.password === password);
             if (!foundUser) {
-                alert("Invalid username/email or password.");
+                alert("Invalid username/email or password. Please check your credentials or sign up first.");
                 return;
             }
 
@@ -1260,7 +1263,7 @@
             if (!modalGrid) return;
 
             if (globalState.reviews.length === 0) {
-                modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet.</p>';
+                modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Delivered orders can submit recommendations globally!</p>';
                 return;
             }
 
@@ -1335,7 +1338,7 @@
             renderReviews();
             toggleRatingModal();
             renderRecentOrdersList();
-            showToast("Thank you! Your recommendation is now visible globally.");
+            showToast("Thank you! Your recommendation is now visible globally across all devices.");
         };
 
         window.checkAdminPassword = function() {
@@ -1363,7 +1366,7 @@
             if (!listContainer) return;
 
             if (globalState.orders.length === 0) {
-                listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; padding: 1rem;">No customer orders logged yet.</p>';
+                listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; padding: 1rem;">No customer orders logged yet across any device.</p>';
                 return;
             }
 
@@ -1377,7 +1380,7 @@
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
                         <select id="admin-status-${index}" style="margin:0; padding:0.4rem; font-size:0.85rem; flex-grow:1;">
                             <option value="Order Placed - Processing" ${ord.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
-                            <option value="Ordered from Supplier / Hub" ${ord.status.includes('Supplier') ? 'selected' : ''}>Ordered from Supplier / Hub</option>
+                            <option value="Ordered from Supplier / Hub" ${ord.status.includes('Supplier') || ord.status.includes('AliExpress') ? 'selected' : ''}>Ordered from Supplier / Hub</option>
                             <option value="Shipped / In Transit" ${ord.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
                             <option value="Out for Delivery" ${ord.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
                             <option value="Delivered Successfully" ${ord.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
@@ -1392,7 +1395,7 @@
             const newStatus = document.getElementById(`admin-status-${index}`).value;
             globalState.orders[index].status = newStatus;
             saveStateToFirebase();
-            showToast(`Order status updated globally!`);
+            showToast(`Order ${globalState.orders[index].id} status updated globally!`);
             renderAdminOrderList();
             renderRecentOrdersList();
         };
@@ -1413,7 +1416,7 @@
             saveStateToFirebase();
             document.getElementById('admin-new-promo').value = '';
             renderAdminPromoList();
-            showToast(`Promo code ${code} created successfully!`);
+            showToast(`Promo code ${code} created successfully (5% off)!`);
         };
 
         window.adminDeletePromoCode = function(code) {
@@ -1519,6 +1522,7 @@
                         const compressedImg = await compressImage(adminSelectedImages[i], 800, 0.65);
                         imagesBase64.push(compressedImg);
                     } catch (imgErr) {
+                        console.warn("Image compression fallback triggered:", imgErr);
                         try {
                             const fallbackBase64 = await readFileAsBase64(adminSelectedImages[i]);
                             imagesBase64.push(fallbackBase64);
@@ -1529,19 +1533,19 @@
                 }
 
                 if (imagesBase64.length === 0) {
-                    throw new Error("Could not process any of the selected images.");
+                    throw new Error("Could not process any of the selected images. Please try smaller files.");
                 }
 
                 let videosBase64 = [];
                 for (let i = 0; i < adminSelectedVideos.length; i++) {
                     if (adminSelectedVideos[i].size > 2 * 1024 * 1024) {
-                        throw new Error(`Video "${adminSelectedVideos[i].name}" exceeds 2MB limit.`);
+                        throw new Error(`Video "${adminSelectedVideos[i].name}" exceeds 2MB limit. Please select a smaller video clip.`);
                     }
                     try {
                         const vidBase64 = await readFileAsBase64(adminSelectedVideos[i]);
                         videosBase64.push(vidBase64);
                     } catch (vidErr) {
-                        console.warn("Video read warning:", vidErr);
+                        console.warn("Video read warning, skipping video:", vidErr);
                     }
                 }
 
@@ -1562,6 +1566,7 @@
                 renderProducts();
                 renderAdminProductList();
 
+                // Reset form fields and media selection arrays
                 document.getElementById('admin-name').value = '';
                 document.getElementById('admin-price-usd').value = '';
                 document.getElementById('admin-price-ngn').value = '';
@@ -1577,7 +1582,7 @@
                 showToast('Product successfully added and synced globally!');
             } catch (err) {
                 console.error("Add product error:", err);
-                alert(err.message || "Error reading files.");
+                alert(err.message || "Error reading files. Make sure the video/image files are valid or smaller in size.");
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
             }
@@ -1617,10 +1622,14 @@
                             reject(err);
                         }
                     };
-                    img.onerror = function(err) { reject(err); };
+                    img.onerror = function(err) {
+                        reject(err);
+                    };
                     img.src = e.target.result;
                 };
-                reader.onerror = function(err) { reject(err); };
+                reader.onerror = function(err) {
+                    reject(err);
+                };
                 reader.readAsDataURL(file);
             });
         }
@@ -1697,4 +1706,3 @@
     </script>
 </body>
 </html>
-
