@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SwiftSelect - Premium Online Store</title>
     <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -71,7 +71,8 @@
         /* Track Order Section */
         .track-section h3 { margin-top: 0; margin-bottom: 0.5rem; color: #0f172a; font-size: 1.15rem; }
         .track-row { display: flex; gap: 0.5rem; }
-        .track-row input { flex-grow: 1; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; transition: border-color 0.2s; }
+        /* Fixed font-size to 16px to prevent mobile auto-zoom */
+        .track-row input { flex-grow: 1; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-size: 16px; transition: border-color 0.2s; }
         .track-row input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
         .track-result-box { margin-top: 1rem; padding: 1.25rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border); font-size: 0.95rem; }
 
@@ -90,7 +91,8 @@
         
         .search-input-wrapper { position: relative; }
         .search-input-wrapper span { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem; }
-        .search-input { width: 100%; padding: 0.9rem 1rem 0.9rem 3rem; font-size: 1rem; border: 1px solid var(--border); border-radius: 14px; box-sizing: border-box; outline: none; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.2s; }
+        /* Fixed font-size to 16px to prevent mobile auto-zoom */
+        .search-input { width: 100%; padding: 0.9rem 1rem 0.9rem 3rem; font-size: 16px; border: 1px solid var(--border); border-radius: 14px; box-sizing: border-box; outline: none; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.2s; }
         .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12); }
 
         .section-title { font-size: 1.35rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; color: #0f172a; }
@@ -139,7 +141,9 @@
         .modal.active { display: flex; }
         .modal-content { background: white; padding: 2.25rem; border-radius: 20px; width: 100%; max-width: 520px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 0.85rem 1rem; margin-bottom: 1.1rem; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; outline: none; background: #fff; transition: all 0.2s; }
+        
+        /* Fixed font-size to 16px on all modal inputs/selects/textareas to prevent mobile auto-zoom */
+        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 0.85rem 1rem; margin-bottom: 1.1rem; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; font-size: 16px; outline: none; background: #fff; transition: all 0.2s; }
         .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
 
         /* Product Detail Modal Specifics */
@@ -1601,7 +1605,7 @@
                     </div>
                     <div style="color:#475569; margin-bottom:0.5rem;">Items: ${ord.items} | Total Paid: ${ord.totalPaid || 'N/A'} | Phone: ${ord.phone}</div>
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
-                        <select id="admin-status-${index}" style="margin:0; padding:0.4rem; font-size:0.85rem; flex-grow:1;">
+                        <select id="admin-status-${index}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1;">
                             <option value="Order Placed - Processing" ${ord.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
                             <option value="Ordered from Supplier / Hub" ${ord.status.includes('Supplier') || ord.status.includes('AliExpress') ? 'selected' : ''}>Ordered from Supplier / Hub</option>
                             <option value="Shipped / In Transit" ${ord.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
