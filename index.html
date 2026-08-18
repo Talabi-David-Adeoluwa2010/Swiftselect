@@ -27,6 +27,11 @@
         }
         body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 45px; }
         
+        /* Lock background scroll when cart drawer is active */
+        body.cart-open {
+            overflow: hidden;
+        }
+
         /* Announcement Bar */
         .announcement-bar { background: linear-gradient(90deg, #4f46e5, #9333ea); color: white; text-align: center; padding: 0.5rem; font-size: 0.85rem; font-weight: 500; }
 
@@ -248,6 +253,32 @@
         .cart-item-details { 
             flex-grow: 1; 
             min-width: 0; 
+        }
+
+        /* Cart Item Quantity Controls (+ / -) */
+        .cart-qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+        }
+        .cart-qty-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .cart-qty-btn:hover {
+            background: #e2e8f0;
         }
 
         /* Permanently fixed footer containing totals, secure badge, and checkout button */
@@ -1845,6 +1876,17 @@
             showToast(`Added ${product.name} to cart!`);
         };
 
+        window.changeQuantity = function(productId, delta) {
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += delta;
+                if (existingItem.quantity <= 0) {
+                    cart = cart.filter(item => item.id !== productId);
+                }
+                updateCartUI();
+            }
+        };
+
         window.removeFromCart = function(productId) {
             cart = cart.filter(item => item.id !== productId);
             updateCartUI();
@@ -1874,7 +1916,12 @@
                         <img src="${imgUrl}" alt="${item.name}">
                         <div class="cart-item-details">
                             <strong>${item.name}</strong><br>
-                            <small style="color:#64748b;">$${(item.priceUSD * item.quantity).toFixed(2)} / ₦${(item.priceNGN * item.quantity).toLocaleString()} × ${item.quantity}</small>
+                            <small style="color:#64748b;">$${(item.priceUSD * item.quantity).toFixed(2)} / ₦${(item.priceNGN * item.quantity).toLocaleString()}</small>
+                            <div class="cart-qty-controls">
+                                <button class="cart-qty-btn" onclick="changeQuantity(${item.id}, -1)">-</button>
+                                <span style="font-size: 0.85rem; font-weight: 700;">${item.quantity}</span>
+                                <button class="cart-qty-btn" onclick="changeQuantity(${item.id}, 1)">+</button>
+                            </div>
                         </div>
                         <button class="btn-small" onclick="removeFromCart(${item.id})">Remove</button>
                     </div>
@@ -1894,7 +1941,7 @@
             const cartModal = document.getElementById('cart-modal');
             cartModal.classList.toggle('active');
             
-            // Toggle body class so the floating badge hides automatically when the cart drawer is open
+            // Toggle body class so the background scrolling stops and the floating badge hides when the cart drawer is open
             if (cartModal.classList.contains('active')) {
                 document.body.classList.add('cart-open');
             } else {
