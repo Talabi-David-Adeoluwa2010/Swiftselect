@@ -161,196 +161,195 @@
 
         /* Cart Drawer (Optimized Scrolling & Fixed Footer) */
         .cart-modal { 
-    display: none; 
-    position: fixed; 
-    top: 0; 
-    right: 0; 
-    width: 100%; 
-    max-width: 440px; 
-    height: 100vh; 
-    background: white; 
-    box-shadow: -15px 0 35px rgba(0,0,0,0.15); 
-    z-index: 1200; 
-    padding: 0; 
-    box-sizing: border-box; 
-    flex-direction: column; 
-    animation: slideInRight 0.3s ease; 
-}
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            right: 0; 
+            width: 100%; 
+            max-width: 440px; 
+            height: 100vh; 
+            background: white; 
+            box-shadow: -15px 0 35px rgba(0,0,0,0.15); 
+            z-index: 1200; 
+            padding: 0; 
+            box-sizing: border-box; 
+            flex-direction: column; 
+            animation: slideInRight 0.3s ease; 
+        }
 
         @keyframes slideInRight { 
-    from { transform: translateX(100%); } 
-    to { transform: translateX(0); } 
-}
+            from { transform: translateX(100%); } 
+            to { transform: translateX(0); } 
+        }
 
         .cart-modal.active { 
-    display: flex; 
-}
+            display: flex; 
+        }
 
         .cart-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    border-bottom: 1px solid var(--border); 
-    padding: 1.5rem; 
-    flex-shrink: 0; 
-}
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border); 
+            padding: 1.5rem; 
+            flex-shrink: 0; 
+        }
 
         .close-btn { 
-    background: none; 
-    border: none; 
-    font-size: 1.75rem; 
-    cursor: pointer; 
-    color: #64748b; 
-    transition: color 0.2s; 
-}
+            background: none; 
+            border: none; 
+            font-size: 1.75rem; 
+            cursor: pointer; 
+            color: #64748b; 
+            transition: color 0.2s; 
+        }
 
         .close-btn:hover { 
-    color: #0f172a; 
-}
+            color: #0f172a; 
+        }
 
-/* Scrollable items container with auto-scroll bar */
+        /* Scrollable items container with internal flex scrolling */
         .cart-items { 
-    flex-grow: 1; 
-    overflow-y: auto; 
-    margin: 0; 
-    padding: 1rem 1.5rem; 
-    min-height: 0; 
-    scrollbar-width: thin; 
-}
+            flex: 1 1 auto;
+            overflow-y: auto; 
+            margin: 0; 
+            padding: 1rem 1.5rem; 
+            min-height: 0; 
+            scrollbar-width: thin; 
+        }
 
         .cart-items::-webkit-scrollbar { 
-    width: 6px; 
-}
+            width: 6px; 
+        }
 
         .cart-items::-webkit-scrollbar-thumb { 
-    background: #cbd5e1; 
-    border-radius: 4px; 
-}
+            background: #cbd5e1; 
+            border-radius: 4px; 
+        }
 
         .cart-item { 
-    display: flex; 
-    align-items: center; 
-    gap: 1rem; 
-    margin-bottom: 1rem; 
-    border-bottom: 1px solid #f1f5f9; 
-    padding-bottom: 1rem; 
-}
+            display: flex; 
+            align-items: center; 
+            gap: 1rem; 
+            margin-bottom: 1rem; 
+            border-bottom: 1px solid #f1f5f9; 
+            padding-bottom: 1rem; 
+        }
 
         .cart-item img { 
-    width: 65px; 
-    height: 65px; 
-    object-fit: cover; 
-    border-radius: 10px; 
-    background: #f1f5f9; 
-    flex-shrink: 0;
-}
+            width: 65px; 
+            height: 65px; 
+            object-fit: cover; 
+            border-radius: 10px; 
+            background: #f1f5f9; 
+            flex-shrink: 0;
+        }
 
         .cart-item-details { 
-    flex-grow: 1; 
-    min-width: 0; 
-}
+            flex-grow: 1; 
+            min-width: 0; 
+        }
 
-/* Permanently fixed footer containing totals, secure badge, and checkout button */
+        /* Permanently fixed footer containing totals, secure badge, and checkout button */
         .cart-footer { 
-    border-top: 1px solid var(--border); 
-    padding: 1.25rem 1.5rem; 
-    flex-shrink: 0; 
-    background: #ffffff; 
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03);
-}
+            border-top: 1px solid var(--border); 
+            padding: 1.25rem 1.5rem; 
+            flex-shrink: 0; 
+            background: #ffffff; 
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03);
+        }
 
         .total-price { 
-    font-size: 1.25rem; 
-    font-weight: 800; 
-    margin-bottom: 1rem; 
-    display: flex; 
-    justify-content: space-between; 
-    color: #0f172a; 
-    flex-direction: column; 
-    gap: 0.3rem; 
-}
+            font-size: 1.25rem; 
+            font-weight: 800; 
+            margin-bottom: 1rem; 
+            display: flex; 
+            justify-content: space-between; 
+            color: #0f172a; 
+            flex-direction: column; 
+            gap: 0.3rem; 
+        }
 
         .total-price .total-sub { 
-    font-size: 0.95rem; 
-    color: #64748b; 
-    font-weight: 600; 
-}
+            font-size: 0.95rem; 
+            color: #64748b; 
+            font-weight: 600; 
+        }
 
         #user-greeting { 
-    font-size: 0.9rem; 
-    color: #64748b; 
-    font-weight: 600; 
-    margin-right: 0.5rem; 
-}
+            font-size: 0.9rem; 
+            color: #64748b; 
+            font-weight: 600; 
+            margin-right: 0.5rem; 
+        }
 
-/* Auth Tabs */
+        /* Auth Tabs */
         .auth-tabs { 
-    display: flex; 
-    margin-bottom: 1.25rem; 
-    border-bottom: 1px solid var(--border); 
-}
+            display: flex; 
+            margin-bottom: 1.25rem; 
+            border-bottom: 1px solid var(--border); 
+        }
 
         .auth-tab { 
-    flex: 1; 
-    text-align: center; 
-    padding: 0.75rem; 
-    font-weight: 700; 
-    cursor: pointer; 
-    color: #64748b; 
-    border-bottom: 2px solid transparent; 
-    transition: all 0.2s; 
-}
+            flex: 1; 
+            text-align: center; 
+            padding: 0.75rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            color: #64748b; 
+            border-bottom: 2px solid transparent; 
+            transition: all 0.2s; 
+        }
 
         .auth-tab.active { 
-    color: var(--primary); 
-    border-bottom-color: var(--primary); 
-}
+            color: var(--primary); 
+            border-bottom-color: var(--primary); 
+        }
 
-/* Paystack Secure Badge Styling */
+        /* Paystack Secure Badge Styling */
         .paystack-badge-footer {
-    margin-top: 0.75rem;
-    background-color: #f97316;
-    color: white;
-    padding: 0.5rem 0.9rem;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 0.85rem;
-    font-weight: 700;
-    box-shadow: 0 2px 6px rgba(249, 115, 22, 0.25);
-}
+            margin-top: 0.75rem;
+            background-color: #f97316;
+            color: white;
+            padding: 0.5rem 0.9rem;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: 0 2px 6px rgba(249, 115, 22, 0.25);
+        }
 
-/* Floating Paystack Badge (Visible on all pages, hidden when cart drawer is active) */
+        /* Floating Paystack Badge (Visible on all pages, hidden when cart drawer is active) */
         .paystack-floating-badge {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #f97316;
-    color: white;
-    padding: 0.6rem 1rem;
-    border-radius: 30px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
-    z-index: 1100;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #f97316;
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
 
         .paystack-floating-badge:hover {
-    transform: translateY(-2px);
-}
+            transform: translateY(-2px);
+        }
 
-/* Hide floating badge when cart drawer is open to prevent overlapping */
+        /* Hide floating badge when cart drawer is open to prevent overlapping */
         body.cart-open .paystack-floating-badge {
-    display: none;
-}
-</style>
+            display: none;
+        }
+    </style>
 </head>
 <body>
-
 
     <div class="announcement-bar">
         ⚡ Instant Global Firebase Cloud Sync & IndexedDB Storage Active | Paystack ($ & ₦)
@@ -661,14 +660,12 @@
 
     <!-- Slide-out Cart Drawer -->
     <div class="cart-modal" id="cart-modal">
-        <div>
-            <div class="cart-header">
-                <h3 style="margin:0;">Your Shopping Cart</h3>
-                <button class="close-btn" onclick="toggleCart()">&times;</button>
-            </div>
-            <div class="cart-items" id="cart-items">
-                <p style="color: #64748b; text-align: center; margin-top: 2rem;">Your cart is empty.</p>
-            </div>
+        <div class="cart-header">
+            <h3 style="margin:0;">Your Shopping Cart</h3>
+            <button class="close-btn" onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p style="color: #64748b; text-align: center; margin-top: 2rem;">Your cart is empty.</p>
         </div>
         <div class="cart-footer">
             <div class="total-price">
