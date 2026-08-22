@@ -39,8 +39,6 @@
         
         .btn-primary { background: var(--primary); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); }
         .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
-        .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; box-shadow: none; }
-        
         .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
         .btn-secondary:hover { background: #e2e8f0; }
         .btn-danger { background: #fee2e2; color: #dc2626; border: none; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
@@ -139,7 +137,7 @@
         .detail-video { width: 100%; height: 220px; object-fit: cover; border-radius: 12px; background: #f1f5f9; }
         .shipping-badge { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.9rem; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
 
-        .admin-modal-content { max-width: 850px !important; }
+        .admin-modal-content { max-width: 800px !important; }
         .admin-section-box { background: #f8fafc; padding: 1.25rem; border-radius: 14px; margin-bottom: 1.5rem; border: 1px solid var(--border); }
         .admin-order-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; font-size: 0.9rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         .admin-product-row { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid var(--border); gap: 1rem; }
@@ -150,55 +148,185 @@
         .rating-stars-input { display: flex; gap: 0.5rem; font-size: 1.75rem; cursor: pointer; color: #cbd5e1; margin-bottom: 1.25rem; }
         .rating-stars-input span.selected { color: var(--accent); }
 
-        .cart-modal { display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 440px; height: 100vh; background: white; box-shadow: -15px 0 35px rgba(0,0,0,0.15); z-index: 1200; padding: 0; box-sizing: border-box; flex-direction: column; animation: slideInRight 0.3s ease; }
-        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
-        .cart-modal.active { display: flex; }
+        .cart-modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            right: 0; 
+            width: 100%; 
+            max-width: 440px; 
+            height: 100vh; 
+            background: white; 
+            box-shadow: -15px 0 35px rgba(0,0,0,0.15); 
+            z-index: 1200; 
+            padding: 0; 
+            box-sizing: border-box; 
+            flex-direction: column; 
+            animation: slideInRight 0.3s ease; 
+        }
 
-        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 1.5rem; flex-shrink: 0; }
-        .close-btn { background: none; border: none; font-size: 1.75rem; cursor: pointer; color: #64748b; transition: color 0.2s; }
-        .close-btn:hover { color: #0f172a; }
+        @keyframes slideInRight { 
+            from { transform: translateX(100%); } 
+            to { transform: translateX(0); } 
+        }
 
-        .cart-items { flex: 1 1 auto; overflow-y: auto; margin: 0; padding: 1rem 1.5rem; min-height: 0; scrollbar-width: thin; }
-        .cart-items::-webkit-scrollbar { width: 6px; }
-        .cart-items::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .cart-modal.active { 
+            display: flex; 
+        }
 
-        .cart-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; }
-        .cart-item img { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; background: #f1f5f9; flex-shrink: 0; }
-        .cart-item-details { flex-grow: 1; min-width: 0; }
+        .cart-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border); 
+            padding: 1.5rem; 
+            flex-shrink: 0; 
+        }
 
-        .cart-qty-controls { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
-        .cart-qty-btn { background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; width: 24px; height: 24px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-        .cart-qty-btn:hover { background: #e2e8f0; }
+        .close-btn { 
+            background: none; 
+            border: none; 
+            font-size: 1.75rem; 
+            cursor: pointer; 
+            color: #64748b; 
+            transition: color 0.2s; 
+        }
 
-        .cart-footer { border-top: 1px solid var(--border); padding: 1.25rem 1.5rem; flex-shrink: 0; background: #ffffff; box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03); }
-        .total-price { font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; display: flex; justify-content: space-between; color: #0f172a; flex-direction: column; gap: 0.3rem; }
-        .total-price .total-sub { font-size: 0.95rem; color: #64748b; font-weight: 600; }
+        .close-btn:hover { 
+            color: #0f172a; 
+        }
 
-        #user-greeting { font-size: 0.9rem; color: #64748b; font-weight: 600; margin-right: 0.5rem; }
+        .cart-items { 
+            flex: 1 1 auto;
+            overflow-y: auto; 
+            margin: 0; 
+            padding: 1rem 1.5rem; 
+            min-height: 0; 
+            scrollbar-width: thin; 
+        }
 
-        .auth-tabs { display: flex; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
-        .auth-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: 700; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; }
-        .auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .cart-items::-webkit-scrollbar { 
+            width: 6px; 
+        }
 
-        .payment-info-box { background: #fef3c7; border: 1px solid #f59e0b; padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; font-size: 0.85rem; color: #92400e; }
-        .payment-info-box strong { color: #78350f; }
+        .cart-items::-webkit-scrollbar-thumb { 
+            background: #cbd5e1; 
+            border-radius: 4px; 
+        }
 
-        .paysw-badge-footer { margin-top: 0.75rem; background-color: #059669; color: white; padding: 0.5rem 0.9rem; border-radius: 10px; text-align: center; font-size: 0.85rem; font-weight: 700; }
-        .paysw-floating-badge { position: fixed; bottom: 20px; right: 20px; background-color: #059669; color: white; padding: 0.6rem 1rem; border-radius: 30px; font-size: 0.8rem; font-weight: 700; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35); z-index: 1100; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; transition: transform 0.2s ease; }
-        .paysw-floating-badge:hover { transform: translateY(-2px); }
-        body.cart-open .paysw-floating-badge { display: none; }
+        .cart-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 1rem; 
+            margin-bottom: 1rem; 
+            border-bottom: 1px solid #f1f5f9; 
+            padding-bottom: 1rem; 
+        }
+
+        .cart-item img { 
+            width: 65px; 
+            height: 65px; 
+            object-fit: cover; 
+            border-radius: 10px; 
+            background: #f1f5f9; 
+            flex-shrink: 0;
+        }
+
+        .cart-item-details { 
+            flex-grow: 1; 
+            min-width: 0; 
+        }
+
+        .cart-qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+        }
+        .cart-qty-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .cart-qty-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .cart-footer { 
+            border-top: 1px solid var(--border); 
+            padding: 1.25rem 1.5rem; 
+            flex-shrink: 0; 
+            background: #ffffff; 
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .total-price { 
+            font-size: 1.25rem; 
+            font-weight: 800; 
+            margin-bottom: 1rem; 
+            display: flex; 
+            justify-content: space-between; 
+            color: #0f172a; 
+            flex-direction: column; 
+            gap: 0.3rem; 
+        }
+
+        .total-price .total-sub { 
+            font-size: 0.95rem; 
+            color: #64748b; 
+            font-weight: 600; 
+        }
+
+        #user-greeting { 
+            font-size: 0.9rem; 
+            color: #64748b; 
+            font-weight: 600; 
+            margin-right: 0.5rem; 
+        }
+
+        .auth-tabs { 
+            display: flex; 
+            margin-bottom: 1.25rem; 
+            border-bottom: 1px solid var(--border); 
+        }
+
+        .auth-tab { 
+            flex: 1; 
+            text-align: center; 
+            padding: 0.75rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            color: #64748b; 
+            border-bottom: 2px solid transparent; 
+            transition: all 0.2s; 
+        }
+
+        .auth-tab.active { 
+            color: var(--primary); 
+            border-bottom-color: var(--primary); 
+        }
     </style>
 </head>
 <body>
 
     <div class="announcement-bar">
-        ⚡ Instant Global Firebase Cloud Sync Active | Manual OPay Transfer Enabled
+        ⚡ Instant Global Firebase Cloud Sync & IndexedDB Storage Active | Manual OPay Transfer
     </div>
 
     <header>
         <div class="logo-container">
             <div class="logo-icon">S</div>
-            <div class="logo">SwiftSelect</div>
+            <div class="logo">Swift Select</div>
         </div>
         <div class="nav-buttons">
             <span id="user-greeting"></span>
@@ -212,7 +340,7 @@
     <div class="container">
         <div class="hero-banner">
             <h1>Discover Premium Quality Essentials</h1>
-            <p>Handpicked products delivered globally with fast fulfillment and manual OPay bank transfers in USD ($) and NGN (₦).</p>
+            <p>Handpicked products delivered globally with fast fulfillment and manual OPay prepaid ordering in USD ($) and NGN (₦).</p>
         </div>
 
         <div class="utilities-toggle-row">
@@ -264,8 +392,8 @@
 
         <div class="trust-strip">
             <div class="trust-item">
-                <h4>🔒 Manual Transfer</h4>
-                <p>Secure OPay bank payments</p>
+                <h4>🔒 Direct Bank Transfer</h4>
+                <p>Secure manual OPay transfer</p>
             </div>
             <div class="trust-item">
                 <h4>🚀 Fast Shipping</h4>
@@ -278,34 +406,29 @@
         </div>
     </div>
 
-    <div class="paysw-floating-badge" onclick="toggleCart()">
-        💳 OPay Manual Payment Active
-    </div>
-
     <div id="toast">Item added to cart!</div>
 
     <footer>
-        <p>&copy; 2026 SwiftSelect. All rights reserved. Support Email: talabidavid275@gmail.com | Admin Phone: 08024300891 <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
+        <p>&copy; 2026 Swift Select. All rights reserved. <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
     </footer>
 
     <div class="modal" id="help-modal">
         <div class="modal-content" style="max-width: 600px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3 style="margin: 0;">🤖 SwiftSelect AI Assistant & Support</h3>
+                <h3 style="margin: 0;">🤖 Swift Select AI Assistant & Support</h3>
                 <button class="close-btn" onclick="toggleHelpModal()">&times;</button>
             </div>
             
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; font-size: 0.9rem; color: #166534;">
-                <strong>Customer Care Hotline & Admin:</strong> <a href="tel:08024300891" style="color: #166534; font-weight: bold; text-decoration: underline;">08024300891</a><br>
-                <strong>Support Email:</strong> talabidavid275@gmail.com<br>
-                <span style="font-size: 0.8rem; color: #15803d;">Tap the number to call directly or select a category below.</span>
+                <strong>Customer Care Hotline:</strong> <a href="tel:08024300891" style="color: #166534; font-weight: bold; text-decoration: underline;">08024300891</a><br>
+                <span style="font-size: 0.8rem; color: #15803d;">Tap the number to call directly or select a category below for instant AI responses.</span>
             </div>
 
             <div style="margin-bottom: 1rem;">
                 <label style="font-size: 0.85rem; font-weight: 700; color: #0f172a; display: block; margin-bottom: 0.5rem;">Select Support Category:</label>
                 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
                     <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('shipping')">📦 Shipping & Delivery</button>
-                    <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('payment')">💳 OPay Bank Transfer</button>
+                    <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('payment')">💳 Payments & OPay</button>
                     <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('orders')">📋 Order Tracking</button>
                 </div>
             </div>
@@ -374,45 +497,39 @@
                 <h3 style="margin: 0;">⭐ Global Customer Ratings & Recommendations</h3>
                 <button class="close-btn" onclick="openReviewsModal()">&times;</button>
             </div>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback shared globally by verified international and local customers whose orders were fulfilled.</p>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback shared globally by verified international and local customers whose orders were fulfilled. Visible across all devices instantly.</p>
             <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;"></div>
         </div>
     </div>
 
-    <!-- Billing & Checkout Modal with OPay Details & Payment Account Name -->
     <div class="modal" id="billing-modal">
         <div class="modal-content">
-            <h3>Manual Bank Transfer Checkout</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Provide your accurate delivery information and transfer funds to our official OPay account below.</p>
-            
-            <div class="payment-info-box">
-                <strong>OPay Account Transfer Details:</strong><br>
-                Bank Name: <strong>OPay</strong><br>
-                Account Number: <strong style="font-size: 1.1rem; font-family: monospace;">8024300891</strong><br>
-                Account Name: <strong>Talabi Sunny Okunola</strong><br>
-                <span style="font-size: 0.78rem; display:block; margin-top:0.3rem;">Please transfer the exact total amount and enter your payment account name below.</span>
-            </div>
-
+            <h3>Prepaid Checkout & Delivery</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Provide your accurate delivery information for manual OPay transfer fulfillment.</p>
             <input type="text" id="bill-address" placeholder="Street Address">
             <input type="text" id="bill-city" placeholder="City">
             <div style="display: flex; gap: 0.5rem;">
                 <input type="text" id="bill-state" placeholder="State / Province">
                 <input type="text" id="bill-postal" placeholder="Postal / Zip Code">
             </div>
-            <input type="text" id="bill-country" placeholder="Country (e.g. Nigeria, Ghana, US)">
-            <input type="text" id="bill-phone" placeholder="Phone Number (08024300891 format)">
+            <input type="text" id="bill-country" placeholder="Country (e.g. United States, Nigeria, UK)">
+            <input type="text" id="bill-phone" placeholder="Phone Number (for delivery rider)">
             
-            <!-- Payment Account Name Added -->
-            <input type="text" id="bill-account-name" placeholder="Your Payment Account Name (Name used to transfer funds)">
-
             <div style="display: flex; gap: 0.5rem; margin-bottom: 1.1rem;">
                 <input type="text" id="bill-promo" placeholder="Promo Code (Optional)" style="margin-bottom: 0; text-transform: uppercase;">
                 <button class="btn-secondary" onclick="applyPromoCode()" style="width: auto; padding: 0 1rem; margin-bottom:0;">Apply</button>
             </div>
             <div id="promo-feedback" style="font-size: 0.8rem; margin-top: -0.75rem; margin-bottom: 1rem; font-weight: 600;"></div>
 
-            <!-- Once press button to prevent multiple orders -->
-            <button class="btn-primary" id="make-payment-btn" onclick="completeManualOrder()" style="width:100%; margin-bottom:0.75rem;">I Have Made Payment</button>
+            <div style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; margin-bottom: 1.1rem; font-size: 0.9rem;">
+                <strong>Bank Transfer Instructions:</strong><br>
+                Please transfer the exact total amount to the OPay account below:<br><br>
+                <strong>Bank Name:</strong> OPay<br>
+                <strong>Account Name:</strong> Talabi Sunny Okunola<br>
+                <strong>Account Number:</strong> 8024300891<br>
+            </div>
+
+            <button class="btn-primary" id="made-payment-btn" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">I Have Made Payment</button>
             <button class="btn-secondary" onclick="toggleBillingModal()" style="width:100%;">Cancel</button>
         </div>
     </div>
@@ -438,7 +555,6 @@
         </div>
     </div>
 
-    <!-- Admin Panel Modal with "Payment Received" Button -->
     <div class="modal" id="admin-modal">
         <div class="modal-content admin-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
@@ -447,13 +563,14 @@
             </div>
             
             <div class="admin-section-box">
-                <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders & Payment Verification Tracker</h4>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">View orders, customer payment account names, and press the <strong>"Payment Received & Confirm Order"</strong> button to sync confirmation globally so customers see their payment status update instantly.</p>
-                <div id="admin-orders-list" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;"></div>
+                <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders Tracker</h4>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Review incoming orders, verify manual payments via OPay, and click <strong>"Payment Received"</strong> to sync approval globally back to the customer.</p>
+                <div id="admin-orders-list" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;"></div>
             </div>
 
             <div class="admin-section-box">
                 <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Promo Code Management (5% Discount)</h4>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Create active promotional codes that grant customers a 5% discount at checkout.</p>
                 <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
                     <input type="text" id="admin-new-promo" placeholder="Enter promo code (e.g. SWIFT5)" style="margin-bottom:0; text-transform: uppercase;">
                     <button class="btn-primary" onclick="adminCreatePromoCode()" style="width: auto; padding: 0 1.25rem;">Create Promo</button>
@@ -508,19 +625,19 @@
                     <span id="cart-total-ngn">₦0</span>
                 </div>
             </div>
-            <button class="btn-primary" style="width:100%;" onclick="proceedToCheckout()">Proceed to Manual OPay Checkout</button>
-            <div class="paysw-badge-footer">
-              💳 Official OPay: 8024300891 (Talabi Sunny Okunola)
-            </div>
+            <button class="btn-primary" style="width:100%;" onclick="proceedToCheckout()">Proceed to Secure Checkout</button>
         </div>
     </div>
 
-    <!-- Firebase & IndexedDB Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        const IDB_CONFIG = { dbName: "SwiftSelectDB", storeName: "storeState", version: 1 };
+        const IDB_CONFIG = {
+            dbName: "SwiftSelectDB",
+            storeName: "storeState",
+            version: 1
+        };
 
         const dbHelper = {
             openDB() {
@@ -579,13 +696,29 @@
                     name: "Smart Gadget Pro", 
                     priceUSD: 49.99, 
                     priceNGN: 75000, 
-                    description: "The ultimate next-gen smart gadget designed for maximum productivity and long battery life.", 
+                    description: "The ultimate next-gen smart gadget designed for maximum productivity and long battery life. Highly recommended for daily wear and international tech enthusiasts.", 
                     images: [
                         "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80",
-                        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80"
+                        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80"
                     ], 
                     videos: [], 
-                    shipping: "Ships within 24 hours from Hub",
+                    shipping: "Ships within 24 hours from International Hub",
+                    isSoldOut: false
+                },
+                { 
+                    id: 2, 
+                    name: "Minimalist Watch", 
+                    priceUSD: 29.99, 
+                    priceNGN: 45000, 
+                    description: "Clean aesthetic lines combined with premium strap durability. Water-resistant and crafted to match any formal or casual look worldwide.", 
+                    images: [
+                        "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80"
+                    ], 
+                    videos: [], 
+                    shipping: "Ships within 2 business days",
                     isSoldOut: false
                 }
             ],
@@ -594,7 +727,8 @@
             ],
             orders: [],
             reviews: [
-                { name: "@david_t", rating: 5, comment: "Super fast shipping and excellent store quality!", date: "10/08/2026" }
+                { name: "@david_t", rating: 5, comment: "Super fast shipping to the US and excellent product quality. Highly recommend Swift Select!", date: "10/08/2026" },
+                { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery.", date: "11/08/2026" }
             ],
             promoCodes: ["SWIFT5"] 
         };
@@ -613,21 +747,22 @@
         let currentRatingOrderId = null;
         let selectedStarCount = 5;
         let appliedDiscountPercent = 0; 
+
         let adminSelectedImages = [];
         let adminSelectedVideos = [];
 
         const faqData = {
             shipping: [
-                { q: "How long does shipping take?", a: "Standard international priority delivery usually takes between 2 to 4 business days." },
+                { q: "How long does shipping take?", a: "Standard international priority delivery usually takes between 2 to 4 business days depending on your destination." },
                 { q: "Do you ship worldwide?", a: "Yes, we fulfill orders globally with fast priority delivery hubs." }
             ],
             payment: [
-                { q: "How do I pay via OPay?", a: "Transfer the exact amount to OPay Account: 8024300891 (Name: Talabi Sunny Okunola), then click 'I Have Made Payment' and provide your payment account name." },
-                { q: "How long does payment confirmation take?", a: "Once you submit your order, the admin verifies your payment and confirms it instantly on your order page." }
+                { q: "What payment methods are accepted?", a: "We accept secure manual bank transfers via OPay (Account Name: Talabi Sunny Okunola, Account Number: 8024300891)." },
+                { q: "How do I confirm my payment?", a: "After transferring funds to the OPay account, click 'I Have Made Payment' to notify the store admin." }
             ],
             orders: [
-                { q: "How do I track my order?", a: "Use the 'Track Order Status' section by entering your unique Order ID." },
-                { q: "Need immediate help?", a: "Call our customer hotline at 08024300891 or email talabidavid275@gmail.com." }
+                { q: "How do I track my order?", a: "You can use the 'Track Order Status' section on the main dashboard by entering your unique Order ID (e.g., SWIFT-XXXXXX)." },
+                { q: "Can I cancel or change my order?", a: "Orders are processed quickly. If you need immediate assistance, please call our customer care hotline at 08024300891." }
             ]
         };
 
@@ -641,7 +776,9 @@
         window.filterFaqCategory = function(category) {
             const answerBox = document.getElementById('faq-answer-box');
             const questionsList = document.getElementById('faq-questions-list');
-            answerBox.innerHTML = `<em>Select a question below regarding <strong>${category.toUpperCase()}</strong>.</em>`;
+            
+            answerBox.innerHTML = `<em>Please select a specific question below related to <strong>${category.toUpperCase()}</strong>.</em>`;
+            
             const questions = faqData[category] || [];
             questionsList.innerHTML = questions.map((item, idx) => `
                 <button class="btn-secondary" style="text-align: left; font-size: 0.85rem; padding: 0.6rem 1rem; width: 100%; justify-content: flex-start;" onclick="showFaqAnswer('${category}', ${idx})">
@@ -666,16 +803,20 @@
                 if (data.orders) globalState.orders = data.orders;
                 if (data.reviews) globalState.reviews = data.reviews;
                 if (data.promoCodes) globalState.promoCodes = data.promoCodes;
+                
                 try {
                     await dbHelper.save('swift_cached_state', globalState);
-                } catch (e) {}
+                } catch (e) {
+                    console.warn("IndexedDB save error during sync:", e);
+                }
             } else {
                 set(stateRef, globalState);
             }
             renderProducts();
             renderReviews();
             renderRecentOrdersList();
-            if (document.getElementById('admin-modal').classList.contains('active')) {
+            const adminModal = document.getElementById('admin-modal');
+            if (adminModal && adminModal.classList.contains('active')) {
                 renderAdminDashboard();
             }
         });
@@ -683,7 +824,9 @@
         async function saveStateToFirebase() {
             try {
                 await dbHelper.save('swift_cached_state', globalState);
-            } catch (e) {}
+            } catch (e) {
+                console.warn("IndexedDB save error:", e);
+            }
             set(stateRef, globalState).catch((error) => {
                 console.error("Firebase sync error:", error);
             });
@@ -706,7 +849,10 @@
                 imageInput.addEventListener('change', (e) => {
                     const files = Array.from(e.target.files);
                     for (let file of files) {
-                        if (adminSelectedImages.length >= 5) break;
+                        if (adminSelectedImages.length >= 5) {
+                            alert('You can upload a maximum of 5 pictures.');
+                            break;
+                        }
                         adminSelectedImages.push(file);
                     }
                     imageInput.value = '';
@@ -718,8 +864,14 @@
                 videoInput.addEventListener('change', (e) => {
                     const files = Array.from(e.target.files);
                     for (let file of files) {
-                        if (adminSelectedVideos.length >= 2) break;
-                        if (file.size > 2 * 1024 * 1024) continue;
+                        if (adminSelectedVideos.length >= 2) {
+                            alert('You can upload a maximum of 2 videos.');
+                            break;
+                        }
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert(`Video "${file.name}" is too large (>2MB). Please upload a smaller video clip to ensure instant sync.`);
+                            continue;
+                        }
                         adminSelectedVideos.push(file);
                         renderAdminVideoPreviews();
                     }
@@ -734,7 +886,7 @@
             container.innerHTML = adminSelectedImages.map((file, idx) => `
                 <div style="position: relative; width: 60px; height: 60px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
                     <img src="${URL.createObjectURL(file)}" style="width: 100%; height: 100%; object-fit: cover;">
-                    <button type="button" onclick="removeAdminImage(${idx})" style="position: absolute; top: 2px; right: 2px; background: #dc2626; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer;">&times;</button>
+                    <button type="button" onclick="removeAdminImage(${idx})" style="position: absolute; top: 2px; right: 2px; background: #dc2626; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
                 </div>
             `).join('');
         };
@@ -750,7 +902,7 @@
             container.innerHTML = adminSelectedVideos.map((file, idx) => `
                 <div style="position: relative; width: 80px; height: 60px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: #000;">
                     <video src="${URL.createObjectURL(file)}" style="width: 100%; height: 100%; object-fit: cover;"></video>
-                    <button type="button" onclick="removeAdminVideo(${idx})" style="position: absolute; top: 2px; right: 2px; background: #dc2626; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer;">&times;</button>
+                    <button type="button" onclick="removeAdminVideo(${idx})" style="position: absolute; top: 2px; right: 2px; background: #dc2626; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
                 </div>
             `).join('');
         };
@@ -774,9 +926,13 @@
         window.toggleSection = function(boxId) {
             const box = document.getElementById(boxId);
             const isActive = box.classList.contains('active');
+            
             document.getElementById('track-box').classList.remove('active');
             document.getElementById('recent-box').classList.remove('active');
-            if (!isActive) box.classList.add('active');
+
+            if (!isActive) {
+                box.classList.add('active');
+            }
         };
 
         function formatMarketplacePrice(product) {
@@ -870,7 +1026,8 @@
 
         window.switchDetailImage = function(thumbEl, url) {
             document.getElementById('detail-image').src = url;
-            document.querySelectorAll('.detail-thumb').forEach(t => t.classList.remove('active'));
+            const thumbs = document.querySelectorAll('.detail-thumb');
+            thumbs.forEach(t => t.classList.remove('active'));
             thumbEl.classList.add('active');
         };
 
@@ -879,14 +1036,17 @@
         };
 
         window.handleSearch = function() {
-            renderProducts(document.getElementById('search-input').value);
+            const query = document.getElementById('search-input').value;
+            renderProducts(query);
         };
 
         window.showToast = function(message) {
             const toast = document.getElementById('toast');
             toast.innerText = message;
             toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 2500);
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
         };
 
         window.updateAuthUI = function() {
@@ -947,12 +1107,13 @@
             const password = document.getElementById('signup-password').value;
 
             if (!username || !name || !email || !password) {
-                alert("Please fill in all fields.");
+                alert("Please fill in all fields (Username, Full Name, Email, Password).");
                 return;
             }
 
-            if (globalState.users.find(u => u.username === username || u.email === email)) {
-                alert("An account with this Username or Email already exists.");
+            const existing = globalState.users.find(u => u.username === username || u.email === email);
+            if (existing) {
+                alert("An account with this Username or Email already exists. Please log in.");
                 switchAuthTab('login');
                 return;
             }
@@ -961,10 +1122,17 @@
             globalState.users.push(newUser);
             saveStateToFirebase();
 
-            currentUser = { username, name, email };
+            currentUser = { username: newUser.username, name: newUser.name, email: newUser.email };
             localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
+
             updateAuthUI();
             toggleAuthModal();
+
+            document.getElementById('signup-username').value = '';
+            document.getElementById('signup-name').value = '';
+            document.getElementById('signup-email').value = '';
+            document.getElementById('signup-password').value = '';
+
             showToast(`Global account created! Welcome, @${username}!`);
         };
 
@@ -972,16 +1140,26 @@
             const identifier = document.getElementById('login-username-or-email').value.trim().toLowerCase();
             const password = document.getElementById('login-password').value;
 
+            if (!identifier || !password) {
+                alert("Please enter your Username/Email and password.");
+                return;
+            }
+
             const foundUser = globalState.users.find(u => (u.username === identifier || u.email === identifier) && u.password === password);
             if (!foundUser) {
-                alert("Invalid username/email or password.");
+                alert("Invalid username/email or password. Please check your credentials or sign up first.");
                 return;
             }
 
             currentUser = { username: foundUser.username, name: foundUser.name, email: foundUser.email };
             localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
+
             updateAuthUI();
             toggleAuthModal();
+
+            document.getElementById('login-username-or-email').value = '';
+            document.getElementById('login-password').value = '';
+
             showToast(`Welcome back, @${currentUser.username}!`);
         };
 
@@ -1005,10 +1183,6 @@
             appliedDiscountPercent = 0;
             document.getElementById('bill-promo').value = '';
             document.getElementById('promo-feedback').innerText = '';
-            // Reset "I have made payment" button state
-            const payBtn = document.getElementById('make-payment-btn');
-            payBtn.disabled = false;
-            payBtn.innerText = "I Have Made Payment";
             updateCartUI();
         };
 
@@ -1036,25 +1210,18 @@
             }
         };
 
-        // Once-Press Manual Order Completion with Payment Account Name & EmailJS
-        window.completeManualOrder = function() {
-            const address = document.getElementById('bill-address').value.trim();
-            const city = document.getElementById('bill-city').value.trim();
-            const state = document.getElementById('bill-state').value.trim();
-            const postal = document.getElementById('bill-postal').value.trim();
-            const country = document.getElementById('bill-country').value.trim();
-            const phone = document.getElementById('bill-phone').value.trim();
-            const paymentAccountName = document.getElementById('bill-account-name').value.trim();
+        window.completeOrder = function() {
+            const address = document.getElementById('bill-address').value;
+            const city = document.getElementById('bill-city').value;
+            const state = document.getElementById('bill-state').value;
+            const postal = document.getElementById('bill-postal').value;
+            const country = document.getElementById('bill-country').value;
+            const phone = document.getElementById('bill-phone').value;
 
-            if (!address || !city || !state || !postal || !country || !phone || !paymentAccountName) {
-                alert("Please fill in all required delivery fields and your Payment Account Name.");
+            if (!address || !city || !state || !postal || !country || !phone) {
+                alert("Please fill in all required delivery information fields.");
                 return;
             }
-
-            // Disable button immediately to prevent multiple presses / double orders
-            const payBtn = document.getElementById('make-payment-btn');
-            payBtn.disabled = true;
-            payBtn.innerText = "Processing Order...";
 
             let subtotalUSD = cart.reduce((sum, item) => sum + (item.priceUSD * item.quantity), 0);
             let subtotalNGN = cart.reduce((sum, item) => sum + (item.priceNGN * item.quantity), 0);
@@ -1066,16 +1233,19 @@
             const orderId = "SWIFT-" + Math.floor(100000 + Math.random() * 900000);
             const orderItemsText = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
 
+            const madePaymentBtn = document.getElementById('made-payment-btn');
+            madePaymentBtn.disabled = true;
+            madePaymentBtn.innerText = "Submitting Order...";
+
             const newOrderRecord = {
                 id: orderId,
                 customerUsername: currentUser.username,
                 customerName: currentUser.name,
                 customerEmail: currentUser.email,
                 phone: phone,
-                paymentAccountName: paymentAccountName,
                 address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 items: orderItemsText,
-                totalPaid: `$${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()}`,
+                totalPaid: `$${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()} (OPay Manual Transfer)`,
                 status: "Pending Payment Confirmation",
                 date: new Date().toLocaleDateString(),
                 hasReviewed: false
@@ -1085,26 +1255,27 @@
             saveStateToFirebase();
             renderRecentOrdersList();
 
-            // Send notification email to talabidavid275@gmail.com using EmailJS
             const templateParams = {
                 order_id: orderId,
                 customer_name: currentUser.name,
                 customer_email: currentUser.email,
                 customer_phone: phone,
-                payment_account_name: paymentAccountName,
                 customer_address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 order_items: orderItemsText,
-                total_amount: `$${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()}`,
-                payment_method: "Manual OPay Transfer (Account Name: " + paymentAccountName + ")"
+                payment_method: "OPay Manual Transfer (Account: 8024300891, Name: Talabi Sunny Okunola)"
             };
 
             emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams)
                 .then(function(response) {
-                    alert(`Order placed successfully! Your Order ID is: ${orderId}\nAn order notification has been emailed to talabidavid275@gmail.com.`);
+                    alert(`Order placed successfully! Your Order ID is: ${orderId}\nPlease complete your OPay transfer to Talabi Sunny Okunola (8024300891). An email notification has been sent.`);
                     finalizeOrderCleanUp();
+                    madePaymentBtn.disabled = false;
+                    madePaymentBtn.innerText = "I Have Made Payment";
                 }, function(error) {
-                    alert(`Order placed successfully! Your Order ID is: ${orderId}\n(Note: Email notification failed to send, but order is recorded globally).`);
+                    alert(`Order placed successfully! Your Order ID is: ${orderId}\nPlease complete your OPay transfer to Talabi Sunny Okunola (8024300891).\n(Note: Email alert failed to dispatch, but order is saved globally).`);
                     finalizeOrderCleanUp();
+                    madePaymentBtn.disabled = false;
+                    madePaymentBtn.innerText = "I Have Made Payment";
                 });
         };
 
@@ -1120,13 +1291,13 @@
             document.getElementById('bill-postal').value = '';
             document.getElementById('bill-country').value = '';
             document.getElementById('bill-phone').value = '';
-            document.getElementById('bill-account-name').value = '';
             document.getElementById('bill-promo').value = '';
         }
 
         window.trackOrder = function() {
             const query = document.getElementById('track-input').value.trim();
             const resultBox = document.getElementById('track-result-container');
+
             if (!query) {
                 alert("Please enter a valid Order ID.");
                 return;
@@ -1137,20 +1308,19 @@
 
             if (found) {
                 if (!currentUser || currentUser.username.toLowerCase() !== found.customerUsername.toLowerCase()) {
-                    resultBox.innerHTML = `<p style="color: #dc2626; margin: 0;">Access denied. You can only track orders belonging to your logged-in account.</p>`;
+                    resultBox.innerHTML = `<p style="color: #dc2626; margin: 0;">Access denied. You can only track orders belonging to your logged-in account (@${currentUser ? currentUser.username : 'guest'}).</p>`;
                     return;
                 }
 
                 resultBox.innerHTML = `
                     <p style="margin: 0 0 0.5rem;"><strong>Order ID:</strong> ${found.id}</p>
                     <p style="margin: 0 0 0.5rem;"><strong>Items:</strong> ${found.items}</p>
-                    <p style="margin: 0 0 0.5rem;"><strong>Total Amount:</strong> ${found.totalPaid}</p>
-                    <p style="margin: 0 0 0.5rem;"><strong>Payment Account Name:</strong> ${found.paymentAccountName || 'N/A'}</p>
-                    <p style="margin: 0 0 0.5rem;"><strong>Status:</strong> <span style="color: var(--primary); font-weight: 700;">${found.status}</span></p>
+                    <p style="margin: 0 0 0.5rem;"><strong>Total:</strong> ${found.totalPaid}</p>
+                    <p style="margin: 0 0 0.5rem;"><strong>Delivery Status:</strong> <span style="color: var(--primary); font-weight: 700;">${found.status}</span></p>
                     <p style="margin: 0; font-size: 0.8rem; color: #64748b;">Placed on: ${found.date}</p>
                 `;
             } else {
-                resultBox.innerHTML = `<p style="color: #dc2626; margin: 0;">No order found matching "${query}".</p>`;
+                resultBox.innerHTML = `<p style="color: #dc2626; margin: 0;">No order found matching "${query}". Check your ID.</p>`;
             }
         };
 
@@ -1166,6 +1336,7 @@
             }
 
             titleElement.innerText = `Your Recent Orders (@${currentUser.username})`;
+
             const userOrders = globalState.orders.filter(o => o.customerUsername.toLowerCase() === currentUser.username.toLowerCase());
 
             if (userOrders.length === 0) {
@@ -1178,12 +1349,12 @@
                     <div>
                         <span class="order-pill">${order.id}</span>
                         <span style="font-weight: 600; margin-left: 0.25rem;">${order.customerName}</span>
-                        <div style="color: #64748b; font-size: 0.75rem; margin-top: 0.15rem;">${order.items} | Account Name: <strong>${order.paymentAccountName || 'N/A'}</strong></div>
+                        <div style="color: #64748b; font-size: 0.75rem; margin-top: 0.15rem;">${order.items} (${order.totalPaid})</div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                         <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">${order.status}</span>
                         <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Track</button>
-                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.75rem;" onclick="triggerRatingModal('${order.id}')">Rate</button>` : ''}
+                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.75rem;" onclick="triggerRatingModal('${order.id}')">Rate & Review</button>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -1202,27 +1373,29 @@
                 alert("Please log in first.");
                 return;
             }
-            if (confirm("Clear your order history?")) {
+            if (confirm("Are you sure you want to clear your recent orders history?")) {
                 globalState.orders = globalState.orders.filter(o => o.customerUsername.toLowerCase() !== currentUser.username.toLowerCase());
                 saveStateToFirebase();
                 renderRecentOrdersList();
                 document.getElementById('track-result-container').style.display = 'none';
-                showToast("Order history cleared");
+                showToast("Your order history cleared");
             }
         };
 
         window.renderReviews = function() {
             const modalGrid = document.getElementById('modal-reviews-grid');
             if (!modalGrid) return;
+
             if (globalState.reviews.length === 0) {
-                modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem;">No reviews yet.</p>';
+                modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Delivered orders can submit recommendations globally!</p>';
                 return;
             }
+
             modalGrid.innerHTML = globalState.reviews.map(r => `
-                <div style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; font-size: 0.9rem;">
-                    <div style="color: var(--accent); margin-bottom: 0.3rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                <div class="review-card" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; font-size: 0.9rem;">
+                    <div class="stars" style="color: var(--accent); margin-bottom: 0.3rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
                     <p style="margin: 0.3rem 0; color: #334155;">"${r.comment}"</p>
-                    <span style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block;">— ${r.name} (${r.date})</span>
+                    <span class="author" style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block;">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
                 </div>
             `).join('');
         };
@@ -1235,11 +1408,13 @@
         window.triggerRatingModal = function(orderId) {
             const order = globalState.orders.find(o => o.id === orderId);
             if (!order || order.hasReviewed) return;
+
             currentRatingOrderId = orderId;
             selectedStarCount = 5;
             highlightStars(5);
             document.getElementById('rating-order-info').innerText = `Order: ${order.id} (${order.items})`;
             document.getElementById('review-comment').value = '';
+            
             document.getElementById('rating-modal').classList.add('active');
         };
 
@@ -1255,31 +1430,39 @@
         function highlightStars(count) {
             const stars = document.getElementById('star-container').children;
             for (let i = 0; i < stars.length; i++) {
-                if (i < count) stars[i].classList.add('selected');
-                else stars[i].classList.remove('selected');
+                if (i < count) {
+                    stars[i].classList.add('selected');
+                } else {
+                    stars[i].classList.remove('selected');
+                }
             }
         }
 
         window.submitReview = function() {
             const comment = document.getElementById('review-comment').value.trim();
             if (!comment) {
-                alert("Please write a review comment.");
+                alert("Please write a short review comment.");
                 return;
             }
-            const order = globalState.orders.find(o => o.id === currentRatingOrderId);
-            if (order) order.hasReviewed = true;
 
-            globalState.reviews.unshift({
+            const order = globalState.orders.find(o => o.id === currentRatingOrderId);
+            if (order) {
+                order.hasReviewed = true;
+            }
+
+            const newReview = {
                 name: currentUser ? `@${currentUser.username}` : "Verified Customer",
                 rating: selectedStarCount,
                 comment: comment,
                 date: new Date().toLocaleDateString()
-            });
+            };
+
+            globalState.reviews.unshift(newReview);
             saveStateToFirebase();
             renderReviews();
             toggleRatingModal();
             renderRecentOrdersList();
-            showToast("Review submitted successfully!");
+            showToast("Thank you! Your recommendation is now visible globally across all devices.");
         };
 
         window.checkAdminPassword = function() {
@@ -1302,48 +1485,44 @@
             renderAdminPromoList();
         }
 
-        // Admin Order List with "Payment Received & Confirm Order" Button
         function renderAdminOrderList() {
             const listContainer = document.getElementById('admin-orders-list');
             if (!listContainer) return;
 
             if (globalState.orders.length === 0) {
-                listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; padding: 1rem;">No customer orders logged yet.</p>';
+                listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; padding: 1rem;">No customer orders logged yet across any device.</p>';
                 return;
             }
 
             listContainer.innerHTML = globalState.orders.map((ord, index) => `
                 <div class="admin-order-card">
                     <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
-                        <strong>${ord.id} (@${ord.customerUsername} - ${ord.customerName})</strong>
+                        <strong>${ord.id} (@${ord.customerUsername || 'user'} - ${ord.customerName})</strong>
                         <span style="color:#64748b;">${ord.date}</span>
                     </div>
-                    <div style="color:#475569; margin-bottom:0.4rem; font-size:0.85rem;">
-                        Items: ${ord.items}<br>
-                        Total: ${ord.totalPaid} | Phone: ${ord.phone}<br>
-                        Payment Account Name: <strong style="color: var(--primary);">${ord.paymentAccountName || 'Not Provided'}</strong>
+                    <div style="color:#475569; margin-bottom:0.5rem;">Items: ${ord.items} | Total: ${ord.totalPaid || 'N/A'} | Phone: ${ord.phone}</div>
+                    <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-bottom:0.5rem;">
+                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto; background: #16a34a;" onclick="confirmPaymentReceived(${index})">✓ Payment Received (Confirm)</button>
                     </div>
-                    <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top:0.5rem;">
-                        <button class="btn-primary" style="background: #059669; padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="confirmPaymentReceived(${index})">
-                            ✓ Payment Received & Confirm Order
-                        </button>
+                    <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
                         <select id="admin-status-${index}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1;">
                             <option value="Pending Payment Confirmation" ${ord.status.includes('Pending') ? 'selected' : ''}>Pending Payment Confirmation</option>
-                            <option value="Payment Confirmed - Processing" ${ord.status.includes('Confirmed') ? 'selected' : ''}>Payment Confirmed - Processing</option>
+                            <option value="Payment Confirmed - Processing" ${ord.status.includes('Payment Confirmed') ? 'selected' : ''}>Payment Confirmed - Processing</option>
+                            <option value="Ordered from Supplier / Hub" ${ord.status.includes('Supplier') ? 'selected' : ''}>Ordered from Supplier / Hub</option>
                             <option value="Shipped / In Transit" ${ord.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
+                            <option value="Out for Delivery" ${ord.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
                             <option value="Delivered Successfully" ${ord.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
                         </select>
-                        <button class="btn-secondary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateOrderStatus(${index})">Update Status</button>
+                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateOrderStatus(${index})">Update Status</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Global Sync for Payment Received button
         window.confirmPaymentReceived = function(index) {
-            globalState.orders[index].status = "Payment Confirmed - Order Processing";
+            globalState.orders[index].status = "Payment Confirmed - Processing";
             saveStateToFirebase();
-            showToast(`Payment verified for order ${globalState.orders[index].id}! Synced globally.`);
+            showToast(`Payment confirmed for order ${globalState.orders[index].id} and synced globally!`);
             renderAdminOrderList();
             renderRecentOrdersList();
         };
@@ -1359,31 +1538,41 @@
 
         window.adminCreatePromoCode = function() {
             const code = document.getElementById('admin-new-promo').value.trim().toUpperCase();
-            if (!code) return;
-            if (!globalState.promoCodes) globalState.promoCodes = [];
-            if (!globalState.promoCodes.includes(code)) {
-                globalState.promoCodes.push(code);
-                saveStateToFirebase();
-                document.getElementById('admin-new-promo').value = '';
-                renderAdminPromoList();
-                showToast(`Promo code ${code} created!`);
+            if (!code) {
+                alert("Please enter a valid promo code name.");
+                return;
             }
+            if (!globalState.promoCodes) globalState.promoCodes = [];
+            if (globalState.promoCodes.includes(code)) {
+                alert("This promo code already exists!");
+                return;
+            }
+
+            globalState.promoCodes.push(code);
+            saveStateToFirebase();
+            document.getElementById('admin-new-promo').value = '';
+            renderAdminPromoList();
+            showToast(`Promo code ${code} created successfully (5% off)!`);
         };
 
         window.adminDeletePromoCode = function(code) {
-            globalState.promoCodes = globalState.promoCodes.filter(c => c !== code);
-            saveStateToFirebase();
-            renderAdminPromoList();
-            showToast("Promo code deleted");
+            if (confirm(`Are you sure you want to delete promo code "${code}"?`)) {
+                globalState.promoCodes = globalState.promoCodes.filter(c => c !== code);
+                saveStateToFirebase();
+                renderAdminPromoList();
+                showToast("Promo code deleted");
+            }
         };
 
         function renderAdminPromoList() {
             const listContainer = document.getElementById('admin-promo-list');
             if (!listContainer) return;
+
             if (!globalState.promoCodes || globalState.promoCodes.length === 0) {
                 listContainer.innerHTML = '<span style="color:#64748b; font-size:0.85rem;">No active promo codes.</span>';
                 return;
             }
+
             listContainer.innerHTML = globalState.promoCodes.map(code => `
                 <div style="background: white; border: 1px solid var(--border); padding: 0.4rem 0.75rem; border-radius: 8px; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; font-family: monospace;">
                     <strong>${code}</strong> (5% OFF)
@@ -1395,22 +1584,24 @@
         function renderAdminProductList() {
             const listContainer = document.getElementById('admin-product-list');
             if (!listContainer) return;
+
             if (globalState.products.length === 0) {
-                listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem;">No products.</p>';
+                listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; margin: 1rem 0;">No products in inventory.</p>';
                 return;
             }
+
             listContainer.innerHTML = globalState.products.map(product => `
                 <div class="admin-product-row">
                     <div class="admin-product-info">
                         <img src="${product.images && product.images.length > 0 ? product.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'}" alt="">
                         <div style="overflow:hidden;">
                             <strong style="font-size: 0.9rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${product.name}</strong>
-                            <small style="color: #64748b; font-size: 0.75rem;">$${product.priceUSD} / ₦${product.priceNGN.toLocaleString()}</small>
+                            <small style="color: #64748b; font-size: 0.75rem;">$${product.priceUSD} / ₦${product.priceNGN.toLocaleString()} | Images: ${product.images ? product.images.length : 0} | Videos: ${product.videos ? product.videos.length : 0}</small>
                         </div>
                     </div>
                     <div class="admin-actions">
                         <button class="${product.isSoldOut ? 'btn-primary' : 'btn-secondary'}" style="font-size:0.75rem; padding:0.4rem 0.7rem;" onclick="toggleSoldOut(${product.id})">
-                            ${product.isSoldOut ? 'In Stock' : 'Sold Out'}
+                            ${product.isSoldOut ? 'Mark In Stock' : 'Mark Sold Out'}
                         </button>
                         <button class="btn-danger-small" onclick="deleteProduct(${product.id})">Delete</button>
                     </div>
@@ -1425,17 +1616,17 @@
                 saveStateToFirebase();
                 renderProducts();
                 renderAdminProductList();
-                showToast(`Updated stock status`);
+                showToast(`Updated stock status for ${product.name}`);
             }
         };
 
         window.deleteProduct = function(productId) {
-            if (confirm("Delete product?")) {
+            if (confirm("Are you sure you want to delete this product globally?")) {
                 globalState.products = globalState.products.filter(p => p.id !== productId);
                 saveStateToFirebase();
                 renderProducts();
                 renderAdminProductList();
-                showToast("Deleted");
+                showToast("Product deleted successfully");
             }
         };
 
@@ -1447,32 +1638,54 @@
             const shipping = document.getElementById('admin-shipping').value.trim();
 
             if (!name || isNaN(priceUSD) || isNaN(priceNGN)) {
-                alert('Please fill in product name and pricing.');
+                alert('Please fill in product name and pricing ($ and ₦).');
                 return;
             }
+
             if (adminSelectedImages.length < 3 || adminSelectedImages.length > 5) {
-                alert('Please select between 3 to 5 pictures.');
+                alert('Please select between 3 to 5 pictures for the product.');
                 return;
             }
 
             const addBtn = document.getElementById('admin-add-btn');
-            addBtn.innerText = "Processing files...";
+            addBtn.innerText = "Processing files & adding...";
             addBtn.disabled = true;
 
             try {
                 let imagesBase64 = [];
                 for (let i = 0; i < adminSelectedImages.length; i++) {
-                    const fallbackBase64 = await readFileAsBase64(adminSelectedImages[i]);
-                    imagesBase64.push(fallbackBase64);
+                    try {
+                        const compressedImg = await compressImage(adminSelectedImages[i], 800, 0.65);
+                        imagesBase64.push(compressedImg);
+                    } catch (imgErr) {
+                        console.warn("Image compression fallback triggered:", imgErr);
+                        try {
+                            const fallbackBase64 = await readFileAsBase64(adminSelectedImages[i]);
+                            imagesBase64.push(fallbackBase64);
+                        } catch (innerErr) {
+                            console.error("Failed to read image file:", innerErr);
+                        }
+                    }
+                }
+
+                if (imagesBase64.length === 0) {
+                    throw new Error("Could not process any of the selected images. Please try smaller files.");
                 }
 
                 let videosBase64 = [];
                 for (let i = 0; i < adminSelectedVideos.length; i++) {
-                    const vidBase64 = await readFileAsBase64(adminSelectedVideos[i]);
-                    videosBase64.push(vidBase64);
+                    if (adminSelectedVideos[i].size > 2 * 1024 * 1024) {
+                        throw new Error(`Video "${adminSelectedVideos[i].name}" exceeds 2MB limit. Please select a smaller video clip.`);
+                    }
+                    try {
+                        const vidBase64 = await readFileAsBase64(adminSelectedVideos[i]);
+                        videosBase64.push(vidBase64);
+                    } catch (vidErr) {
+                        console.warn("Video read warning, skipping video:", vidErr);
+                    }
                 }
 
-                globalState.products.push({ 
+                const newProduct = { 
                     id: Date.now(), 
                     name, 
                     priceUSD, 
@@ -1482,8 +1695,9 @@
                     videos: videosBase64, 
                     shipping: shipping || "Ships in 2 - 3 business days",
                     isSoldOut: false
-                });
+                };
 
+                globalState.products.push(newProduct);
                 saveStateToFirebase();
                 renderProducts();
                 renderAdminProductList();
@@ -1500,9 +1714,10 @@
                 
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
-                showToast('Product added successfully!');
+                showToast('Product successfully added and synced globally!');
             } catch (err) {
-                alert("Error processing files.");
+                console.error("Add product error:", err);
+                alert(err.message || "Error reading files. Make sure the video/image files are valid or smaller in size.");
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
             }
@@ -1517,26 +1732,69 @@
             });
         }
 
+        function compressImage(file, maxWidth, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+
+                            if (width > maxWidth) {
+                                height = Math.round((height * maxWidth) / width);
+                                width = maxWidth;
+                            }
+
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            resolve(canvas.toDataURL('image/jpeg', quality));
+                        } catch (err) {
+                            reject(err);
+                        }
+                    };
+                    img.onerror = function(err) {
+                        reject(err);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.onerror = function(err) {
+                    reject(err);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
         window.addToCart = function(event, productId) {
             if (event) event.stopPropagation();
             const product = globalState.products.find(p => p.id === productId);
             if (product.isSoldOut) {
-                alert("Sold out.");
+                alert("Sorry, this item is currently sold out.");
                 return;
             }
+
             const existingItem = cart.find(item => item.id === productId);
-            if (existingItem) existingItem.quantity++;
-            else cart.push({ ...product, quantity: 1 });
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
 
             updateCartUI();
-            showToast(`Added to cart!`);
+            showToast(`Added ${product.name} to cart!`);
         };
 
         window.changeQuantity = function(productId, delta) {
             const existingItem = cart.find(item => item.id === productId);
             if (existingItem) {
                 existingItem.quantity += delta;
-                if (existingItem.quantity <= 0) cart = cart.filter(item => item.id !== productId);
+                if (existingItem.quantity <= 0) {
+                    cart = cart.filter(item => item.id !== productId);
+                }
                 updateCartUI();
             }
         };
@@ -1544,14 +1802,14 @@
         window.removeFromCart = function(productId) {
             cart = cart.filter(item => item.id !== productId);
             updateCartUI();
-            showToast("Removed");
+            showToast("Item removed from cart");
         };
 
         function updateCartUI() {
             const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             document.getElementById('cart-count').innerText = totalCount;
+
             const cartItemsContainer = document.getElementById('cart-items');
-            
             if (cart.length === 0) {
                 cartItemsContainer.innerHTML = '<p style="color: #64748b; text-align: center; margin-top: 2rem;">Your cart drawer is empty.</p>';
                 document.getElementById('cart-total-usd').innerText = '$0.00';
@@ -1594,8 +1852,12 @@
         window.toggleCart = function() {
             const cartModal = document.getElementById('cart-modal');
             cartModal.classList.toggle('active');
-            if (cartModal.classList.contains('active')) document.body.classList.add('cart-open');
-            else document.body.classList.remove('cart-open');
+            
+            if (cartModal.classList.contains('active')) {
+                document.body.classList.add('cart-open');
+            } else {
+                document.body.classList.remove('cart-open');
+            }
         };
 
         initApp();
