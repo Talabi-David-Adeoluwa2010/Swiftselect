@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SwiftSelect - Premium Online Store</title>
+    <title>Swift Select - Premium Online Store</title>
     <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
@@ -25,10 +25,12 @@
         }
         body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 45px; }
         
+        /* Lock background scroll when cart drawer is active */
         body.cart-open {
             overflow: hidden;
         }
 
+        /* Announcement Bar */
         .announcement-bar { background: linear-gradient(90deg, #4f46e5, #9333ea); color: white; text-align: center; padding: 0.5rem; font-size: 0.85rem; font-weight: 500; }
 
         header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #0f172a; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
@@ -50,10 +52,12 @@
 
         .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
         
+        /* Hero Banner */
         .hero-banner { background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; padding: 1.5rem 2rem; border-radius: 20px; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.2); position: relative; overflow: hidden; }
         .hero-banner h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
         .hero-banner p { margin: 0; color: #c7d2fe; font-size: 0.9rem; max-width: 600px; line-height: 1.4; }
 
+        /* Collapsible Utilities Panel */
         .utilities-toggle-row { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
         .utility-toggle-btn { flex: 1; min-width: 200px; background: white; border: 1px solid var(--border); padding: 0.85rem 1.25rem; border-radius: 14px; font-weight: 700; color: #0f172a; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.01); transition: all 0.2s; }
         .utility-toggle-btn:hover { border-color: var(--primary); background: #f8fafc; }
@@ -62,12 +66,14 @@
         .collapsible-box.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Track Order Section */
         .track-section h3 { margin-top: 0; margin-bottom: 0.5rem; color: #0f172a; font-size: 1.15rem; }
         .track-row { display: flex; gap: 0.5rem; }
         .track-row input { flex-grow: 1; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-size: 16px; transition: border-color 0.2s; }
         .track-row input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
         .track-result-box { margin-top: 1rem; padding: 1.25rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border); font-size: 0.95rem; }
 
+        /* Recent Orders Section */
         .recent-orders-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
         .recent-orders-header h3 { margin: 0; color: #0f172a; font-size: 1.15rem; }
         .recent-orders-list { display: flex; flex-direction: column; gap: 0.75rem; max-height: 260px; overflow-y: auto; margin-top: 0.75rem; }
@@ -75,6 +81,7 @@
         .recent-order-item:hover { background: #f1f5f9; }
         .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
 
+        /* Sticky Search Bar */
         .search-container-wrapper { margin-bottom: 1.25rem; }
         .sticky-search-container { position: sticky; top: 73px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
         .sticky-search-container.is-stuck { box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(8px); }
@@ -86,6 +93,7 @@
 
         .section-title { font-size: 1.35rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; color: #0f172a; }
         
+        /* Product Grid */
         .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem; }
         @media(min-width: 768px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; } }
 
@@ -110,17 +118,21 @@
         .btn-marketplace:hover { background: #ea580c; }
         .btn-marketplace.disabled { background: #cbd5e1; cursor: not-allowed; }
 
+        /* Trust Strip */
         .trust-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 3rem 0 2rem; background: white; padding: 2rem; border-radius: 16px; border: 1px solid var(--border); text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
         .trust-item h4 { margin: 0 0 0.3rem; font-size: 1rem; font-weight: 700; color: #0f172a; }
         .trust-item p { margin: 0; font-size: 0.85rem; color: #64748b; }
 
+        /* Toast Notification */
         #toast { position: fixed; bottom: 45px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 0.85rem 1.75rem; border-radius: 35px; box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); max-width: 90vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
+        /* Footer */
         footer { text-align: center; padding: 2.5rem; background: #0f172a; color: #64748b; font-size: 0.9rem; margin-top: auto; border-top: 1px solid #1e293b; }
         .secret-admin { cursor: pointer; opacity: 0.2; user-select: none; transition: opacity 0.2s; padding: 0.2rem 0.5rem; }
         .secret-admin:hover { opacity: 1; color: #fff; }
 
+        /* Modals Common Style */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 1rem; box-sizing: border-box; }
         .modal.active { display: flex; }
         .modal-content { background: white; padding: 2.25rem; border-radius: 20px; width: 100%; max-width: 520px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -129,6 +141,7 @@
         .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 0.85rem 1rem; margin-bottom: 1.1rem; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; font-size: 16px; outline: none; background: #fff; transition: all 0.2s; }
         .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
 
+        /* Product Detail Modal Specifics */
         .detail-img-main { width: 100%; height: 300px; object-fit: cover; border-radius: 14px; margin-bottom: 1rem; background: #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .detail-thumbnails-grid { display: flex; gap: 0.5rem; overflow-x: auto; margin-bottom: 1rem; padding-bottom: 0.25rem; }
         .detail-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; background: #f1f5f9; flex-shrink: 0; transition: border-color 0.2s; }
@@ -137,6 +150,7 @@
         .detail-video { width: 100%; height: 220px; object-fit: cover; border-radius: 12px; background: #f1f5f9; }
         .shipping-badge { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.9rem; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
 
+        /* Admin Management Dashboard */
         .admin-modal-content { max-width: 800px !important; }
         .admin-section-box { background: #f8fafc; padding: 1.25rem; border-radius: 14px; margin-bottom: 1.5rem; border: 1px solid var(--border); }
         .admin-order-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; font-size: 0.9rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
@@ -145,176 +159,47 @@
         .admin-product-info img { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; }
         .admin-actions { display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0; }
 
+        /* Rating Stars Style */
         .rating-stars-input { display: flex; gap: 0.5rem; font-size: 1.75rem; cursor: pointer; color: #cbd5e1; margin-bottom: 1.25rem; }
         .rating-stars-input span.selected { color: var(--accent); }
 
-        .cart-modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            right: 0; 
-            width: 100%; 
-            max-width: 440px; 
-            height: 100vh; 
-            background: white; 
-            box-shadow: -15px 0 35px rgba(0,0,0,0.15); 
-            z-index: 1200; 
-            padding: 0; 
-            box-sizing: border-box; 
-            flex-direction: column; 
-            animation: slideInRight 0.3s ease; 
-        }
+        /* Cart Drawer */
+        .cart-modal { display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 440px; height: 100vh; background: white; box-shadow: -15px 0 35px rgba(0,0,0,0.15); z-index: 1200; padding: 0; box-sizing: border-box; flex-direction: column; animation: slideInRight 0.3s ease; }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .cart-modal.active { display: flex; }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 1.5rem; flex-shrink: 0; }
+        .close-btn { background: none; border: none; font-size: 1.75rem; cursor: pointer; color: #64748b; transition: color 0.2s; }
+        .close-btn:hover { color: #0f172a; }
+        .cart-items { flex: 1 1 auto; overflow-y: auto; margin: 0; padding: 1rem 1.5rem; min-height: 0; scrollbar-width: thin; }
+        .cart-items::-webkit-scrollbar { width: 6px; }
+        .cart-items::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .cart-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; }
+        .cart-item img { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; background: #f1f5f9; flex-shrink: 0; }
+        .cart-item-details { flex-grow: 1; min-width: 0; }
+        .cart-qty-controls { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
+        .cart-qty-btn { background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; width: 24px; height: 24px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .cart-qty-btn:hover { background: #e2e8f0; }
+        .cart-footer { border-top: 1px solid var(--border); padding: 1.25rem 1.5rem; flex-shrink: 0; background: #ffffff; box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03); }
+        .total-price { font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; display: flex; justify-content: space-between; color: #0f172a; flex-direction: column; gap: 0.3rem; }
+        .total-price .total-sub { font-size: 0.95rem; color: #64748b; font-weight: 600; }
+        #user-greeting { font-size: 0.9rem; color: #64748b; font-weight: 600; margin-right: 0.5rem; }
 
-        @keyframes slideInRight { 
-            from { transform: translateX(100%); } 
-            to { transform: translateX(0); } 
-        }
+        /* Auth Tabs */
+        .auth-tabs { display: flex; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+        .auth-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: 700; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-        .cart-modal.active { 
-            display: flex; 
+        /* Manual Transfer Info Box */
+        .opay-transfer-box {
+            background: #fffbeb;
+            border: 1px solid #fef3c7;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #b45309;
         }
-
-        .cart-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid var(--border); 
-            padding: 1.5rem; 
-            flex-shrink: 0; 
-        }
-
-        .close-btn { 
-            background: none; 
-            border: none; 
-            font-size: 1.75rem; 
-            cursor: pointer; 
-            color: #64748b; 
-            transition: color 0.2s; 
-        }
-
-        .close-btn:hover { 
-            color: #0f172a; 
-        }
-
-        .cart-items { 
-            flex: 1 1 auto;
-            overflow-y: auto; 
-            margin: 0; 
-            padding: 1rem 1.5rem; 
-            min-height: 0; 
-            scrollbar-width: thin; 
-        }
-
-        .cart-items::-webkit-scrollbar { 
-            width: 6px; 
-        }
-
-        .cart-items::-webkit-scrollbar-thumb { 
-            background: #cbd5e1; 
-            border-radius: 4px; 
-        }
-
-        .cart-item { 
-            display: flex; 
-            align-items: center; 
-            gap: 1rem; 
-            margin-bottom: 1rem; 
-            border-bottom: 1px solid #f1f5f9; 
-            padding-bottom: 1rem; 
-        }
-
-        .cart-item img { 
-            width: 65px; 
-            height: 65px; 
-            object-fit: cover; 
-            border-radius: 10px; 
-            background: #f1f5f9; 
-            flex-shrink: 0;
-        }
-
-        .cart-item-details { 
-            flex-grow: 1; 
-            min-width: 0; 
-        }
-
-        .cart-qty-controls {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.4rem;
-        }
-        .cart-qty-btn {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            color: #0f172a;
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-        .cart-qty-btn:hover {
-            background: #e2e8f0;
-        }
-
-        .cart-footer { 
-            border-top: 1px solid var(--border); 
-            padding: 1.25rem 1.5rem; 
-            flex-shrink: 0; 
-            background: #ffffff; 
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03);
-        }
-
-        .total-price { 
-            font-size: 1.25rem; 
-            font-weight: 800; 
-            margin-bottom: 1rem; 
-            display: flex; 
-            justify-content: space-between; 
-            color: #0f172a; 
-            flex-direction: column; 
-            gap: 0.3rem; 
-        }
-
-        .total-price .total-sub { 
-            font-size: 0.95rem; 
-            color: #64748b; 
-            font-weight: 600; 
-        }
-
-        #user-greeting { 
-            font-size: 0.9rem; 
-            color: #64748b; 
-            font-weight: 600; 
-            margin-right: 0.5rem; 
-        }
-
-        .auth-tabs { 
-            display: flex; 
-            margin-bottom: 1.25rem; 
-            border-bottom: 1px solid var(--border); 
-        }
-
-        .auth-tab { 
-            flex: 1; 
-            text-align: center; 
-            padding: 0.75rem; 
-            font-weight: 700; 
-            cursor: pointer; 
-            color: #64748b; 
-            border-bottom: 2px solid transparent; 
-            transition: all 0.2s; 
-        }
-
-        .auth-tab.active { 
-            color: var(--primary); 
-            border-bottom-color: var(--primary); 
-        }
+        .opay-transfer-box strong { color: #92400e; }
     </style>
 </head>
 <body>
@@ -338,11 +223,13 @@
     </header>
 
     <div class="container">
+        <!-- Hero Section -->
         <div class="hero-banner">
             <h1>Discover Premium Quality Essentials</h1>
-            <p>Handpicked products delivered globally with fast fulfillment and manual OPay prepaid ordering in USD ($) and NGN (₦).</p>
+            <p>Handpicked products delivered globally with fast fulfillment and manual OPay transfers in USD ($) and NGN (₦).</p>
         </div>
 
+        <!-- Utilities Action Buttons Bar -->
         <div class="utilities-toggle-row">
             <button class="utility-toggle-btn" onclick="toggleSection('track-box')">
                 <span>📦 Track Order Status</span>
@@ -354,6 +241,7 @@
             </button>
         </div>
 
+        <!-- Collapsible Track Order Section -->
         <div class="collapsible-box" id="track-box">
             <div class="track-section">
                 <h3>Track Your Order Status</h3>
@@ -366,6 +254,7 @@
             </div>
         </div>
 
+        <!-- Collapsible Recent Orders Section -->
         <div class="collapsible-box" id="recent-box">
             <div class="recent-orders-header">
                 <h3 id="recent-orders-title">Your Recent Orders</h3>
@@ -375,6 +264,7 @@
             <div class="recent-orders-list" id="recent-orders-list"></div>
         </div>
 
+        <!-- Sticky Search Bar -->
         <div class="search-container-wrapper" id="search-wrapper">
             <div class="sticky-search-container" id="sticky-search">
                 <div class="search-input-wrapper">
@@ -390,10 +280,11 @@
 
         <div class="product-grid" id="product-grid"></div>
 
+        <!-- Trust Badges Strip -->
         <div class="trust-strip">
             <div class="trust-item">
-                <h4>🔒 Direct Bank Transfer</h4>
-                <p>Secure manual OPay transfer</p>
+                <h4>🔒 Direct OPay Transfer</h4>
+                <p>Safe manual payment processing</p>
             </div>
             <div class="trust-item">
                 <h4>🚀 Fast Shipping</h4>
@@ -406,12 +297,14 @@
         </div>
     </div>
 
+    <!-- Toast Notification Popup -->
     <div id="toast">Item added to cart!</div>
 
     <footer>
-        <p>&copy; 2026 Swift Select. All rights reserved. <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
+        <p>&copy; 2026 Swift Select. All rights reserved. Admin Hotline: 08024300891 <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
     </footer>
 
+    <!-- AI Help & FAQ Modal -->
     <div class="modal" id="help-modal">
         <div class="modal-content" style="max-width: 600px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -420,7 +313,7 @@
             </div>
             
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; font-size: 0.9rem; color: #166534;">
-                <strong>Customer Care Hotline:</strong> <a href="tel:08024300891" style="color: #166534; font-weight: bold; text-decoration: underline;">08024300891</a><br>
+                <strong>Customer Care & Admin Hotline:</strong> <a href="tel:08024300891" style="color: #166534; font-weight: bold; text-decoration: underline;">08024300891</a><br>
                 <span style="font-size: 0.8rem; color: #15803d;">Tap the number to call directly or select a category below for instant AI responses.</span>
             </div>
 
@@ -428,7 +321,7 @@
                 <label style="font-size: 0.85rem; font-weight: 700; color: #0f172a; display: block; margin-bottom: 0.5rem;">Select Support Category:</label>
                 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
                     <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('shipping')">📦 Shipping & Delivery</button>
-                    <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('payment')">💳 Payments & OPay</button>
+                    <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('payment')">💳 Manual OPay Payments</button>
                     <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('orders')">📋 Order Tracking</button>
                 </div>
             </div>
@@ -443,6 +336,7 @@
         </div>
     </div>
 
+    <!-- Product Detail Modal -->
     <div class="modal" id="detail-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -462,6 +356,7 @@
         </div>
     </div>
 
+    <!-- User Account Authentication Modal -->
     <div class="modal" id="auth-modal">
         <div class="modal-content">
             <div class="auth-tabs">
@@ -469,6 +364,7 @@
                 <div class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Sign Up</div>
             </div>
 
+            <!-- Login Form -->
             <div id="login-form-container">
                 <h3>Welcome Back</h3>
                 <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Enter your Username or Email and password to access your account globally.</p>
@@ -478,6 +374,7 @@
                 <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
             </div>
 
+            <!-- Signup Form -->
             <div id="signup-form-container" style="display: none;">
                 <h3>Create Global Account</h3>
                 <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Sign up with a unique username so you can access your account on any device.</p>
@@ -491,6 +388,7 @@
         </div>
     </div>
 
+    <!-- Recommendations Modal -->
     <div class="modal" id="reviews-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -502,10 +400,19 @@
         </div>
     </div>
 
+    <!-- Billing & Checkout Modal (Manual OPay) -->
     <div class="modal" id="billing-modal">
         <div class="modal-content">
             <h3>Prepaid Checkout & Delivery</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Provide your accurate delivery information for manual OPay transfer fulfillment.</p>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Provide your accurate delivery information and complete your manual transfer to OPay.</p>
+            
+            <div class="opay-transfer-box">
+                <strong>OPay Transfer Details:</strong><br>
+                Bank Name: <strong>OPay</strong><br>
+                Account Name: <strong>Talabi Sunny Okunola</strong><br>
+                Account Number: <strong style="font-size: 1.1rem; font-family: monospace;">8024300891</strong>
+            </div>
+
             <input type="text" id="bill-address" placeholder="Street Address">
             <input type="text" id="bill-city" placeholder="City">
             <div style="display: flex; gap: 0.5rem;">
@@ -521,19 +428,18 @@
             </div>
             <div id="promo-feedback" style="font-size: 0.8rem; margin-top: -0.75rem; margin-bottom: 1rem; font-weight: 600;"></div>
 
-            <div style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; margin-bottom: 1.1rem; font-size: 0.9rem;">
-                <strong>Bank Transfer Instructions:</strong><br>
-                Please transfer the exact total amount to the OPay account below:<br><br>
-                <strong>Bank Name:</strong> OPay<br>
-                <strong>Account Name:</strong> Talabi Sunny Okunola<br>
-                <strong>Account Number:</strong> 8024300891<br>
-            </div>
+            <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Payment Method:</label>
+            <select id="bill-payment">
+                <option value="OPay Manual Transfer">Manual Bank Transfer via OPay</option>
+            </select>
 
-            <button class="btn-primary" id="made-payment-btn" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">I Have Made Payment</button>
+            <!-- Once-press payment button to prevent duplicate orders -->
+            <button class="btn-primary" id="made-payment-btn" onclick="completeManualPaymentOrder()" style="width:100%; margin-bottom:0.75rem;">I Have Made Payment</button>
             <button class="btn-secondary" onclick="toggleBillingModal()" style="width:100%;">Cancel</button>
         </div>
     </div>
 
+    <!-- Customer Rating & Review Modal -->
     <div class="modal" id="rating-modal">
         <div class="modal-content">
             <h3>⭐ Rate Your Delivered Order</h3>
@@ -555,6 +461,7 @@
         </div>
     </div>
 
+    <!-- Admin Panel Modal -->
     <div class="modal" id="admin-modal">
         <div class="modal-content admin-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
@@ -564,8 +471,8 @@
             
             <div class="admin-section-box">
                 <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders Tracker</h4>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Review incoming orders, verify manual payments via OPay, and click <strong>"Payment Received"</strong> to sync approval globally back to the customer.</p>
-                <div id="admin-orders-list" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;"></div>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and countries are shown below. Use the <strong>"Payment Received"</strong> button or update status to <strong>"Delivered Successfully"</strong>.</p>
+                <div id="admin-orders-list" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;"></div>
             </div>
 
             <div class="admin-section-box">
@@ -606,6 +513,7 @@
         </div>
     </div>
 
+    <!-- Slide-out Cart Drawer -->
     <div class="cart-modal" id="cart-modal">
         <div class="cart-header">
             <h3 style="margin:0;">Your Shopping Cart</h3>
@@ -629,6 +537,7 @@
         </div>
     </div>
 
+    <!-- IndexedDB Helper & Firebase App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -727,7 +636,7 @@
             ],
             orders: [],
             reviews: [
-                { name: "@david_t", rating: 5, comment: "Super fast shipping to the US and excellent product quality. Highly recommend Swift Select!", date: "10/08/2026" },
+                { name: "@david_t", rating: 5, comment: "Super fast shipping and excellent product quality. Highly recommend Swift Select!", date: "10/08/2026" },
                 { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery.", date: "11/08/2026" }
             ],
             promoCodes: ["SWIFT5"] 
@@ -757,12 +666,12 @@
                 { q: "Do you ship worldwide?", a: "Yes, we fulfill orders globally with fast priority delivery hubs." }
             ],
             payment: [
-                { q: "What payment methods are accepted?", a: "We accept secure manual bank transfers via OPay (Account Name: Talabi Sunny Okunola, Account Number: 8024300891)." },
-                { q: "How do I confirm my payment?", a: "After transferring funds to the OPay account, click 'I Have Made Payment' to notify the store admin." }
+                { q: "How do manual OPay payments work?", a: "Transfer the exact total to OPay Account: 8024300891 (Talabi Sunny Okunola), then click 'I Have Made Payment' to submit your order." },
+                { q: "How do I know my payment is confirmed?", a: "Once the admin verifies your transfer in the dashboard, your order status updates globally to 'Payment Confirmed & Processing'." }
             ],
             orders: [
                 { q: "How do I track my order?", a: "You can use the 'Track Order Status' section on the main dashboard by entering your unique Order ID (e.g., SWIFT-XXXXXX)." },
-                { q: "Can I cancel or change my order?", a: "Orders are processed quickly. If you need immediate assistance, please call our customer care hotline at 08024300891." }
+                { q: "Can I cancel or change my order?", a: "Orders are processed quickly. If you need immediate assistance, please call our admin hotline at 08024300891." }
             ]
         };
 
@@ -869,7 +778,7 @@
                             break;
                         }
                         if (file.size > 2 * 1024 * 1024) {
-                            alert(`Video "${file.name}" is too large (>2MB). Please upload a smaller video clip to ensure instant sync.`);
+                            alert(`Video "${file.name}" is too large (>2MB). Please upload a smaller video clip.`);
                             continue;
                         }
                         adminSelectedVideos.push(file);
@@ -1183,6 +1092,14 @@
             appliedDiscountPercent = 0;
             document.getElementById('bill-promo').value = '';
             document.getElementById('promo-feedback').innerText = '';
+            
+            // Re-enable the payment button when opening the modal
+            const payBtn = document.getElementById('made-payment-btn');
+            if (payBtn) {
+                payBtn.disabled = false;
+                payBtn.innerText = "I Have Made Payment";
+                payBtn.style.opacity = "1";
+            }
             updateCartUI();
         };
 
@@ -1210,17 +1127,26 @@
             }
         };
 
-        window.completeOrder = function() {
-            const address = document.getElementById('bill-address').value;
-            const city = document.getElementById('bill-city').value;
-            const state = document.getElementById('bill-state').value;
-            const postal = document.getElementById('bill-postal').value;
-            const country = document.getElementById('bill-country').value;
-            const phone = document.getElementById('bill-phone').value;
+        // Once-press manual payment checkout function
+        window.completeManualPaymentOrder = function() {
+            const address = document.getElementById('bill-address').value.trim();
+            const city = document.getElementById('bill-city').value.trim();
+            const state = document.getElementById('bill-state').value.trim();
+            const postal = document.getElementById('bill-postal').value.trim();
+            const country = document.getElementById('bill-country').value.trim();
+            const phone = document.getElementById('bill-phone').value.trim();
 
             if (!address || !city || !state || !postal || !country || !phone) {
                 alert("Please fill in all required delivery information fields.");
                 return;
+            }
+
+            // Disable button immediately to prevent multiple presses/orders
+            const payBtn = document.getElementById('made-payment-btn');
+            if (payBtn) {
+                payBtn.disabled = true;
+                payBtn.innerText = "Processing Order...";
+                payBtn.style.opacity = "0.6";
             }
 
             let subtotalUSD = cart.reduce((sum, item) => sum + (item.priceUSD * item.quantity), 0);
@@ -1233,10 +1159,6 @@
             const orderId = "SWIFT-" + Math.floor(100000 + Math.random() * 900000);
             const orderItemsText = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
 
-            const madePaymentBtn = document.getElementById('made-payment-btn');
-            madePaymentBtn.disabled = true;
-            madePaymentBtn.innerText = "Submitting Order...";
-
             const newOrderRecord = {
                 id: orderId,
                 customerUsername: currentUser.username,
@@ -1246,7 +1168,7 @@
                 address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 items: orderItemsText,
                 totalPaid: `$${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()} (OPay Manual Transfer)`,
-                status: "Pending Payment Confirmation",
+                status: "Pending Admin Payment Confirmation",
                 date: new Date().toLocaleDateString(),
                 hasReviewed: false
             };
@@ -1262,20 +1184,17 @@
                 customer_phone: phone,
                 customer_address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 order_items: orderItemsText,
-                payment_method: "OPay Manual Transfer (Account: 8024300891, Name: Talabi Sunny Okunola)"
+                payment_method: "OPay Manual Transfer (Account: 8024300891 - Talabi Sunny Okunola)"
             };
 
+            // EmailJS dispatch to talabidavid275@gmail.com
             emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams)
                 .then(function(response) {
-                    alert(`Order placed successfully! Your Order ID is: ${orderId}\nPlease complete your OPay transfer to Talabi Sunny Okunola (8024300891). An email notification has been sent.`);
+                    alert(`Order successful! Your Order ID is: ${orderId}\nAdmin notification sent to talabidavid275@gmail.com.`);
                     finalizeOrderCleanUp();
-                    madePaymentBtn.disabled = false;
-                    madePaymentBtn.innerText = "I Have Made Payment";
                 }, function(error) {
-                    alert(`Order placed successfully! Your Order ID is: ${orderId}\nPlease complete your OPay transfer to Talabi Sunny Okunola (8024300891).\n(Note: Email alert failed to dispatch, but order is saved globally).`);
+                    alert(`Order successful! Your Order ID is: ${orderId}\n(Note: Email alert failed to dispatch, but order is saved globally).`);
                     finalizeOrderCleanUp();
-                    madePaymentBtn.disabled = false;
-                    madePaymentBtn.innerText = "I Have Made Payment";
                 });
         };
 
@@ -1316,7 +1235,7 @@
                     <p style="margin: 0 0 0.5rem;"><strong>Order ID:</strong> ${found.id}</p>
                     <p style="margin: 0 0 0.5rem;"><strong>Items:</strong> ${found.items}</p>
                     <p style="margin: 0 0 0.5rem;"><strong>Total:</strong> ${found.totalPaid}</p>
-                    <p style="margin: 0 0 0.5rem;"><strong>Delivery Status:</strong> <span style="color: var(--primary); font-weight: 700;">${found.status}</span></p>
+                    <p style="margin: 0 0 0.5rem;"><strong>Delivery & Payment Status:</strong> <span style="color: var(--primary); font-weight: 700;">${found.status}</span></p>
                     <p style="margin: 0; font-size: 0.8rem; color: #64748b;">Placed on: ${found.date}</p>
                 `;
             } else {
@@ -1501,14 +1420,11 @@
                         <span style="color:#64748b;">${ord.date}</span>
                     </div>
                     <div style="color:#475569; margin-bottom:0.5rem;">Items: ${ord.items} | Total: ${ord.totalPaid || 'N/A'} | Phone: ${ord.phone}</div>
-                    <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-bottom:0.5rem;">
-                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto; background: #16a34a;" onclick="confirmPaymentReceived(${index})">✓ Payment Received (Confirm)</button>
-                    </div>
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                        <button class="btn-primary" style="background:#16a34a; padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="confirmPaymentReceived(${index})">✓ Payment Received</button>
                         <select id="admin-status-${index}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1;">
-                            <option value="Pending Payment Confirmation" ${ord.status.includes('Pending') ? 'selected' : ''}>Pending Payment Confirmation</option>
-                            <option value="Payment Confirmed - Processing" ${ord.status.includes('Payment Confirmed') ? 'selected' : ''}>Payment Confirmed - Processing</option>
-                            <option value="Ordered from Supplier / Hub" ${ord.status.includes('Supplier') ? 'selected' : ''}>Ordered from Supplier / Hub</option>
+                            <option value="Pending Admin Payment Confirmation" ${ord.status.includes('Pending') ? 'selected' : ''}>Pending Admin Payment Confirmation</option>
+                            <option value="Payment Confirmed & Processing" ${ord.status.includes('Payment Confirmed') ? 'selected' : ''}>Payment Confirmed & Processing</option>
                             <option value="Shipped / In Transit" ${ord.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
                             <option value="Out for Delivery" ${ord.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
                             <option value="Delivered Successfully" ${ord.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
@@ -1519,10 +1435,11 @@
             `).join('');
         }
 
+        // Global sync payment received button function
         window.confirmPaymentReceived = function(index) {
-            globalState.orders[index].status = "Payment Confirmed - Processing";
+            globalState.orders[index].status = "Payment Confirmed & Processing";
             saveStateToFirebase();
-            showToast(`Payment confirmed for order ${globalState.orders[index].id} and synced globally!`);
+            showToast(`Payment confirmed for Order ${globalState.orders[index].id} (Synced globally)!`);
             renderAdminOrderList();
             renderRecentOrdersList();
         };
@@ -1668,10 +1585,6 @@
                     }
                 }
 
-                if (imagesBase64.length === 0) {
-                    throw new Error("Could not process any of the selected images. Please try smaller files.");
-                }
-
                 let videosBase64 = [];
                 for (let i = 0; i < adminSelectedVideos.length; i++) {
                     if (adminSelectedVideos[i].size > 2 * 1024 * 1024) {
@@ -1717,7 +1630,7 @@
                 showToast('Product successfully added and synced globally!');
             } catch (err) {
                 console.error("Add product error:", err);
-                alert(err.message || "Error reading files. Make sure the video/image files are valid or smaller in size.");
+                alert(err.message || "Error reading files.");
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
             }
@@ -1757,14 +1670,10 @@
                             reject(err);
                         }
                     };
-                    img.onerror = function(err) {
-                        reject(err);
-                    };
+                    img.onerror = function(err) { reject(err); };
                     img.src = e.target.result;
                 };
-                reader.onerror = function(err) {
-                    reject(err);
-                };
+                reader.onerror = function(err) { reject(err); };
                 reader.readAsDataURL(file);
             });
         }
