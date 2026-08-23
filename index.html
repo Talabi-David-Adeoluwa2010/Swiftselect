@@ -180,8 +180,23 @@
         .auth-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: 700; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; }
         .auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-        .payment-info-box { background: #fef3c7; border: 1px solid #f59e0b; padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; font-size: 0.85rem; color: #92400e; }
-        .payment-info-box strong { color: #78350f; }
+        /* Sample Look-alike Deposit Modal Styles */
+        .deposit-modal-box { background: #ffffff; border-radius: 20px; overflow: hidden; width: 100%; max-width: 480px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .deposit-header { background: #2563eb; color: white; padding: 1.5rem 1rem; text-align: center; position: relative; }
+        .deposit-header h4 { margin: 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
+        .deposit-header h2 { margin: 0.4rem 0 0.5rem; font-size: 1.65rem; font-weight: 800; }
+        .deposit-header p { margin: 0; font-size: 0.85rem; opacity: 0.95; }
+        .deposit-close-btn { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; opacity: 0.9; }
+        .deposit-close-btn:hover { opacity: 1; }
+        
+        .deposit-body { padding: 1.25rem 1.5rem 1.5rem; max-height: 75vh; overflow-y: auto; }
+        .deposit-warning { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.8rem; font-weight: 600; text-align: center; margin-bottom: 1rem; line-height: 1.4; }
+        
+        .deposit-field-card { background: #f8fafc; border: 1px solid var(--border); padding: 0.75rem 1rem; border-radius: 12px; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; }
+        .deposit-field-label { font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 0.15rem; }
+        .deposit-field-val { font-size: 0.95rem; font-weight: 700; color: #0f172a; font-family: monospace; }
+        .copy-btn { background: #2563eb; color: white; border: none; padding: 0.35rem 0.85rem; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .copy-btn:hover { background: #1d4ed8; }
 
         .paysw-badge-footer { margin-top: 0.75rem; background-color: #059669; color: white; padding: 0.5rem 0.9rem; border-radius: 10px; text-align: center; font-size: 0.85rem; font-weight: 700; }
         .paysw-floating-badge { position: fixed; bottom: 20px; right: 20px; background-color: #059669; color: white; padding: 0.6rem 1rem; border-radius: 30px; font-size: 0.8rem; font-weight: 700; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35); z-index: 1100; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; transition: transform 0.2s ease; }
@@ -379,20 +394,12 @@
         </div>
     </div>
 
-    <!-- Billing & Checkout Modal with OPay Details & Payment Account Name -->
+    <!-- Step 1: Billing & Delivery Details Form Modal -->
     <div class="modal" id="billing-modal">
         <div class="modal-content">
-            <h3>Manual Bank Transfer Checkout</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Provide your accurate delivery information and transfer funds to our official OPay account below.</p>
+            <h3>Delivery & Contact Information</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Provide your accurate delivery details before proceeding to your manual OPay transfer deposit details.</p>
             
-            <div class="payment-info-box">
-                <strong>OPay Account Transfer Details:</strong><br>
-                Bank Name: <strong>OPay</strong><br>
-                Account Number: <strong style="font-size: 1.1rem; font-family: monospace;">8024300891</strong><br>
-                Account Name: <strong>Talabi Sunny Okunola</strong><br>
-                <span style="font-size: 0.78rem; display:block; margin-top:0.3rem;">Please transfer the exact total amount and enter your payment account name below.</span>
-            </div>
-
             <input type="text" id="bill-address" placeholder="Street Address">
             <input type="text" id="bill-city" placeholder="City">
             <div style="display: flex; gap: 0.5rem;">
@@ -402,7 +409,6 @@
             <input type="text" id="bill-country" placeholder="Country (e.g. Nigeria, Ghana, US)">
             <input type="text" id="bill-phone" placeholder="Phone Number (08024300891 format)">
             
-            <!-- Payment Account Name Added -->
             <input type="text" id="bill-account-name" placeholder="Your Payment Account Name (Name used to transfer funds)">
 
             <div style="display: flex; gap: 0.5rem; margin-bottom: 1.1rem;">
@@ -411,9 +417,86 @@
             </div>
             <div id="promo-feedback" style="font-size: 0.8rem; margin-top: -0.75rem; margin-bottom: 1rem; font-weight: 600;"></div>
 
-            <!-- Once press button to prevent multiple orders -->
-            <button class="btn-primary" id="make-payment-btn" onclick="completeManualOrder()" style="width:100%; margin-bottom:0.75rem;">I Have Made Payment</button>
+            <button class="btn-primary" onclick="proceedToDepositModal()" style="width:100%; margin-bottom:0.75rem;">Proceed to Transfer Details</button>
             <button class="btn-secondary" onclick="toggleBillingModal()" style="width:100%;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Step 2: Sample Look-alike Deposit Modal with Copy Buttons -->
+    <div class="modal" id="deposit-modal">
+        <div class="deposit-modal-box">
+            <div class="deposit-header">
+                <button class="deposit-close-btn" onclick="toggleDepositModal()">&times;</button>
+                <h4>Deposit</h4>
+                <h2 id="deposit-amount-display">₦ 0.00</h2>
+                <p>Make a transfer of the exact amount to the account below</p>
+            </div>
+            <div class="deposit-body">
+                <div class="deposit-warning">
+                    This account is valid for one time. Please do not transfer multiple times.
+                </div>
+
+                <div class="deposit-field-card">
+                    <div>
+                        <div class="deposit-field-label">Account Number</div>
+                        <div class="deposit-field-val" id="deposit-acc-num">8024300891</div>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('8024300891')">Copy</button>
+                </div>
+
+                <div class="deposit-field-card">
+                    <div>
+                        <div class="deposit-field-label">Bank Name</div>
+                        <div class="deposit-field-val">OPAY</div>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('OPAY')">Copy</button>
+                </div>
+
+                <div class="deposit-field-card">
+                    <div>
+                        <div class="deposit-field-label">Account Name</div>
+                        <div class="deposit-field-val">Talabi Sunny Okunola</div>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('Talabi Sunny Okunola')">Copy</button>
+                </div>
+
+                <button class="btn-primary" id="make-payment-btn" onclick="completeManualOrder()" style="width:100%; margin: 1rem 0 0.75rem; padding: 0.85rem; font-size: 1rem; background: #2563eb;">I HAVE MADE THE PAYMENT</button>
+                
+                <div style="text-align: center; font-size: 0.8rem; color: #64748b; line-height: 1.5;">
+                    If you have any questions, connect us by email.<br>
+                    Email address: <a href="mailto:talabidavid275@gmail.com" style="color: #2563eb; text-decoration: underline;">talabidavid275@gmail.com</a><br>
+                    Customer Service: <a href="tel:08024300891" style="color: #2563eb; text-decoration: underline;">08024300891</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: Verifying Payment Loader Modal -->
+    <div class="modal" id="verifying-modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 2.5rem 1.5rem;">
+            <div style="font-size: 3rem; margin-bottom: 0.75rem;">⏳</div>
+            <h3 style="margin: 0 0 0.5rem; color: #0f172a; font-size: 1.35rem;">Verifying Payment...</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin: 0; line-height: 1.5;">Please wait while we sync your payment notification globally across devices.</p>
+        </div>
+    </div>
+
+    <!-- Step 4: Order Status Update Pending Confirmation Modal -->
+    <div class="modal" id="status-confirmation-modal">
+        <div class="deposit-modal-box">
+            <div class="deposit-header" style="background: #2563eb;">
+                <button class="deposit-close-btn" onclick="closeStatusConfirmationModal()">&times;</button>
+                <h4 style="letter-spacing: 0.5px;">Payment Verification</h4>
+                <h2 style="font-size: 1.35rem; margin: 0.2rem 0;">SwiftSelect</h2>
+                <p style="font-size: 0.75rem; opacity: 0.9;">Order Status Update</p>
+            </div>
+            <div class="deposit-body" style="text-align: center; padding: 1.75rem 1.5rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⏳</div>
+                <div style="background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; padding: 0.6rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-block; margin-bottom: 1rem;">
+                    YOUR ORDER PAYMENT IS PENDING
+                </div>
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 1.5rem; line-height: 1.5;">Your order is being reviewed by the administrator click continue below to view your order status</p>
+                <button class="btn-primary" onclick="closeStatusConfirmationModal()" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; background: #2563eb;">CONTINUE</button>
+            </div>
         </div>
     </div>
 
@@ -1005,11 +1088,30 @@
             appliedDiscountPercent = 0;
             document.getElementById('bill-promo').value = '';
             document.getElementById('promo-feedback').innerText = '';
-            // Reset "I have made payment" button state
-            const payBtn = document.getElementById('make-payment-btn');
-            payBtn.disabled = false;
-            payBtn.innerText = "I Have Made Payment";
-            updateCartUI();
+        };
+
+        window.toggleDepositModal = function() {
+            document.getElementById('deposit-modal').classList.toggle('active');
+        };
+
+        window.toggleVerifyingModal = function() {
+            document.getElementById('verifying-modal').classList.toggle('active');
+        };
+
+        window.toggleStatusConfirmationModal = function() {
+            document.getElementById('status-confirmation-modal').classList.toggle('active');
+        };
+
+        window.closeStatusConfirmationModal = function() {
+            document.getElementById('status-confirmation-modal').classList.remove('active');
+        };
+
+        window.copyToClipboard = function(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Copied: " + text);
+            }).catch(() => {
+                alert("Failed to copy text.");
+            });
         };
 
         window.applyPromoCode = function() {
@@ -1036,8 +1138,8 @@
             }
         };
 
-        // Once-Press Manual Order Completion with Payment Account Name & EmailJS
-        window.completeManualOrder = function() {
+        // Transition from billing info to the Sample Look-alike Deposit Modal
+        window.proceedToDepositModal = function() {
             const address = document.getElementById('bill-address').value.trim();
             const city = document.getElementById('bill-city').value.trim();
             const state = document.getElementById('bill-state').value.trim();
@@ -1051,10 +1153,32 @@
                 return;
             }
 
-            // Disable button immediately to prevent multiple presses / double orders
-            const payBtn = document.getElementById('make-payment-btn');
-            payBtn.disabled = true;
-            payBtn.innerText = "Processing Order...";
+            let subtotalUSD = cart.reduce((sum, item) => sum + (item.priceUSD * item.quantity), 0);
+            let subtotalNGN = cart.reduce((sum, item) => sum + (item.priceNGN * item.quantity), 0);
+            if (appliedDiscountPercent === 5) {
+                subtotalUSD *= 0.95;
+                subtotalNGN *= 0.95;
+            }
+
+            // Update the deposit amount display in the sample layout modal
+            document.getElementById('deposit-amount-display').innerText = `₦ ${Math.round(subtotalNGN).toLocaleString()}.00`;
+
+            toggleBillingModal();
+            toggleDepositModal();
+        };
+
+        // Complete Order with Verifying Loader and Pending Confirmation Modal
+        window.completeManualOrder = function() {
+            const address = document.getElementById('bill-address').value.trim();
+            const city = document.getElementById('bill-city').value.trim();
+            const state = document.getElementById('bill-state').value.trim();
+            const postal = document.getElementById('bill-postal').value.trim();
+            const country = document.getElementById('bill-country').value.trim();
+            const phone = document.getElementById('bill-phone').value.trim();
+            const paymentAccountName = document.getElementById('bill-account-name').value.trim();
+
+            toggleDepositModal();
+            toggleVerifyingModal();
 
             let subtotalUSD = cart.reduce((sum, item) => sum + (item.priceUSD * item.quantity), 0);
             let subtotalNGN = cart.reduce((sum, item) => sum + (item.priceNGN * item.quantity), 0);
@@ -1085,7 +1209,6 @@
             saveStateToFirebase();
             renderRecentOrdersList();
 
-            // Send notification email to talabidavid275@gmail.com using EmailJS
             const templateParams = {
                 order_id: orderId,
                 customer_name: currentUser.name,
@@ -1098,21 +1221,20 @@
                 payment_method: "Manual OPay Transfer (Account Name: " + paymentAccountName + ")"
             };
 
-            emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams)
-                .then(function(response) {
-                    alert(`Order placed successfully! Your Order ID is: ${orderId}\nAn order notification has been emailed to talabidavid275@gmail.com.`);
-                    finalizeOrderCleanUp();
-                }, function(error) {
-                    alert(`Order placed successfully! Your Order ID is: ${orderId}\n(Note: Email notification failed to send, but order is recorded globally).`);
-                    finalizeOrderCleanUp();
-                });
+            emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams).catch(function(error) {});
+
+            // Simulate the verification loader display duration, then show confirmation modal
+            setTimeout(() => {
+                toggleVerifyingModal();
+                toggleStatusConfirmationModal();
+                finalizeOrderCleanUp();
+            }, 2000);
         };
 
         function finalizeOrderCleanUp() {
             cart = [];
             appliedDiscountPercent = 0;
             updateCartUI();
-            toggleBillingModal();
 
             document.getElementById('bill-address').value = '';
             document.getElementById('bill-city').value = '';
@@ -1302,7 +1424,6 @@
             renderAdminPromoList();
         }
 
-        // Admin Order List with "Payment Received & Confirm Order" Button
         function renderAdminOrderList() {
             const listContainer = document.getElementById('admin-orders-list');
             if (!listContainer) return;
@@ -1339,7 +1460,6 @@
             `).join('');
         }
 
-        // Global Sync for Payment Received button
         window.confirmPaymentReceived = function(index) {
             globalState.orders[index].status = "Payment Confirmed - Order Processing";
             saveStateToFirebase();
