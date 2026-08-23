@@ -1465,7 +1465,7 @@
             ord.status = "Payment Confirmed - Order Processing";
             saveStateToFirebase();
 
-            // EmailJS template integration for confirmed payment
+            // EmailJS template integration for confirmed payment (Updated to template_hv2kyh6)
             const templateParams = {
                 order_id: ord.id,
                 customer_name: ord.customerName,
@@ -1475,8 +1475,7 @@
                 total_amount: ord.totalPaid
             };
 
-            // Replace 'template_payment_confirmed' with your actual EmailJS template ID for payment confirmation
-            emailjs.send("Swift_alerts", "template_payment_confirmed", templateParams).catch(function(error) {
+            emailjs.send("Swift_alerts", "template_hv2kyh6", templateParams).catch(function(error) {
                 console.error("EmailJS payment confirmation notification failed:", error);
             });
 
