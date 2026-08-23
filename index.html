@@ -1461,9 +1461,26 @@
         }
 
         window.confirmPaymentReceived = function(index) {
-            globalState.orders[index].status = "Payment Confirmed - Order Processing";
+            const ord = globalState.orders[index];
+            ord.status = "Payment Confirmed - Order Processing";
             saveStateToFirebase();
-            showToast(`Payment verified for order ${globalState.orders[index].id}! Synced globally.`);
+
+            // EmailJS template integration for confirmed payment
+            const templateParams = {
+                order_id: ord.id,
+                customer_name: ord.customerName,
+                customer_email: ord.customerEmail,
+                customer_address: ord.address,
+                order_items: ord.items,
+                total_amount: ord.totalPaid
+            };
+
+            // Replace 'template_payment_confirmed' with your actual EmailJS template ID for payment confirmation
+            emailjs.send("Swift_alerts", "template_payment_confirmed", templateParams).catch(function(error) {
+                console.error("EmailJS payment confirmation notification failed:", error);
+            });
+
+            showToast(`Payment verified for order ${ord.id}! Customer notified via email.`);
             renderAdminOrderList();
             renderRecentOrdersList();
         };
