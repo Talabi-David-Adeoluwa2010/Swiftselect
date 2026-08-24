@@ -180,7 +180,6 @@
         .auth-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: 700; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; }
         .auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-        /* Sample Look-alike Deposit Modal Styles */
         .deposit-modal-box { background: #ffffff; border-radius: 20px; overflow: hidden; width: 100%; max-width: 480px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
         .deposit-header { background: #2563eb; color: white; padding: 1.5rem 1rem; text-align: center; position: relative; }
         .deposit-header h4 { margin: 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
@@ -227,7 +226,7 @@
     <div class="container">
         <div class="hero-banner">
             <h1>Discover Premium Quality Essentials</h1>
-            <p>Handpicked products delivered globally with fast fulfillment and manual OPay bank transfers in USD ($) and NGN (₦).</p>
+            <p>Handpicked products delivered globally with fast fulfillment and manual OPay bank transfers in USD and NGN (₦).</p>
         </div>
 
         <div class="utilities-toggle-row">
@@ -394,7 +393,6 @@
         </div>
     </div>
 
-    <!-- Step 1: Billing & Delivery Details Form Modal -->
     <div class="modal" id="billing-modal">
         <div class="modal-content">
             <h3>Delivery & Contact Information</h3>
@@ -422,7 +420,6 @@
         </div>
     </div>
 
-    <!-- Step 2: Sample Look-alike Deposit Modal with Copy Buttons -->
     <div class="modal" id="deposit-modal">
         <div class="deposit-modal-box">
             <div class="deposit-header">
@@ -471,7 +468,6 @@
         </div>
     </div>
 
-    <!-- Step 3: Verifying Payment Loader Modal -->
     <div class="modal" id="verifying-modal">
         <div class="modal-content" style="max-width: 400px; text-align: center; padding: 2.5rem 1.5rem;">
             <div style="font-size: 3rem; margin-bottom: 0.75rem;">⏳</div>
@@ -480,7 +476,6 @@
         </div>
     </div>
 
-    <!-- Step 4: Order Status Update Pending Confirmation Modal -->
     <div class="modal" id="status-confirmation-modal">
         <div class="deposit-modal-box">
             <div class="deposit-header" style="background: #2563eb;">
@@ -521,7 +516,6 @@
         </div>
     </div>
 
-    <!-- Admin Panel Modal with "Payment Received" Button -->
     <div class="modal" id="admin-modal">
         <div class="modal-content admin-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
@@ -549,7 +543,7 @@
                 <div id="add-product-form-container">
                     <input type="text" id="admin-name" placeholder="Product Name">
                     <div style="display: flex; gap: 0.5rem;">
-                        <input type="number" step="0.01" id="admin-price-usd" placeholder="Price ($USD)">
+                        <input type="number" step="0.01" id="admin-price-usd" placeholder="Price (USD)">
                         <input type="number" id="admin-price-ngn" placeholder="Price (₦NGN)">
                     </div>
                     <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
@@ -583,8 +577,8 @@
         <div class="cart-footer">
             <div class="total-price">
                 <div style="display: flex; justify-content: space-between;">
-                    <span>Subtotal ($):</span>
-                    <span id="cart-total-usd">$0.00</span>
+                    <span>Subtotal (USD):</span>
+                    <span id="cart-total-usd">0.00</span>
                 </div>
                 <div style="display: flex; justify-content: space-between;" class="total-sub">
                     <span>Subtotal (₦):</span>
@@ -598,7 +592,6 @@
         </div>
     </div>
 
-    <!-- Firebase & IndexedDB Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -866,8 +859,8 @@
             const originalUSD = (product.priceUSD * 1.4).toFixed(2);
             const originalNGN = Math.round(product.priceNGN * 1.4);
             return `
-                <span class="price-sub">$${originalUSD} / ₦${originalNGN.toLocaleString()}</span>
-                <span class="current-price">$${product.priceUSD.toFixed(2)} / ₦${product.priceNGN.toLocaleString()}</span>
+                <span class="price-sub">USD ${originalUSD} / ₦${originalNGN.toLocaleString()}</span>
+                <span class="current-price">USD ${product.priceUSD.toFixed(2)} / ₦${product.priceNGN.toLocaleString()}</span>
             `;
         }
 
@@ -904,8 +897,8 @@
 
             document.getElementById('detail-name').innerText = product.name;
             document.getElementById('detail-price').innerHTML = `
-                <span style="font-size: 0.9rem; color: #64748b; text-decoration: line-through;">$${(product.priceUSD * 1.4).toFixed(2)} / ₦${Math.round(product.priceNGN * 1.4).toLocaleString()}</span>
-                <span style="font-size: 1.35rem; color: #0f172a;">$${product.priceUSD.toFixed(2)} / ₦${product.priceNGN.toLocaleString()}</span>
+                <span style="font-size: 0.9rem; color: #64748b; text-decoration: line-through;">USD ${(product.priceUSD * 1.4).toFixed(2)} / ₦${Math.round(product.priceNGN * 1.4).toLocaleString()}</span>
+                <span style="font-size: 1.35rem; color: #0f172a;">USD ${product.priceUSD.toFixed(2)} / ₦${product.priceNGN.toLocaleString()}</span>
             `;
             document.getElementById('detail-desc').innerText = product.description || "No description provided.";
             document.getElementById('detail-shipping').innerText = product.shipping || "Estimated delivery: 2 - 4 business days";
@@ -1138,7 +1131,6 @@
             }
         };
 
-        // Transition from billing info to the Sample Look-alike Deposit Modal
         window.proceedToDepositModal = function() {
             const address = document.getElementById('bill-address').value.trim();
             const city = document.getElementById('bill-city').value.trim();
@@ -1160,14 +1152,12 @@
                 subtotalNGN *= 0.95;
             }
 
-            // Update the deposit amount display in the sample layout modal
             document.getElementById('deposit-amount-display').innerText = `₦ ${Math.round(subtotalNGN).toLocaleString()}.00`;
 
             toggleBillingModal();
             toggleDepositModal();
         };
 
-        // Complete Order with Verifying Loader and Pending Confirmation Modal
         window.completeManualOrder = function() {
             const address = document.getElementById('bill-address').value.trim();
             const city = document.getElementById('bill-city').value.trim();
@@ -1199,7 +1189,7 @@
                 paymentAccountName: paymentAccountName,
                 address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 items: orderItemsText,
-                totalPaid: `$${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()}`,
+                totalPaid: `USD ${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()}`,
                 status: "Pending Payment Confirmation",
                 date: new Date().toLocaleDateString(),
                 hasReviewed: false
@@ -1217,13 +1207,12 @@
                 payment_account_name: paymentAccountName,
                 customer_address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 order_items: orderItemsText,
-                total_amount: `$${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()}`,
+                total_amount: `USD ${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()}`,
                 payment_method: "Manual OPay Transfer (Account Name: " + paymentAccountName + ")"
             };
 
             emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams).catch(function(error) {});
 
-            // Simulate the verification loader display duration, then show confirmation modal
             setTimeout(() => {
                 toggleVerifyingModal();
                 toggleStatusConfirmationModal();
@@ -1460,61 +1449,49 @@
             `).join('');
         }
 
-window.confirmPaymentReceived = function(index) {
-    // 1. Safety check to ensure the order index exists
-    if (!globalState || !globalState.orders || !globalState.orders[index]) {
-        console.error("Error: Order not found at index", index);
-        showToast("Error: Could not find order details.");
-        return;
-    }
+        window.confirmPaymentReceived = function(index) {
+            if (!globalState || !globalState.orders || !globalState.orders[index]) {
+                console.error("Error: Order not found at index", index);
+                showToast("Error: Could not find order details.");
+                return;
+            }
 
-    const ord = globalState.orders[index];
+            const ord = globalState.orders[index];
+            ord.status = "Payment Confirmed - Order Processing";
+            if (typeof saveStateToFirebase === "function") {
+                saveStateToFirebase();
+            }
 
-    // 2. Update order status and save state
-    ord.status = "Payment Confirmed - Order Processing";
-    if (typeof saveStateToFirebase === "function") {
-        saveStateToFirebase();
-    }
+            const templateParams = {
+                order_id: ord.id || "N/A",
+                customer_name: ord.customerName || "Valued Customer",
+                customer_email: ord.customerEmail || "",
+                product_name: ord.items || "Your Items",
+                amount: ord.totalPaid || "N/A"
+            };
 
-    // 3. Prepare template parameters with fallback values to prevent empty strings
-    const templateParams = {
-        order_id: ord.id || "N/A",
-        customer_name: ord.customerName || "Valued Customer",
-        customer_email: ord.customerEmail || "",
-        product_name: ord.items || "Your Items",
-        amount: ord.totalPaid || "N/A"
-    };
+            if (!templateParams.customer_email) {
+                console.warn("Warning: Customer email is missing for order ID:", ord.id);
+                showToast(`Payment verified for order ${ord.id}, but no customer email found!`);
+                if (typeof renderAdminOrderList === "function") renderAdminOrderList();
+                if (typeof renderRecentOrdersList === "function") renderRecentOrdersList();
+                return;
+            }
 
-    // 4. Validate that an email address actually exists before sending
-    if (!templateParams.customer_email) {
-        console.warn("Warning: Customer email is missing for order ID:", ord.id);
-        showToast(`Payment verified for order ${ord.id}, but no customer email found!`);
-        
-        // Still update UI even if email is missing
-        if (typeof renderAdminOrderList === "function") renderAdminOrderList();
-        if (typeof renderRecentOrdersList === "function") renderRecentOrdersList();
-        return;
-    }
-
-    // 5. Send email via EmailJS
-    emailjs.send("Swift_alerts", "template_hv2kyh6", templateParams, "5viHIEbeZ90KuRrb3")
-        .then(function(response) {
-            console.log("SUCCESS! Approval email sent:", response.status, response.text);
-            showToast(`Payment verified for order ${ord.id}! Customer notified via email.`);
-        })
-        .catch(function(error) {
-            console.error("FAILED to send approval email:", error);
-            showToast(`Payment verified, but email failed to send. Check console.`);
-        })
-        .finally(function() {
-            // Refresh admin views regardless of email success/failure
-            if (typeof renderAdminOrderList === "function") renderAdminOrderList();
-            if (typeof renderRecentOrdersList === "function") renderRecentOrdersList();
-        });
-
-
-
-
+            emailjs.send("Swift_alerts", "template_hv2kyh6", templateParams, "5viHIEbeZ90KuRrb3")
+                .then(function(response) {
+                    console.log("SUCCESS! Approval email sent:", response.status, response.text);
+                    showToast(`Payment verified for order ${ord.id}! Customer notified via email.`);
+                })
+                .catch(function(error) {
+                    console.error("FAILED to send approval email:", error);
+                    showToast(`Payment verified, but email failed to send. Check console.`);
+                })
+                .finally(function() {
+                    if (typeof renderAdminOrderList === "function") renderAdminOrderList();
+                    if (typeof renderRecentOrdersList === "function") renderRecentOrdersList();
+                });
+        };
 
         window.updateOrderStatus = function(index) {
             const newStatus = document.getElementById(`admin-status-${index}`).value;
@@ -1573,7 +1550,7 @@ window.confirmPaymentReceived = function(index) {
                         <img src="${product.images && product.images.length > 0 ? product.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'}" alt="">
                         <div style="overflow:hidden;">
                             <strong style="font-size: 0.9rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${product.name}</strong>
-                            <small style="color: #64748b; font-size: 0.75rem;">$${product.priceUSD} / ₦${product.priceNGN.toLocaleString()}</small>
+                            <small style="color: #64748b; font-size: 0.75rem;">USD ${product.priceUSD} / ₦${product.priceNGN.toLocaleString()}</small>
                         </div>
                     </div>
                     <div class="admin-actions">
@@ -1722,7 +1699,7 @@ window.confirmPaymentReceived = function(index) {
             
             if (cart.length === 0) {
                 cartItemsContainer.innerHTML = '<p style="color: #64748b; text-align: center; margin-top: 2rem;">Your cart drawer is empty.</p>';
-                document.getElementById('cart-total-usd').innerText = '$0.00';
+                document.getElementById('cart-total-usd').innerText = '0.00';
                 document.getElementById('cart-total-ngn').innerText = '₦0';
                 return;
             }
@@ -1738,7 +1715,7 @@ window.confirmPaymentReceived = function(index) {
                         <img src="${imgUrl}" alt="${item.name}">
                         <div class="cart-item-details">
                             <strong>${item.name}</strong><br>
-                            <small style="color:#64748b;">$${(item.priceUSD * item.quantity).toFixed(2)} / ₦${(item.priceNGN * item.quantity).toLocaleString()}</small>
+                            <small style="color:#64748b;">USD ${(item.priceUSD * item.quantity).toFixed(2)} / ₦${(item.priceNGN * item.quantity).toLocaleString()}</small>
                             <div class="cart-qty-controls">
                                 <button class="cart-qty-btn" onclick="changeQuantity(${item.id}, -1)">-</button>
                                 <span style="font-size: 0.85rem; font-weight: 700;">${item.quantity}</span>
@@ -1755,7 +1732,7 @@ window.confirmPaymentReceived = function(index) {
                 totalPriceNGN *= 0.95;
             }
 
-            document.getElementById('cart-total-usd').innerText = `$${totalPriceUSD.toFixed(2)}${appliedDiscountPercent === 5 ? ' (5% Off)' : ''}`;
+            document.getElementById('cart-total-usd').innerText = `USD ${totalPriceUSD.toFixed(2)}${appliedDiscountPercent === 5 ? ' (5% Off)' : ''}`;
             document.getElementById('cart-total-ngn').innerText = `₦${Math.round(totalPriceNGN).toLocaleString()}${appliedDiscountPercent === 5 ? ' (5% Off)' : ''}`;
         }
 
