@@ -18,7 +18,7 @@
             --primary: #4f46e5;
             --primary-dark: #4338ca;
             --accent: #f59e0b;
-            --bg: #f8fafc; 
+            --bg: #fdfbf7; 
             --text: #0f172a;
             --card-bg: #ffffff;
             --border: #e2e8f0;
@@ -31,7 +31,7 @@
 
         .announcement-bar { background: linear-gradient(90deg, #4f46e5, #9333ea); color: white; text-align: center; padding: 0.5rem; font-size: 0.85rem; font-weight: 500; }
 
-        header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #0f172a; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        header { background: rgba(253, 251, 247, 0.95); backdrop-filter: blur(10px); color: #0f172a; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
         .logo-container { display: flex; align-items: center; gap: 0.75rem; }
         .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--primary), #9333ea); color: white; display: flex; justify-content: center; align-items: center; border-radius: 10px; font-weight: 800; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); }
         .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, var(--primary), #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -56,26 +56,9 @@
         .hero-banner h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
         .hero-banner p { margin: 0; color: #c7d2fe; font-size: 0.9rem; max-width: 600px; line-height: 1.4; }
 
-        .dashboard-buttons-row { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
-        .dashboard-btn { flex: 1; min-width: 200px; background: white; border: 1px solid var(--border); padding: 0.85rem 1.25rem; border-radius: 14px; font-weight: 700; color: #0f172a; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.01); transition: all 0.2s; text-decoration: none; }
-        .dashboard-btn:hover { border-color: var(--primary); background: #f8fafc; color: var(--primary); }
-
-        .track-section h3 { margin-top: 0; margin-bottom: 0.5rem; color: #0f172a; font-size: 1.15rem; }
-        .track-row { display: flex; gap: 0.5rem; }
-        .track-row input { flex-grow: 1; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-size: 16px; transition: border-color 0.2s; }
-        .track-row input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
-        .track-result-box { margin-top: 1rem; padding: 1.25rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border); font-size: 0.95rem; }
-
-        .recent-orders-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-        .recent-orders-header h3 { margin: 0; color: #0f172a; font-size: 1.15rem; }
-        .recent-orders-list { display: flex; flex-direction: column; gap: 0.75rem; max-height: 400px; overflow-y: auto; margin-top: 0.75rem; }
-        .recent-order-item { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; gap: 1rem; transition: background 0.2s; }
-        .recent-order-item:hover { background: #f1f5f9; }
-        .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
-
         .search-container-wrapper { margin-bottom: 1.25rem; }
         .sticky-search-container { position: sticky; top: 73px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
-        .sticky-search-container.is-stuck { box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(8px); }
+        .sticky-search-container.is-stuck { box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: rgba(253, 251, 247, 0.95); backdrop-filter: blur(8px); }
         
         .search-input-wrapper { position: relative; }
         .search-input-wrapper span { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem; }
@@ -197,6 +180,23 @@
         .paysw-floating-badge { position: fixed; bottom: 20px; right: 20px; background-color: #059669; color: white; padding: 0.6rem 1rem; border-radius: 30px; font-size: 0.8rem; font-weight: 700; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35); z-index: 1100; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; transition: transform 0.2s ease; }
         .paysw-floating-badge:hover { transform: translateY(-2px); }
         body.cart-open .paysw-floating-badge { display: none; }
+
+        /* Custom Screenshot Match Styles for Orders Page */
+        .orders-page-container { background: #fdfbf7; min-height: 100vh; }
+        .orders-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .back-collection-btn { background: transparent; border: 1.5px solid #1e293b; color: #1e293b; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .orders-title { font-size: 1.2rem; font-weight: 800; color: #1e293b; letter-spacing: 0.5px; margin: 1.25rem 0 1rem; }
+        
+        .custom-order-card { background: white; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 1.15rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .custom-order-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+        .custom-order-id { font-size: 1.05rem; font-weight: 800; color: #0f172a; }
+        
+        .status-badge-delivered { background: #16a34a; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.3px; }
+        .status-badge-received { background: #2563eb; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.3px; }
+        .status-badge-pending { background: #f59e0b; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.3px; }
+
+        .custom-order-detail-line { font-size: 0.9rem; color: #334155; margin-bottom: 0.35rem; line-height: 1.4; }
+        .custom-order-detail-line strong { color: #0f172a; }
     </style>
 </head>
 <body>
@@ -212,8 +212,9 @@
         </div>
         <div class="nav-buttons">
             <span id="user-greeting"></span>
-            <button class="btn-nav-link" onclick="openReviewsModal()">⭐ Ratings & Reviews</button>
-            <button class="btn-secondary" onclick="toggleHelpModal()">🤖 Help / AI Assistant</button>
+            <button class="btn-primary" onclick="openPageModal('orders-page-modal')" style="background: #1e293b;">📦 My Orders / Tracking</button>
+            <button class="btn-nav-link" onclick="openReviewsModal()">⭐ Ratings</button>
+            <button class="btn-secondary" onclick="toggleHelpModal()">🤖 Help</button>
             <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login / Signup</button>
             <button class="btn-primary" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
         </div>
@@ -223,15 +224,6 @@
         <div class="hero-banner">
             <h1>Discover Premium Quality Essentials</h1>
             <p>Handpicked products delivered globally with fast fulfillment and manual OPay bank transfers in NGN (₦).</p>
-        </div>
-
-        <div class="dashboard-buttons-row">
-            <button class="dashboard-btn" onclick="openPageModal('track-page-modal')">
-                <span>📦</span> Track Order Status
-            </button>
-            <button class="dashboard-btn" onclick="openPageModal('recent-page-modal')">
-                <span>📋</span> Your Recent Orders
-            </button>
         </div>
 
         <div class="search-container-wrapper" id="search-wrapper">
@@ -265,38 +257,24 @@
         </div>
     </div>
 
-    <!-- Track Order Page Modal -->
-    <div class="modal" id="track-page-modal">
-        <div class="modal-content" style="max-width: 600px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                <h3 style="margin: 0;">📦 Track Order Status</h3>
-                <button class="close-btn" onclick="closePageModal('track-page-modal')">&times;</button>
-            </div>
-            <div class="track-section">
-                <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Enter your Order ID below to check live progress.</p>
-                <div class="track-row">
-                    <input type="text" id="track-input" placeholder="e.g., SWIFT-483920">
-                    <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
-                </div>
-                <div id="track-result-container" style="display: none;" class="track-result-box"></div>
-            </div>
-            <button class="btn-secondary" onclick="closePageModal('track-page-modal')" style="width: 100%; margin-top: 1.5rem;">Close</button>
-        </div>
-    </div>
-
-    <!-- Recent Orders Page Modal -->
-    <div class="modal" id="recent-page-modal">
-        <div class="modal-content" style="max-width: 700px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                <h3 id="recent-orders-title" style="margin: 0;">Your Recent Orders</h3>
+    <!-- Separate Orders & Tracking Page Modal (Matching your screenshot style) -->
+    <div class="modal" id="orders-page-modal" style="background: rgba(253, 251, 247, 0.95); backdrop-filter: blur(10px); justify-content: flex-start; padding: 1.5rem 1rem;">
+        <div class="modal-content orders-page-container" style="max-width: 650px; background: transparent; box-shadow: none; padding: 0;">
+            <div class="orders-header-row">
+                <button class="back-collection-btn" onclick="closePageModal('orders-page-modal')">
+                    ← BACK TO COLLECTION
+                </button>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
-                    <button class="close-btn" onclick="closePageModal('recent-page-modal')" style="font-size: 1.5rem; margin-left: 0.5rem;">&times;</button>
+                    <button class="close-btn" onclick="closePageModal('orders-page-modal')" style="font-size: 1.5rem;">&times;</button>
                 </div>
             </div>
-            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.5rem;">Manage and view your account's order activity normally.</p>
-            <div class="recent-orders-list" id="recent-orders-list"></div>
-            <button class="btn-secondary" onclick="closePageModal('recent-page-modal')" style="width: 100%; margin-top: 1.5rem;">Close</button>
+
+            <div class="orders-title">MY ORDER HISTORY & PAYMENT STATUS</div>
+            
+            <div id="custom-orders-list-container"></div>
+            
+            <button class="btn-secondary" onclick="closePageModal('orders-page-modal')" style="width: 100%; margin-top: 1.5rem; background: white;">Close Orders Page</button>
         </div>
     </div>
 
@@ -415,7 +393,7 @@
             <input type="text" id="bill-country" placeholder="Country (e.g. Nigeria, Ghana)">
             <input type="text" id="bill-phone" placeholder="Phone Number (08024300891 format)">
             
-            <input type="text" id="bill-account-name" placeholder="Your Payment Account Name (Name used to transfer funds)">
+            <input type="text" id="bill-account-name" placeholder="Sender Name (Name used to transfer funds)">
 
             <div style="display: flex; gap: 0.5rem; margin-bottom: 1.1rem;">
                 <input type="text" id="bill-promo" placeholder="Promo Code (Optional)" style="margin-bottom: 0; text-transform: uppercase;">
@@ -533,7 +511,7 @@
             
             <div class="admin-section-box">
                 <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders & Payment Verification Tracker</h4>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">View orders, customer payment account names, and press the <strong>"Payment Received & Confirm Order"</strong> button to sync confirmation globally so customers see their payment status update instantly.</p>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">View orders, customer sender names, and press the <strong>"Payment Received & Confirm Order"</strong> button to sync confirmation globally so customers see their payment status update instantly.</p>
                 <div id="admin-orders-list" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;"></div>
             </div>
 
@@ -698,11 +676,11 @@
                 { q: "Do you ship worldwide?", a: "Yes, we fulfill orders globally with fast priority delivery hubs." }
             ],
             payment: [
-                { q: "How do I pay via OPay?", a: "Transfer the exact amount to OPay Account: 8024300891 (Name: Talabi Sunny Okunola), then click 'I Have Made Payment' and provide your payment account name." },
+                { q: "How do I pay via OPay?", a: "Transfer the exact amount to OPay Account: 8024300891 (Name: Talabi Sunny Okunola), then click 'I Have Made Payment' and provide your sender name." },
                 { q: "How long does payment confirmation take?", a: "Once you submit your order, the admin verifies your payment and confirms it instantly on your order page." }
             ],
             orders: [
-                { q: "How do I track my order?", a: "Use the 'Track Order Status' page by entering your unique Order ID." },
+                { q: "How do I track my order?", a: "Use the 'My Orders / Tracking' page to check live progress and statuses." },
                 { q: "Need immediate help?", a: "Call our customer hotline at 08024300891 or email talabidavid275@gmail.com." }
             ]
         };
@@ -750,7 +728,7 @@
             }
             renderProducts();
             renderReviews();
-            renderRecentOrdersList();
+            renderCustomOrdersList();
             if (document.getElementById('admin-modal').classList.contains('active')) {
                 renderAdminDashboard();
             }
@@ -768,7 +746,7 @@
         function initApp() {
             renderProducts();
             updateAuthUI();
-            renderRecentOrdersList();
+            renderCustomOrdersList();
             renderReviews();
             setupStickySearchScrollObserver();
             setupAdminMediaUploadHandlers();
@@ -849,8 +827,8 @@
 
         window.openPageModal = function(modalId) {
             document.getElementById(modalId).classList.add('active');
-            if(modalId === 'recent-page-modal') {
-                renderRecentOrdersList();
+            if(modalId === 'orders-page-modal') {
+                renderCustomOrdersList();
             }
         };
 
@@ -979,7 +957,7 @@
                 authBtn.innerText = "Login / Signup";
                 authBtn.className = "btn-secondary";
             }
-            renderRecentOrdersList();
+            renderCustomOrdersList();
         };
 
         window.handleAuthClick = function() {
@@ -1140,10 +1118,10 @@
             const postal = document.getElementById('bill-postal').value.trim();
             const country = document.getElementById('bill-country').value.trim();
             const phone = document.getElementById('bill-phone').value.trim();
-            const paymentAccountName = document.getElementById('bill-account-name').value.trim();
+            const senderName = document.getElementById('bill-account-name').value.trim();
 
-            if (!address || !city || !state || !postal || !country || !phone || !paymentAccountName) {
-                alert("Please fill in all required delivery fields and your Payment Account Name.");
+            if (!address || !city || !state || !postal || !country || !phone || !senderName) {
+                alert("Please fill in all required delivery fields and your Sender Name.");
                 return;
             }
 
@@ -1165,7 +1143,7 @@
             const postal = document.getElementById('bill-postal').value.trim();
             const country = document.getElementById('bill-country').value.trim();
             const phone = document.getElementById('bill-phone').value.trim();
-            const paymentAccountName = document.getElementById('bill-account-name').value.trim();
+            const senderName = document.getElementById('bill-account-name').value.trim();
 
             toggleDepositModal();
             toggleVerifyingModal();
@@ -1184,7 +1162,7 @@
                 customerName: currentUser.name,
                 customerEmail: currentUser.email,
                 phone: phone,
-                paymentAccountName: paymentAccountName,
+                paymentAccountName: senderName,
                 address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 items: orderItemsText,
                 totalPaid: `₦${Math.round(subtotalNGN).toLocaleString()}`,
@@ -1195,18 +1173,18 @@
 
             globalState.orders.push(newOrderRecord);
             saveStateToFirebase();
-            renderRecentOrdersList();
+            renderCustomOrdersList();
 
             const templateParams = {
                 order_id: orderId,
                 customer_name: currentUser.name,
                 customer_email: currentUser.email,
                 customer_phone: phone,
-                payment_account_name: paymentAccountName,
+                payment_account_name: senderName,
                 customer_address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 order_items: orderItemsText,
                 total_amount: `₦${Math.round(subtotalNGN).toLocaleString()}`,
-                payment_method: "Manual OPay Transfer (Account Name: " + paymentAccountName + ")"
+                payment_method: "Manual OPay Transfer (Sender Name: " + senderName + ")"
             };
 
             emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams).catch(function(error) {});
@@ -1233,76 +1211,51 @@
             document.getElementById('bill-promo').value = '';
         }
 
-        window.trackOrder = function() {
-            const query = document.getElementById('track-input').value.trim();
-            const resultBox = document.getElementById('track-result-container');
-            if (!query) {
-                alert("Please enter a valid Order ID.");
-                return;
-            }
-
-            const found = globalState.orders.find(o => o.id.toLowerCase() === query.toLowerCase());
-            resultBox.style.display = 'block';
-
-            if (found) {
-                if (!currentUser || currentUser.username.toLowerCase() !== found.customerUsername.toLowerCase()) {
-                    resultBox.innerHTML = `<p style="color: #dc2626; margin: 0;">Access denied. You can only track orders belonging to your logged-in account.</p>`;
-                    return;
-                }
-
-                resultBox.innerHTML = `
-                    <p style="margin: 0 0 0.5rem;"><strong>Order ID:</strong> ${found.id}</p>
-                    <p style="margin: 0 0 0.5rem;"><strong>Items:</strong> ${found.items}</p>
-                    <p style="margin: 0 0 0.5rem;"><strong>Total Amount:</strong> ${found.totalPaid}</p>
-                    <p style="margin: 0 0 0.5rem;"><strong>Payment Account Name:</strong> ${found.paymentAccountName || 'N/A'}</p>
-                    <p style="margin: 0 0 0.5rem;"><strong>Status:</strong> <span style="color: var(--primary); font-weight: 700;">${found.status}</span></p>
-                    <p style="margin: 0; font-size: 0.8rem; color: #64748b;">Placed on: ${found.date}</p>
-                `;
-            } else {
-                resultBox.innerHTML = `<p style="color: #dc2626; margin: 0;">No order found matching "${query}".</p>`;
-            }
-        };
-
-        window.renderRecentOrdersList = function() {
-            const listContainer = document.getElementById('recent-orders-list');
-            const titleElement = document.getElementById('recent-orders-title');
-            if (!listContainer || !titleElement) return;
+        window.renderCustomOrdersList = function() {
+            const container = document.getElementById('custom-orders-list-container');
+            if (!container) return;
 
             if (!currentUser) {
-                titleElement.innerText = "Your Recent Orders";
-                listContainer.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; margin: 1rem 0; text-align: center;">Please log in to view your recent orders.</p>';
+                container.innerHTML = '<p style="color: #64748b; font-size: 0.9rem; text-align: center; margin-top: 2rem;">Please log in to view your orders and payment status history.</p>';
                 return;
             }
 
-            titleElement.innerText = `Your Recent Orders (@${currentUser.username})`;
             const userOrders = globalState.orders.filter(o => o.customerUsername.toLowerCase() === currentUser.username.toLowerCase());
 
             if (userOrders.length === 0) {
-                listContainer.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; margin: 1rem 0; text-align: center;">No orders placed yet from this account.</p>';
+                container.innerHTML = '<p style="color: #64748b; font-size: 0.9rem; text-align: center; margin-top: 2rem;">No orders placed yet from this account.</p>';
                 return;
             }
 
-            listContainer.innerHTML = [...userOrders].reverse().map(order => `
-                <div class="recent-order-item">
-                    <div>
-                        <span class="order-pill">${order.id}</span>
-                        <span style="font-weight: 600; margin-left: 0.25rem;">${order.customerName}</span>
-                        <div style="color: #64748b; font-size: 0.75rem; margin-top: 0.15rem;">${order.items} | Account Name: <strong>${order.paymentAccountName || 'N/A'}</strong></div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">${order.status}</span>
-                        <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Track</button>
-                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.75rem;" onclick="triggerRatingModal('${order.id}')">Rate</button>` : ''}
-                    </div>
-                </div>
-            `).join('');
-        };
+            container.innerHTML = [...userOrders].reverse().map(order => {
+                let badgeClass = "status-badge-pending";
+                let displayStatus = order.status.toUpperCase();
+                if (order.status.toLowerCase().includes("delivered")) {
+                    badgeClass = "status-badge-delivered";
+                    displayStatus = "DELIVERED";
+                } else if (order.status.toLowerCase().includes("confirmed") || order.status.toLowerCase().includes("received")) {
+                    badgeClass = "status-badge-received";
+                    displayStatus = "PAYMENT RECEIVED";
+                }
 
-        window.fillTrackingInput = function(orderId) {
-            document.getElementById('track-input').value = orderId;
-            closePageModal('recent-page-modal');
-            openPageModal('track-page-modal');
-            trackOrder();
+                return `
+                    <div class="custom-order-card">
+                        <div class="custom-order-top">
+                            <span class="custom-order-id">Order ID: ${order.id}</span>
+                            <span class="${badgeClass}">${displayStatus}</span>
+                        </div>
+                        <div class="custom-order-detail-line"><strong>Items:</strong> ${order.items}</div>
+                        <div class="custom-order-detail-line"><strong>Total Amount:</strong> ${order.totalPaid}</div>
+                        <div class="custom-order-detail-line"><strong>Delivery Address:</strong> ${order.address}</div>
+                        <div class="custom-order-detail-line"><strong>Sender Name:</strong> ${order.paymentAccountName || 'N/A'}</div>
+                        ${order.status.toLowerCase().includes("delivered") && !order.hasReviewed ? `
+                            <div style="margin-top: 0.75rem; text-align: right;">
+                                <button class="btn-primary" style="padding: 0.35rem 0.85rem; font-size: 0.8rem;" onclick="triggerRatingModal('${order.id}')">Rate Delivered Item</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
         };
 
         window.clearAllOrders = function() {
@@ -1313,9 +1266,7 @@
             if (confirm("Clear your order history?")) {
                 globalState.orders = globalState.orders.filter(o => o.customerUsername.toLowerCase() !== currentUser.username.toLowerCase());
                 saveStateToFirebase();
-                renderRecentOrdersList();
-                const trackRes = document.getElementById('track-result-container');
-                if(trackRes) trackRes.style.display = 'none';
+                renderCustomOrdersList();
                 showToast("Order history cleared");
             }
         };
@@ -1387,7 +1338,7 @@
             saveStateToFirebase();
             renderReviews();
             toggleRatingModal();
-            renderRecentOrdersList();
+            renderCustomOrdersList();
             showToast("Review submitted successfully!");
         };
 
@@ -1429,7 +1380,7 @@
                     <div style="color:#475569; margin-bottom:0.4rem; font-size:0.85rem;">
                         Items: ${ord.items}<br>
                         Total: ${ord.totalPaid} | Phone: ${ord.phone}<br>
-                        Payment Account Name: <strong style="color: var(--primary);">${ord.paymentAccountName || 'Not Provided'}</strong>
+                        Sender Name: <strong style="color: var(--primary);">${ord.paymentAccountName || 'Not Provided'}</strong>
                     </div>
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top:0.5rem;">
                         <button class="btn-primary" style="background: #059669; padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="confirmPaymentReceived(${index})">
@@ -1437,7 +1388,7 @@
                         </button>
                         <select id="admin-status-${index}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1;">
                             <option value="Pending Payment Confirmation" ${ord.status.includes('Pending') ? 'selected' : ''}>Pending Payment Confirmation</option>
-                            <option value="Payment Confirmed - Processing" ${ord.status.includes('Confirmed') ? 'selected' : ''}>Payment Confirmed - Processing</option>
+                            <option value="Payment Received" ${ord.status.includes('Received') || ord.status.includes('Confirmed') ? 'selected' : ''}>Payment Received</option>
                             <option value="Shipped / In Transit" ${ord.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
                             <option value="Delivered Successfully" ${ord.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
                         </select>
@@ -1448,46 +1399,24 @@
         }
 
         window.confirmPaymentReceived = function(index) {
-            if (!globalState || !globalState.orders || !globalState.orders[index]) {
-                console.error("Error: Order not found at index", index);
-                showToast("Error: Could not find order details.");
-                return;
-            }
-
             const ord = globalState.orders[index];
-            ord.status = "Payment Confirmed - Order Processing";
-            if (typeof saveStateToFirebase === "function") {
-                saveStateToFirebase();
-            }
+            ord.status = "Payment Received";
+            saveStateToFirebase();
 
             const templateParams = {
-                order_id: ord.id || "N/A",
-                customer_name: ord.customerName || "Valued Customer",
-                customer_email: ord.customerEmail || "",
-                product_name: ord.items || "Your Items",
-                amount: ord.totalPaid || "N/A"
+                order_id: ord.id,
+                customer_name: ord.customerName,
+                customer_email: ord.customerEmail,
+                product_name: ord.items,
+                amount: ord.totalPaid
             };
 
-            if (!templateParams.customer_email) {
-                console.warn("Warning: Customer email is missing for order ID:", ord.id);
-                showToast(`Payment verified for order ${ord.id}, but no customer email found!`);
-                if (typeof renderAdminOrderList === "function") renderAdminOrderList();
-                if (typeof renderRecentOrdersList === "function") renderRecentOrdersList();
-                return;
-            }
-
             emailjs.send("Swift_alerts", "template_hv2kyh6", templateParams, "5viHIEbeZ90KuRrb3")
-                .then(function(response) {
-                    console.log("SUCCESS! Approval email sent:", response.status, response.text);
-                    showToast(`Payment verified for order ${ord.id}! Customer notified via email.`);
-                })
-                .catch(function(error) {
-                    console.error("FAILED to send approval email:", error);
-                    showToast(`Payment verified, but email failed to send. Check console.`);
-                })
-                .finally(function() {
-                    if (typeof renderAdminOrderList === "function") renderAdminOrderList();
-                    if (typeof renderRecentOrdersList === "function") renderRecentOrdersList();
+                .then(() => showToast(`Payment verified for order ${ord.id}!`))
+                .catch(() => showToast(`Payment verified, but email notification failed.`))
+                .finally(() => {
+                    renderAdminOrderList();
+                    renderCustomOrdersList();
                 });
         };
 
@@ -1495,9 +1424,9 @@
             const newStatus = document.getElementById(`admin-status-${index}`).value;
             globalState.orders[index].status = newStatus;
             saveStateToFirebase();
-            showToast(`Order ${globalState.orders[index].id} status updated globally!`);
+            showToast(`Order status updated globally!`);
             renderAdminOrderList();
-            renderRecentOrdersList();
+            renderCustomOrdersList();
         };
 
         window.adminCreatePromoCode = function() {
