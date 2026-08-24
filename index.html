@@ -226,7 +226,7 @@
     <div class="container">
         <div class="hero-banner">
             <h1>Discover Premium Quality Essentials</h1>
-            <p>Handpicked products delivered globally with fast fulfillment and manual OPay bank transfers in USD and NGN (₦).</p>
+            <p>Handpicked products delivered globally with fast fulfillment and manual OPay bank transfers in NGN (₦).</p>
         </div>
 
         <div class="utilities-toggle-row">
@@ -404,7 +404,7 @@
                 <input type="text" id="bill-state" placeholder="State / Province">
                 <input type="text" id="bill-postal" placeholder="Postal / Zip Code">
             </div>
-            <input type="text" id="bill-country" placeholder="Country (e.g. Nigeria, Ghana, US)">
+            <input type="text" id="bill-country" placeholder="Country (e.g. Nigeria, Ghana)">
             <input type="text" id="bill-phone" placeholder="Phone Number (08024300891 format)">
             
             <input type="text" id="bill-account-name" placeholder="Your Payment Account Name (Name used to transfer funds)">
@@ -542,10 +542,7 @@
                 <h4 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1.05rem; color: #0f172a;">Add New Product (Global Catalog)</h4>
                 <div id="add-product-form-container">
                     <input type="text" id="admin-name" placeholder="Product Name">
-                    <div style="display: flex; gap: 0.5rem;">
-                        <input type="number" step="0.01" id="admin-price-usd" placeholder="Price (USD)">
-                        <input type="number" id="admin-price-ngn" placeholder="Price (₦NGN)">
-                    </div>
+                    <input type="number" id="admin-price-ngn" placeholder="Price (₦ NGN)">
                     <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
                     
                     <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Pictures (Add 3 to 5 pictures):</label>
@@ -576,10 +573,6 @@
         </div>
         <div class="cart-footer">
             <div class="total-price">
-                <div style="display: flex; justify-content: space-between;">
-                    <span>Subtotal (USD):</span>
-                    <span id="cart-total-usd">0.00</span>
-                </div>
                 <div style="display: flex; justify-content: space-between;" class="total-sub">
                     <span>Subtotal (₦):</span>
                     <span id="cart-total-ngn">₦0</span>
@@ -653,7 +646,6 @@
                 { 
                     id: 1, 
                     name: "Smart Gadget Pro", 
-                    priceUSD: 49.99, 
                     priceNGN: 75000, 
                     description: "The ultimate next-gen smart gadget designed for maximum productivity and long battery life.", 
                     images: [
@@ -856,11 +848,10 @@
         };
 
         function formatMarketplacePrice(product) {
-            const originalUSD = (product.priceUSD * 1.4).toFixed(2);
             const originalNGN = Math.round(product.priceNGN * 1.4);
             return `
-                <span class="price-sub">USD ${originalUSD} / ₦${originalNGN.toLocaleString()}</span>
-                <span class="current-price">USD ${product.priceUSD.toFixed(2)} / ₦${product.priceNGN.toLocaleString()}</span>
+                <span class="price-sub">₦${originalNGN.toLocaleString()}</span>
+                <span class="current-price">₦${product.priceNGN.toLocaleString()}</span>
             `;
         }
 
@@ -897,8 +888,8 @@
 
             document.getElementById('detail-name').innerText = product.name;
             document.getElementById('detail-price').innerHTML = `
-                <span style="font-size: 0.9rem; color: #64748b; text-decoration: line-through;">USD ${(product.priceUSD * 1.4).toFixed(2)} / ₦${Math.round(product.priceNGN * 1.4).toLocaleString()}</span>
-                <span style="font-size: 1.35rem; color: #0f172a;">USD ${product.priceUSD.toFixed(2)} / ₦${product.priceNGN.toLocaleString()}</span>
+                <span style="font-size: 0.9rem; color: #64748b; text-decoration: line-through;">₦${Math.round(product.priceNGN * 1.4).toLocaleString()}</span>
+                <span style="font-size: 1.35rem; color: #0f172a;">₦${product.priceNGN.toLocaleString()}</span>
             `;
             document.getElementById('detail-desc').innerText = product.description || "No description provided.";
             document.getElementById('detail-shipping').innerText = product.shipping || "Estimated delivery: 2 - 4 business days";
@@ -1145,10 +1136,8 @@
                 return;
             }
 
-            let subtotalUSD = cart.reduce((sum, item) => sum + (item.priceUSD * item.quantity), 0);
             let subtotalNGN = cart.reduce((sum, item) => sum + (item.priceNGN * item.quantity), 0);
             if (appliedDiscountPercent === 5) {
-                subtotalUSD *= 0.95;
                 subtotalNGN *= 0.95;
             }
 
@@ -1170,10 +1159,8 @@
             toggleDepositModal();
             toggleVerifyingModal();
 
-            let subtotalUSD = cart.reduce((sum, item) => sum + (item.priceUSD * item.quantity), 0);
             let subtotalNGN = cart.reduce((sum, item) => sum + (item.priceNGN * item.quantity), 0);
             if (appliedDiscountPercent === 5) {
-                subtotalUSD *= 0.95;
                 subtotalNGN *= 0.95;
             }
 
@@ -1189,7 +1176,7 @@
                 paymentAccountName: paymentAccountName,
                 address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 items: orderItemsText,
-                totalPaid: `USD ${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()}`,
+                totalPaid: `₦${Math.round(subtotalNGN).toLocaleString()}`,
                 status: "Pending Payment Confirmation",
                 date: new Date().toLocaleDateString(),
                 hasReviewed: false
@@ -1207,7 +1194,7 @@
                 payment_account_name: paymentAccountName,
                 customer_address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 order_items: orderItemsText,
-                total_amount: `USD ${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()}`,
+                total_amount: `₦${Math.round(subtotalNGN).toLocaleString()}`,
                 payment_method: "Manual OPay Transfer (Account Name: " + paymentAccountName + ")"
             };
 
@@ -1550,7 +1537,7 @@
                         <img src="${product.images && product.images.length > 0 ? product.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'}" alt="">
                         <div style="overflow:hidden;">
                             <strong style="font-size: 0.9rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${product.name}</strong>
-                            <small style="color: #64748b; font-size: 0.75rem;">USD ${product.priceUSD} / ₦${product.priceNGN.toLocaleString()}</small>
+                            <small style="color: #64748b; font-size: 0.75rem;">₦${product.priceNGN.toLocaleString()}</small>
                         </div>
                     </div>
                     <div class="admin-actions">
@@ -1586,13 +1573,12 @@
 
         window.addProduct = async function() {
             const name = document.getElementById('admin-name').value.trim();
-            const priceUSD = parseFloat(document.getElementById('admin-price-usd').value);
             const priceNGN = parseFloat(document.getElementById('admin-price-ngn').value);
             const description = document.getElementById('admin-desc').value.trim();
             const shipping = document.getElementById('admin-shipping').value.trim();
 
-            if (!name || isNaN(priceUSD) || isNaN(priceNGN)) {
-                alert('Please fill in product name and pricing.');
+            if (!name || isNaN(priceNGN)) {
+                alert('Please fill in product name and NGN pricing.');
                 return;
             }
             if (adminSelectedImages.length < 3 || adminSelectedImages.length > 5) {
@@ -1620,7 +1606,6 @@
                 globalState.products.push({ 
                     id: Date.now(), 
                     name, 
-                    priceUSD, 
                     priceNGN, 
                     description, 
                     images: imagesBase64, 
@@ -1634,7 +1619,6 @@
                 renderAdminProductList();
 
                 document.getElementById('admin-name').value = '';
-                document.getElementById('admin-price-usd').value = '';
                 document.getElementById('admin-price-ngn').value = '';
                 document.getElementById('admin-desc').value = '';
                 document.getElementById('admin-shipping').value = '';
@@ -1699,15 +1683,12 @@
             
             if (cart.length === 0) {
                 cartItemsContainer.innerHTML = '<p style="color: #64748b; text-align: center; margin-top: 2rem;">Your cart drawer is empty.</p>';
-                document.getElementById('cart-total-usd').innerText = '0.00';
                 document.getElementById('cart-total-ngn').innerText = '₦0';
                 return;
             }
 
-            let totalPriceUSD = 0;
             let totalPriceNGN = 0;
             cartItemsContainer.innerHTML = cart.map(item => {
-                totalPriceUSD += item.priceUSD * item.quantity;
                 totalPriceNGN += item.priceNGN * item.quantity;
                 const imgUrl = item.images && item.images.length > 0 ? item.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';
                 return `
@@ -1715,7 +1696,7 @@
                         <img src="${imgUrl}" alt="${item.name}">
                         <div class="cart-item-details">
                             <strong>${item.name}</strong><br>
-                            <small style="color:#64748b;">USD ${(item.priceUSD * item.quantity).toFixed(2)} / ₦${(item.priceNGN * item.quantity).toLocaleString()}</small>
+                            <small style="color:#64748b;">₦${(item.priceNGN * item.quantity).toLocaleString()}</small>
                             <div class="cart-qty-controls">
                                 <button class="cart-qty-btn" onclick="changeQuantity(${item.id}, -1)">-</button>
                                 <span style="font-size: 0.85rem; font-weight: 700;">${item.quantity}</span>
@@ -1728,11 +1709,9 @@
             }).join('');
 
             if (appliedDiscountPercent === 5) {
-                totalPriceUSD *= 0.95;
                 totalPriceNGN *= 0.95;
             }
 
-            document.getElementById('cart-total-usd').innerText = `USD ${totalPriceUSD.toFixed(2)}${appliedDiscountPercent === 5 ? ' (5% Off)' : ''}`;
             document.getElementById('cart-total-ngn').innerText = `₦${Math.round(totalPriceNGN).toLocaleString()}${appliedDiscountPercent === 5 ? ' (5% Off)' : ''}`;
         }
 
