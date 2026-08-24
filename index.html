@@ -1460,32 +1460,59 @@
             `).join('');
         }
 
-        window.confirmPaymentReceived = function(index) {
-            const ord = globalState.orders[index];
-            ord.status = "Payment Confirmed - Order Processing";
-            saveStateToFirebase();
+window.confirmPaymentReceived = function(index) {
+    // 1. Safety check to ensure the order index exists
+    if (!globalState || !globalState.orders || !globalState.orders[index]) {
+        console.error("Error: Order not found at index", index);
+        showToast("Error: Could not find order details.");
+        return;
+    }
 
-            const templateParams = {
-                order_id: ord.id,
-                customer_name: ord.customerName,
-                customer_email: ord.customerEmail,
-                product_name: ord.items,
-                amount: ord.totalPaid
-            };
+    const ord = globalState.orders[index];
 
-            // Added the public key directly here so EmailJS authenticates properly
-            emailjs.send("Swift_alerts", "template_hv2kyh6", templateParams, "5viHIEbeZ90KuRrb3")
-                .then(function(response) {
-                    console.log("SUCCESS! Email sent:", response.status, response.text);
-                })
-                .catch(function(error) {
-                    console.error("FAILED to send email:", error);
-                });
+    // 2. Update order status and save state
+    ord.status = "Payment Confirmed - Order Processing";
+    if (typeof saveStateToFirebase === "function") {
+        saveStateToFirebase();
+    }
 
+    // 3. Prepare template parameters with fallback values to prevent empty strings
+    const templateParams = {
+        order_id: ord.id || "N/A",
+        customer_name: ord.customerName || "Valued Customer",
+        customer_email: ord.customerEmail || "",
+        product_name: ord.items || "Your Items",
+        amount: ord.totalPaid || "N/A"
+    };
+
+    // 4. Validate that an email address actually exists before sending
+    if (!templateParams.customer_email) {
+        console.warn("Warning: Customer email is missing for order ID:", ord.id);
+        showToast(`Payment verified for order ${ord.id}, but no customer email found!`);
+        
+        // Still update UI even if email is missing
+        if (typeof renderAdminOrderList === "function") renderAdminOrderList();
+        if (typeof renderRecentOrdersList === "function") renderRecentOrdersList();
+        return;
+    }
+
+    // 5. Send email via EmailJS
+    emailjs.send("Swift_alerts", "template_hv2kyh6", templateParams, "5viHIEbeZ90KuRrb3")
+        .then(function(response) {
+            console.log("SUCCESS! Approval email sent:", response.status, response.text);
             showToast(`Payment verified for order ${ord.id}! Customer notified via email.`);
-            renderAdminOrderList();
-            renderRecentOrdersList();
-        };
+        })
+        .catch(function(error) {
+            console.error("FAILED to send approval email:", error);
+            showToast(`Payment verified, but email failed to send. Check console.`);
+        })
+        .finally(function() {
+            // Refresh admin views regardless of email success/failure
+            if (typeof renderAdminOrderList === "function") renderAdminOrderList();
+            if (typeof renderRecentOrdersList === "function") renderRecentOrdersList();
+        });
+
+
 
 
 
