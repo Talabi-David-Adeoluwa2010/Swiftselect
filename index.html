@@ -1460,19 +1460,18 @@
             `).join('');
         }
 
-        window.confirmPaymentReceived = function(index) {
+                window.confirmPaymentReceived = function(index) {
             const ord = globalState.orders[index];
             ord.status = "Payment Confirmed - Order Processing";
             saveStateToFirebase();
 
-            // EmailJS template integration for confirmed payment (Updated to template_hv2kyh6)
+            // EmailJS template integration matching your template variables
             const templateParams = {
                 order_id: ord.id,
                 customer_name: ord.customerName,
                 customer_email: ord.customerEmail,
-                customer_address: ord.address,
-                order_items: ord.items,
-                total_amount: ord.totalPaid
+                product_name: ord.items,
+                amount: ord.totalPaid
             };
 
             emailjs.send("Swift_alerts", "template_hv2kyh6", templateParams).catch(function(error) {
