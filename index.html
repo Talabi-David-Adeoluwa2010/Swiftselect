@@ -56,13 +56,9 @@
         .hero-banner h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
         .hero-banner p { margin: 0; color: #c7d2fe; font-size: 0.9rem; max-width: 600px; line-height: 1.4; }
 
-        .utilities-toggle-row { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
-        .utility-toggle-btn { flex: 1; min-width: 200px; background: white; border: 1px solid var(--border); padding: 0.85rem 1.25rem; border-radius: 14px; font-weight: 700; color: #0f172a; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.01); transition: all 0.2s; }
-        .utility-toggle-btn:hover { border-color: var(--primary); background: #f8fafc; }
-        
-        .collapsible-box { display: none; background: white; border: 1px solid var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 1.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.01); animation: fadeIn 0.25s ease; }
-        .collapsible-box.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+        .dashboard-buttons-row { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+        .dashboard-btn { flex: 1; min-width: 200px; background: white; border: 1px solid var(--border); padding: 0.85rem 1.25rem; border-radius: 14px; font-weight: 700; color: #0f172a; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.01); transition: all 0.2s; text-decoration: none; }
+        .dashboard-btn:hover { border-color: var(--primary); background: #f8fafc; color: var(--primary); }
 
         .track-section h3 { margin-top: 0; margin-bottom: 0.5rem; color: #0f172a; font-size: 1.15rem; }
         .track-row { display: flex; gap: 0.5rem; }
@@ -72,7 +68,7 @@
 
         .recent-orders-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
         .recent-orders-header h3 { margin: 0; color: #0f172a; font-size: 1.15rem; }
-        .recent-orders-list { display: flex; flex-direction: column; gap: 0.75rem; max-height: 260px; overflow-y: auto; margin-top: 0.75rem; }
+        .recent-orders-list { display: flex; flex-direction: column; gap: 0.75rem; max-height: 400px; overflow-y: auto; margin-top: 0.75rem; }
         .recent-order-item { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; gap: 1rem; transition: background 0.2s; }
         .recent-order-item:hover { background: #f1f5f9; }
         .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
@@ -229,36 +225,13 @@
             <p>Handpicked products delivered globally with fast fulfillment and manual OPay bank transfers in NGN (₦).</p>
         </div>
 
-        <div class="utilities-toggle-row">
-            <button class="utility-toggle-btn" onclick="toggleSection('track-box')">
-                <span>📦 Track Order Status</span>
-                <span id="track-arrow">▼</span>
+        <div class="dashboard-buttons-row">
+            <button class="dashboard-btn" onclick="openPageModal('track-page-modal')">
+                <span>📦</span> Track Order Status
             </button>
-            <button class="utility-toggle-btn" onclick="toggleSection('recent-box')">
-                <span>📋 Your Recent Orders</span>
-                <span id="recent-arrow">▼</span>
+            <button class="dashboard-btn" onclick="openPageModal('recent-page-modal')">
+                <span>📋</span> Your Recent Orders
             </button>
-        </div>
-
-        <div class="collapsible-box" id="track-box">
-            <div class="track-section">
-                <h3>Track Your Order Status</h3>
-                <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Enter your Order ID below to check live progress.</p>
-                <div class="track-row">
-                    <input type="text" id="track-input" placeholder="e.g., SWIFT-483920">
-                    <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
-                </div>
-                <div id="track-result-container" style="display: none;" class="track-result-box"></div>
-            </div>
-        </div>
-
-        <div class="collapsible-box" id="recent-box">
-            <div class="recent-orders-header">
-                <h3 id="recent-orders-title">Your Recent Orders</h3>
-                <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
-            </div>
-            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.5rem;">Manage and view your account's order activity.</p>
-            <div class="recent-orders-list" id="recent-orders-list"></div>
         </div>
 
         <div class="search-container-wrapper" id="search-wrapper">
@@ -289,6 +262,41 @@
                 <h4>⭐ Verified Quality</h4>
                 <p>Hand-tested global inventory</p>
             </div>
+        </div>
+    </div>
+
+    <!-- Track Order Page Modal -->
+    <div class="modal" id="track-page-modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h3 style="margin: 0;">📦 Track Order Status</h3>
+                <button class="close-btn" onclick="closePageModal('track-page-modal')">&times;</button>
+            </div>
+            <div class="track-section">
+                <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Enter your Order ID below to check live progress.</p>
+                <div class="track-row">
+                    <input type="text" id="track-input" placeholder="e.g., SWIFT-483920">
+                    <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
+                </div>
+                <div id="track-result-container" style="display: none;" class="track-result-box"></div>
+            </div>
+            <button class="btn-secondary" onclick="closePageModal('track-page-modal')" style="width: 100%; margin-top: 1.5rem;">Close</button>
+        </div>
+    </div>
+
+    <!-- Recent Orders Page Modal -->
+    <div class="modal" id="recent-page-modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h3 id="recent-orders-title" style="margin: 0;">Your Recent Orders</h3>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
+                    <button class="close-btn" onclick="closePageModal('recent-page-modal')" style="font-size: 1.5rem; margin-left: 0.5rem;">&times;</button>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.5rem;">Manage and view your account's order activity normally.</p>
+            <div class="recent-orders-list" id="recent-orders-list"></div>
+            <button class="btn-secondary" onclick="closePageModal('recent-page-modal')" style="width: 100%; margin-top: 1.5rem;">Close</button>
         </div>
     </div>
 
@@ -694,7 +702,7 @@
                 { q: "How long does payment confirmation take?", a: "Once you submit your order, the admin verifies your payment and confirms it instantly on your order page." }
             ],
             orders: [
-                { q: "How do I track my order?", a: "Use the 'Track Order Status' section by entering your unique Order ID." },
+                { q: "How do I track my order?", a: "Use the 'Track Order Status' page by entering your unique Order ID." },
                 { q: "Need immediate help?", a: "Call our customer hotline at 08024300891 or email talabidavid275@gmail.com." }
             ]
         };
@@ -839,12 +847,15 @@
             });
         }
 
-        window.toggleSection = function(boxId) {
-            const box = document.getElementById(boxId);
-            const isActive = box.classList.contains('active');
-            document.getElementById('track-box').classList.remove('active');
-            document.getElementById('recent-box').classList.remove('active');
-            if (!isActive) box.classList.add('active');
+        window.openPageModal = function(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            if(modalId === 'recent-page-modal') {
+                renderRecentOrdersList();
+            }
+        };
+
+        window.closePageModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('active');
         };
 
         function formatMarketplacePrice(product) {
@@ -1289,10 +1300,9 @@
 
         window.fillTrackingInput = function(orderId) {
             document.getElementById('track-input').value = orderId;
-            document.getElementById('track-box').classList.add('active');
-            document.getElementById('recent-box').classList.remove('active');
+            closePageModal('recent-page-modal');
+            openPageModal('track-page-modal');
             trackOrder();
-            window.scrollTo({ top: 200, behavior: 'smooth' });
         };
 
         window.clearAllOrders = function() {
@@ -1304,7 +1314,8 @@
                 globalState.orders = globalState.orders.filter(o => o.customerUsername.toLowerCase() !== currentUser.username.toLowerCase());
                 saveStateToFirebase();
                 renderRecentOrdersList();
-                document.getElementById('track-result-container').style.display = 'none';
+                const trackRes = document.getElementById('track-result-container');
+                if(trackRes) trackRes.style.display = 'none';
                 showToast("Order history cleared");
             }
         };
