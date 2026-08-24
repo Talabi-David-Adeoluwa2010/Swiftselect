@@ -1460,12 +1460,12 @@
             `).join('');
         }
 
-                window.confirmPaymentReceived = function(index) {
+        window.confirmPaymentReceived = function(index) {
             const ord = globalState.orders[index];
             ord.status = "Payment Confirmed - Order Processing";
             saveStateToFirebase();
 
-            // EmailJS template integration matching your template variables
+            // Template keys match your EmailJS dashboard template variables
             const templateParams = {
                 order_id: ord.id,
                 customer_name: ord.customerName,
@@ -1482,6 +1482,7 @@
             renderAdminOrderList();
             renderRecentOrdersList();
         };
+
 
         window.updateOrderStatus = function(index) {
             const newStatus = document.getElementById(`admin-status-${index}`).value;
