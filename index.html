@@ -1465,7 +1465,6 @@
             ord.status = "Payment Confirmed - Order Processing";
             saveStateToFirebase();
 
-            // Template keys match your EmailJS dashboard template variables
             const templateParams = {
                 order_id: ord.id,
                 customer_name: ord.customerName,
@@ -1474,14 +1473,20 @@
                 amount: ord.totalPaid
             };
 
-            emailjs.send("Swift_alerts", "template_hv2kyh6", templateParams).catch(function(error) {
-                console.error("EmailJS payment confirmation notification failed:", error);
-            });
+            // Added the public key directly here so EmailJS authenticates properly
+            emailjs.send("Swift_alerts", "template_hv2kyh6", templateParams, "5viHIEbeZ90KuRrb3")
+                .then(function(response) {
+                    console.log("SUCCESS! Email sent:", response.status, response.text);
+                })
+                .catch(function(error) {
+                    console.error("FAILED to send email:", error);
+                });
 
             showToast(`Payment verified for order ${ord.id}! Customer notified via email.`);
             renderAdminOrderList();
             renderRecentOrdersList();
         };
+
 
 
         window.updateOrderStatus = function(index) {
