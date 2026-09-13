@@ -28,6 +28,7 @@
         body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 45px; }
         
         body.cart-open { overflow: hidden; }
+        body.no-scroll { overflow: hidden; }
 
         .announcement-bar { background: linear-gradient(90deg, #4f46e5, #9333ea); color: white; text-align: center; padding: 0.5rem; font-size: 0.85rem; font-weight: 500; }
 
@@ -76,7 +77,7 @@
         .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
 
         .search-container-wrapper { margin-bottom: 1.25rem; }
-        .sticky-search-container { position: sticky; top: 73px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
+        .sticky-search-container { position: sticky; top: 110px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
         .sticky-search-container.is-stuck { box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(8px); }
         
         .search-input-wrapper { position: relative; }
@@ -114,15 +115,12 @@
         .trust-item h4 { margin: 0 0 0.3rem; font-size: 1rem; font-weight: 700; color: #0f172a; }
         .trust-item p { margin: 0; font-size: 0.85rem; color: #64748b; }
 
-        #toast { position: fixed; bottom: 45px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 0.85rem 1.75rem; border-radius: 35px; box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); max-width: 90vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
+        #toast { position: fixed; bottom: 45px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 0.85rem 1.75rem; border-radius: 35px; box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5000; font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); max-width: 90vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
         footer { text-align: center; padding: 2.5rem; background: #0f172a; color: #64748b; font-size: 0.9rem; margin-top: auto; border-top: 1px solid #1e293b; }
         .secret-admin { cursor: pointer; opacity: 0.2; user-select: none; transition: opacity 0.2s; padding: 0.2rem 0.5rem; }
         .secret-admin:hover { opacity: 1; color: #fff; }
-        .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
-        .footer-links a { color: #94a3b8; text-decoration: none; font-weight: 600; cursor: pointer; }
-        .footer-links a:hover { color: white; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 1rem; box-sizing: border-box; }
         .modal.active { display: flex; }
@@ -149,10 +147,11 @@
         .admin-actions { display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0; }
         
         .admin-refund-card { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; font-size: 0.85rem; }
-        .admin-refund-header { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 0.5rem; }
+        .admin-refund-header { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.3rem; }
         .admin-refund-detail { color: #475569; margin-bottom: 0.2rem; }
-        .admin-refund-images { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
-        .admin-refund-images img { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; }
+        .admin-refund-images { display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap; }
+        .admin-refund-images img { width: 90px; height: 90px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); cursor: zoom-in; transition: transform 0.2s; background: white; }
+        .admin-refund-images img:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
         .rating-stars-input { display: flex; gap: 0.5rem; font-size: 1.75rem; cursor: pointer; color: #cbd5e1; margin-bottom: 1.25rem; }
         .rating-stars-input span.selected { color: var(--accent); }
@@ -161,7 +160,7 @@
         @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
         .cart-modal.active { display: flex; }
         .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 1.5rem; flex-shrink: 0; }
-        .close-btn { background: none; border: none; font-size: 1.75rem; cursor: pointer; color: #64748b; transition: color 0.2s; }
+        .close-btn { background: none; border: none; font-size: 1.75rem; cursor: pointer; color: #64748b; transition: color 0.2s; line-height: 1; }
         .close-btn:hover { color: #0f172a; }
         .cart-items { flex: 1 1 auto; overflow-y: auto; margin: 0; padding: 1rem 1.5rem; min-height: 0; scrollbar-width: thin; }
         .cart-items::-webkit-scrollbar { width: 6px; }
@@ -194,6 +193,38 @@
         .file-upload-box span { font-size: 0.85rem; color: #64748b; }
         .file-preview { margin-top: 0.5rem; max-width: 100px; border-radius: 8px; display: none; }
         .refund-policy-text { font-size: 0.9rem; line-height: 1.6; color: #334155; }
+
+        /* ============================= */
+        /* NEW: FULL-PAGE VIEWS (Orders & Admin) */
+        /* ============================= */
+        .full-page-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1500; display: none; flex-direction: column; overflow: hidden; }
+        .full-page-view.active { display: flex; }
+        .full-page-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; background: white; border-bottom: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); flex-shrink: 0; gap: 0.75rem; }
+        .full-page-header h2 { margin: 0; font-size: 1.2rem; font-weight: 800; }
+        .full-page-body { flex: 1; overflow-y: auto; padding: 1.25rem; max-width: 1200px; width: 100%; margin: 0 auto; box-sizing: border-box; }
+
+        .orders-section { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        .orders-section h3 { margin: 0 0 0.4rem; font-size: 1.15rem; color: #0f172a; }
+        .orders-section > p { font-size: 0.85rem; color: #64748b; margin: 0 0 1rem; }
+
+        /* ============================= */
+        /* NEW: ADMIN PAGE TABS */
+        /* ============================= */
+        .admin-tabs { display: flex; gap: 0.5rem; padding: 0.75rem 1.25rem; background: white; border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
+        .admin-tabs::-webkit-scrollbar { display: none; }
+        .admin-tab { flex-shrink: 0; background: transparent; border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.82rem; color: #64748b; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .admin-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .admin-tab-content { display: none; }
+        .admin-tab-content.active { display: block; }
+
+        /* ============================= */
+        /* NEW: LIGHTBOX */
+        /* ============================= */
+        .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; padding: 1rem; }
+        .lightbox.active { display: flex; }
+        .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+        .lightbox-close { position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.15); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 1.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+        .lightbox-close:hover { background: rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
@@ -210,7 +241,10 @@
         <div class="nav-buttons">
             <span id="user-greeting"></span>
             <button class="btn-nav-link" onclick="openReviewsModal()">⭐ Ratings & Reviews</button>
-            <button class="btn-secondary" onclick="toggleHelpModal()">🤖 Help / AI Assistant</button>
+            <button class="btn-nav-link" onclick="openOrdersPage()">📦 Orders & Tracking</button>
+            <button class="btn-secondary" onclick="toggleRefundPolicyModal()">📜 Refund Policy</button>
+            <button class="btn-secondary" onclick="toggleRefundModal()">🔄 Request Refund</button>
+            <button class="btn-secondary" onclick="toggleHelpModal()">🤖 Help / Support</button>
             <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login / Signup</button>
             <button class="btn-primary" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
         </div>
@@ -222,37 +256,8 @@
             <p>Handpicked products delivered globally with fast fulfillment and prepaid online ordering in USD ($) and NGN (₦).</p>
         </div>
 
-        <div class="utilities-toggle-row">
-            <button class="utility-toggle-btn" onclick="toggleSection('track-box')">
-                <span>📦 Track Order Status</span>
-                <span id="track-arrow">▼</span>
-            </button>
-            <button class="utility-toggle-btn" onclick="toggleSection('recent-box')">
-                <span>📋 Your Recent Orders</span>
-                <span id="recent-arrow">▼</span>
-            </button>
-        </div>
-
-        <div class="collapsible-box" id="track-box">
-            <div class="track-section">
-                <h3>Track Your Order Status</h3>
-                <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Enter your Order ID below to check live progress.</p>
-                <div class="track-row">
-                    <input type="text" id="track-input" placeholder="e.g., SWIFT-483920">
-                    <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
-                </div>
-                <div id="track-result-container" style="display: none;" class="track-result-box"></div>
-            </div>
-        </div>
-
-        <div class="collapsible-box" id="recent-box">
-            <div class="recent-orders-header">
-                <h3 id="recent-orders-title">Your Recent Orders</h3>
-                <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
-            </div>
-            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 0.5rem;">Manage and view your account's order activity.</p>
-            <div class="recent-orders-list" id="recent-orders-list"></div>
-        </div>
+        <!-- OLD: utilities-toggle-row and collapsible-box removed -->
+        <!-- Track Order + Recent Orders moved to full Orders & Tracking page (accessible from header) -->
 
         <div class="search-container-wrapper" id="search-wrapper">
             <div class="sticky-search-container" id="sticky-search">
@@ -292,13 +297,127 @@
     <div id="toast">Item added to cart!</div>
 
     <footer>
-        <div class="footer-links">
-            <a onclick="toggleRefundPolicyModal()">Refund Policy</a>
-            <a onclick="toggleRefundModal()">Request Refund / Complaint</a>
-            <a onclick="toggleHelpModal()">Help & Support</a>
-        </div>
         <p>&copy; 2026 SwiftSelect. All rights reserved. <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
     </footer>
+
+    <!-- ================================================ -->
+    <!-- NEW: ORDERS & TRACKING FULL PAGE VIEW -->
+    <!-- ================================================ -->
+    <div class="full-page-view" id="orders-page">
+        <div class="full-page-header">
+            <button class="btn-secondary" onclick="closeOrdersPage()" style="padding:0.5rem 1rem;">← Back</button>
+            <h2>📦 Your Orders & Tracking</h2>
+            <div style="width: 80px;"></div>
+        </div>
+        <div class="full-page-body">
+            <div class="orders-section">
+                <h3>📦 Track Your Order Status</h3>
+                <p>Enter your Order ID below to check live progress.</p>
+                <div class="track-row">
+                    <input type="text" id="track-input" placeholder="e.g., SWIFT-483920">
+                    <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
+                </div>
+                <div id="track-result-container" style="display: none;" class="track-result-box"></div>
+            </div>
+
+            <div class="orders-section">
+                <div class="recent-orders-header">
+                    <h3 id="recent-orders-title">Your Recent Orders</h3>
+                    <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
+                </div>
+                <p>Manage and view your account's order activity.</p>
+                <div class="recent-orders-list" id="recent-orders-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================ -->
+    <!-- NEW: ADMIN FULL PAGE VIEW -->
+    <!-- ================================================ -->
+    <div class="full-page-view" id="admin-page">
+        <div class="full-page-header">
+            <h2>🔧 Admin Management Dashboard</h2>
+            <button class="close-btn" onclick="closeAdminPage()">&times;</button>
+        </div>
+        <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="refunds" onclick="switchAdminTab('refunds')">💸 Refund Requests</button>
+            <button class="admin-tab" data-tab="orders" onclick="switchAdminTab('orders')">📦 Orders Tracker</button>
+            <button class="admin-tab" data-tab="products" onclick="switchAdminTab('products')">🛍️ Products</button>
+            <button class="admin-tab" data-tab="promos" onclick="switchAdminTab('promos')">🎟️ Promo Codes</button>
+        </div>
+        <div class="full-page-body">
+
+            <!-- Refunds Tab -->
+            <div class="admin-tab-content active" id="admin-tab-refunds">
+                <div class="admin-section-box" style="background: #fff7ed; border-color: #ffedd5;">
+                    <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">💸 Refund & Complaint Requests</h4>
+                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Review customer refund requests. Click on receipt/ID images to view them full-screen. Update status to notify the system.</p>
+                    <div id="admin-refunds-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+                </div>
+            </div>
+
+            <!-- Orders Tab -->
+            <div class="admin-tab-content" id="admin-tab-orders">
+                <div class="admin-section-box">
+                    <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders Tracker</h4>
+                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and countries are shown below. Setting status to <strong>"Delivered Successfully"</strong> unlocks the rating prompt for the recipient user.</p>
+                    <div id="admin-orders-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+                </div>
+            </div>
+
+            <!-- Products Tab -->
+            <div class="admin-tab-content" id="admin-tab-products">
+                <div class="admin-section-box">
+                    <h4 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1.05rem; color: #0f172a;">Add New Product (Global Catalog)</h4>
+                    <div id="add-product-form-container">
+                        <input type="text" id="admin-name" placeholder="Product Name">
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="number" step="0.01" id="admin-price-usd" placeholder="Price ($USD)">
+                            <input type="number" id="admin-price-ngn" placeholder="Price (₦NGN)">
+                        </div>
+                        <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
+                        
+                        <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Pictures (Add 3 to 5 pictures):</label>
+                        <input type="file" id="admin-image-input" multiple accept="image/*" style="margin-bottom: 0.5rem;">
+                        <div id="admin-image-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;"></div>
+
+                        <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Videos (Max 2 short videos, under 2MB each):</label>
+                        <input type="file" id="admin-video-input" accept="video/*,.mov,.mp4,.m4v,.quicktime" multiple style="margin-bottom: 0.5rem;">
+                        <div id="admin-video-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.1rem;"></div>
+
+                        <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g., International Express Hub)">
+                        <button class="btn-primary" id="admin-add-btn" onclick="addProduct()" style="width:100%;">Save New Product Globally</button>
+                    </div>
+                </div>
+
+                <div class="admin-section-box">
+                    <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Manage Catalog Inventory & Status (Global Sync)</h4>
+                    <div id="admin-product-list" style="border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem; background: white;"></div>
+                </div>
+            </div>
+
+            <!-- Promos Tab -->
+            <div class="admin-tab-content" id="admin-tab-promos">
+                <div class="admin-section-box">
+                    <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Promo Code Management (5% Discount)</h4>
+                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Create active promotional codes that grant customers a 5% discount at checkout.</p>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                        <input type="text" id="admin-new-promo" placeholder="Enter promo code (e.g. SWIFT5)" style="margin-bottom:0; text-transform: uppercase;">
+                        <button class="btn-primary" onclick="adminCreatePromoCode()" style="width: auto; padding: 0 1.25rem;">Create Promo</button>
+                    </div>
+                    <div id="admin-promo-list" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================ -->
+    <!-- NEW: LIGHTBOX for full-screen image viewing -->
+    <!-- ================================================ -->
+    <div class="lightbox" id="image-lightbox" onclick="closeLightbox(event)">
+        <button class="lightbox-close" onclick="closeLightbox(event, true)">&times;</button>
+        <img id="lightbox-img" src="" alt="Full view">
+    </div>
 
     <!-- Refund Policy Modal -->
     <div class="modal" id="refund-policy-modal">
@@ -317,7 +436,7 @@
                     <li>Proof of purchase (payment receipt) must be provided.</li>
                 </ul>
                 <p><strong>How to Request a Refund:</strong></p>
-                <p>Please use the "Request Refund / Complaint" button in the footer. Fill out the form with your Order ID, full name, account details, and upload a copy of your payment receipt. Our team will review your request within 3-5 business days.</p>
+                <p>Please use the "Request Refund" button in the top dashboard. Fill out the form with your Order ID, full name, full address, account details, and upload a copy of your payment receipt and valid ID. Our team will review your request within 3-5 business days.</p>
                 <p><strong>Refund Processing:</strong></p>
                 <p>Once approved, refunds will be processed to the bank account provided within 5-7 business days. If you paid via Paystack, the refund may be returned to your original payment method.</p>
                 <p><strong>Non-Refundable Items:</strong></p>
@@ -345,6 +464,12 @@
             <div class="refund-form-group">
                 <label>Order ID</label>
                 <input type="text" id="refund-order-id" placeholder="e.g., SWIFT-123456">
+            </div>
+
+            <!-- NEW: Full Address field -->
+            <div class="refund-form-group">
+                <label>Full Delivery Address *</label>
+                <textarea id="refund-address" rows="2" placeholder="Street address, City, State, Country, Postal Code"></textarea>
             </div>
 
             <div class="refund-form-group">
@@ -523,65 +648,6 @@
         </div>
     </div>
 
-    <!-- Admin Panel Modal (Restored to original secret trigger) -->
-    <div class="modal" id="admin-modal">
-        <div class="modal-content admin-modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                <h3 style="margin: 0; font-size: 1.35rem;">Admin Global Management Dashboard</h3>
-                <button class="close-btn" onclick="toggleAdminModal()">&times;</button>
-            </div>
-            
-            <!-- Admin Refunds Section (NEW) -->
-            <div class="admin-section-box" style="background: #fff7ed; border-color: #ffedd5;">
-                <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">💸 Refund & Complaint Requests</h4>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Review customer refund requests. Click on images to enlarge. Update the status to notify the system.</p>
-                <div id="admin-refunds-list" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;"></div>
-            </div>
-
-            <div class="admin-section-box">
-                <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders Tracker</h4>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and countries are shown below. Setting status to <strong>"Delivered Successfully"</strong> unlocks the rating prompt for the recipient user.</p>
-                <div id="admin-orders-list" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;"></div>
-            </div>
-
-            <div class="admin-section-box">
-                <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Promo Code Management (5% Discount)</h4>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Create active promotional codes that grant customers a 5% discount at checkout.</p>
-                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-                    <input type="text" id="admin-new-promo" placeholder="Enter promo code (e.g. SWIFT5)" style="margin-bottom:0; text-transform: uppercase;">
-                    <button class="btn-primary" onclick="adminCreatePromoCode()" style="width: auto; padding: 0 1.25rem;">Create Promo</button>
-                </div>
-                <div id="admin-promo-list" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
-            </div>
-
-            <div class="admin-section-box">
-                <h4 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1.05rem; color: #0f172a;">Add New Product (Global Catalog)</h4>
-                <div id="add-product-form-container">
-                    <input type="text" id="admin-name" placeholder="Product Name">
-                    <div style="display: flex; gap: 0.5rem;">
-                        <input type="number" step="0.01" id="admin-price-usd" placeholder="Price ($USD)">
-                        <input type="number" id="admin-price-ngn" placeholder="Price (₦NGN)">
-                    </div>
-                    <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
-                    
-                    <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Pictures (Add 3 to 5 pictures):</label>
-                    <input type="file" id="admin-image-input" multiple accept="image/*" style="margin-bottom: 0.5rem;">
-                    <div id="admin-image-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;"></div>
-
-                    <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Videos (Max 2 short videos, under 2MB each):</label>
-                    <input type="file" id="admin-video-input" accept="video/*,.mov,.mp4,.m4v,.quicktime" multiple style="margin-bottom: 0.5rem;">
-                    <div id="admin-video-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.1rem;"></div>
-
-                    <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g., International Express Hub)">
-                    <button class="btn-primary" id="admin-add-btn" onclick="addProduct()" style="width:100%;">Save New Product Globally</button>
-                </div>
-            </div>
-
-            <h4 style="margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Manage Catalog Inventory & Status (Global Sync)</h4>
-            <div id="admin-product-list" style="max-height: 220px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem; background: white;"></div>
-        </div>
-    </div>
-
     <!-- Slide-out Cart Drawer -->
     <div class="cart-modal" id="cart-modal">
         <div class="cart-header">
@@ -743,7 +809,7 @@
                 { q: "Is my payment secure?", a: "Yes! All payments are processed securely through Paystack with high-grade encryption." }
             ],
             orders: [
-                { q: "How do I track my order?", a: "You can use the 'Track Order Status' section on the main dashboard by entering your unique Order ID (e.g., SWIFT-XXXXXX)." },
+                { q: "How do I track my order?", a: "Click the '📦 Orders & Tracking' button in the top dashboard. Enter your unique Order ID (e.g., SWIFT-XXXXXX) and click Search to see live progress." },
                 { q: "Can I cancel or change my order?", a: "Orders are processed quickly. If you need immediate assistance, please call our customer care hotline at 08024300891." }
             ]
         };
@@ -798,8 +864,8 @@
             renderProducts();
             renderReviews();
             renderRecentOrdersList();
-            const adminModal = document.getElementById('admin-modal');
-            if (adminModal && adminModal.classList.contains('active')) {
+            const adminPage = document.getElementById('admin-page');
+            if (adminPage && adminPage.classList.contains('active')) {
                 renderAdminDashboard();
             }
         });
@@ -875,6 +941,7 @@
         window.submitRefundRequest = async function() {
             const name = document.getElementById('refund-name').value.trim();
             const orderId = document.getElementById('refund-order-id').value.trim();
+            const address = document.getElementById('refund-address').value.trim();
             const reason = document.getElementById('refund-reason').value.trim();
             const accountName = document.getElementById('refund-account-name').value.trim();
             const accountNumber = document.getElementById('refund-account-number').value.trim();
@@ -882,8 +949,8 @@
             const receiptFile = document.getElementById('refund-receipt').files[0];
             const idFile = document.getElementById('refund-id').files[0];
 
-            if (!name || !orderId || !reason || !accountName || !accountNumber || !bankName) {
-                alert("Please fill in all required fields.");
+            if (!name || !orderId || !address || !reason || !accountName || !accountNumber || !bankName) {
+                alert("Please fill in all required fields including your full address.");
                 return;
             }
 
@@ -910,6 +977,7 @@
                     customerName: name,
                     customerEmail: currentUser ? currentUser.email : "Guest",
                     orderId: orderId,
+                    address: address,
                     reason: reason,
                     accountName: accountName,
                     accountNumber: accountNumber,
@@ -926,6 +994,7 @@
 
                 document.getElementById('refund-name').value = '';
                 document.getElementById('refund-order-id').value = '';
+                document.getElementById('refund-address').value = '';
                 document.getElementById('refund-reason').value = '';
                 document.getElementById('refund-account-name').value = '';
                 document.getElementById('refund-account-number').value = '';
@@ -1019,7 +1088,7 @@
         function setupStickySearchScrollObserver() {
             const stickySearchEl = document.getElementById('sticky-search');
             window.addEventListener('scroll', () => {
-                if (window.scrollY >= 73) {
+                if (window.scrollY >= 110) {
                     stickySearchEl.classList.add('is-stuck');
                 } else {
                     stickySearchEl.classList.remove('is-stuck');
@@ -1027,16 +1096,20 @@
             });
         }
 
-        window.toggleSection = function(boxId) {
-            const box = document.getElementById(boxId);
-            const isActive = box.classList.contains('active');
-            
-            document.getElementById('track-box').classList.remove('active');
-            document.getElementById('recent-box').classList.remove('active');
+        // =========================================
+        // NEW: Orders full-page view functions
+        // =========================================
+        window.openOrdersPage = function() {
+            renderRecentOrdersList();
+            document.getElementById('orders-page').classList.add('active');
+            document.body.classList.add('no-scroll');
+        };
 
-            if (!isActive) {
-                box.classList.add('active');
-            }
+        window.closeOrdersPage = function() {
+            document.getElementById('orders-page').classList.remove('active');
+            document.body.classList.remove('no-scroll');
+            document.getElementById('track-result-container').style.display = 'none';
+            document.getElementById('track-input').value = '';
         };
 
         function formatMarketplacePrice(product) {
@@ -1427,6 +1500,7 @@
                 resultBox.innerHTML = `
                     <p style="margin: 0 0 0.5rem;"><strong>Order ID:</strong> ${found.id}</p>
                     <p style="margin: 0 0 0.5rem;"><strong>Items:</strong> ${found.items}</p>
+                    <p style="margin: 0 0 0.5rem;"><strong>Delivery Address:</strong> ${found.address || 'N/A'}</p>
                     <p style="margin: 0 0 0.5rem;"><strong>Total Paid:</strong> ${found.totalPaid}</p>
                     <p style="margin: 0 0 0.5rem;"><strong>Delivery Status:</strong> <span style="color: var(--primary); font-weight: 700;">${found.status}</span></p>
                     <p style="margin: 0; font-size: 0.8rem; color: #64748b;">Placed on: ${found.date}</p>
@@ -1458,12 +1532,13 @@
 
             listContainer.innerHTML = [...userOrders].reverse().map(order => `
                 <div class="recent-order-item">
-                    <div>
+                    <div style="min-width: 0; flex: 1;">
                         <span class="order-pill">${order.id}</span>
                         <span style="font-weight: 600; margin-left: 0.25rem;">${order.customerName}</span>
                         <div style="color: #64748b; font-size: 0.75rem; margin-top: 0.15rem;">${order.items} (${order.totalPaid})</div>
+                        <div style="color: #64748b; font-size: 0.72rem; margin-top: 0.15rem;">📍 ${order.address || 'N/A'}</div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                         <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">${order.status}</span>
                         <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Track</button>
                         ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.75rem;" onclick="triggerRatingModal('${order.id}')">Rate & Review</button>` : ''}
@@ -1474,10 +1549,8 @@
 
         window.fillTrackingInput = function(orderId) {
             document.getElementById('track-input').value = orderId;
-            document.getElementById('track-box').classList.add('active');
-            document.getElementById('recent-box').classList.remove('active');
             trackOrder();
-            window.scrollTo({ top: 200, behavior: 'smooth' });
+            document.getElementById('track-result-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
 
         window.clearAllOrders = function() {
@@ -1577,19 +1650,61 @@
             showToast("Thank you! Your recommendation is now visible globally across all devices.");
         };
 
-        // --- ADMIN LOGIC (RESTORED) ---
+        // =========================================
+        // NEW: LIGHTBOX functions
+        // =========================================
+        window.openLightbox = function(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('image-lightbox').classList.add('active');
+        };
+
+        window.closeLightbox = function(event, force) {
+            if (force || event.target.id === 'image-lightbox' || event.target.classList.contains('lightbox-close')) {
+                document.getElementById('image-lightbox').classList.remove('active');
+                document.getElementById('lightbox-img').src = '';
+            }
+        };
+
+        // =========================================
+        // ADMIN LOGIC
+        // =========================================
         window.checkAdminPassword = function() {
             const password = prompt("Enter Admin Password:");
             if (password === "admin123") {
                 renderAdminDashboard();
-                toggleAdminModal();
+                openAdminPage();
             } else if (password !== null) {
                 alert("Incorrect password!");
             }
         };
 
+        window.openAdminPage = function() {
+            document.getElementById('admin-page').classList.add('active');
+            document.body.classList.add('no-scroll');
+        };
+
+        window.closeAdminPage = function() {
+            document.getElementById('admin-page').classList.remove('active');
+            document.body.classList.remove('no-scroll');
+        };
+
         window.toggleAdminModal = function() {
-            document.getElementById('admin-modal').classList.toggle('active');
+            // For backwards compatibility - if admin page is open, close it
+            if (document.getElementById('admin-page').classList.contains('active')) {
+                closeAdminPage();
+            } else {
+                renderAdminDashboard();
+                openAdminPage();
+            }
+        };
+
+        window.switchAdminTab = function(tab) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+            const tabBtn = document.querySelector(`.admin-tab[data-tab="${tab}"]`);
+            const tabContent = document.getElementById(`admin-tab-${tab}`);
+            if (tabBtn) tabBtn.classList.add('active');
+            if (tabContent) tabContent.classList.add('active');
         };
 
         function renderAdminDashboard() {
@@ -1615,6 +1730,7 @@
                         <span style="color: #dc2626;">${refund.status}</span>
                     </div>
                     <div class="admin-refund-detail"><strong>Order ID:</strong> ${refund.orderId}</div>
+                    <div class="admin-refund-detail"><strong>Full Address:</strong> ${refund.address || 'N/A'}</div>
                     <div class="admin-refund-detail"><strong>Reason:</strong> ${refund.reason}</div>
                     <div class="admin-refund-detail"><strong>Account Name:</strong> ${refund.accountName}</div>
                     <div class="admin-refund-detail"><strong>Account Number:</strong> ${refund.accountNumber}</div>
@@ -1623,17 +1739,17 @@
                     
                     <div class="admin-refund-images">
                         <div>
-                            <p style="font-size:0.7rem; margin:0 0 0.2rem; font-weight:700;">Receipt:</p>
-                            <img src="${refund.receiptImage}" alt="Receipt" onclick="window.open('${refund.receiptImage}', '_blank')">
+                            <p style="font-size:0.72rem; margin:0 0 0.3rem; font-weight:700;">Receipt (tap to enlarge):</p>
+                            <img src="${refund.receiptImage}" alt="Receipt" onclick="openLightbox('${refund.receiptImage}')">
                         </div>
                         <div>
-                            <p style="font-size:0.7rem; margin:0 0 0.2rem; font-weight:700;">ID:</p>
-                            <img src="${refund.idImage}" alt="ID" onclick="window.open('${refund.idImage}', '_blank')">
+                            <p style="font-size:0.72rem; margin:0 0 0.3rem; font-weight:700;">ID (tap to enlarge):</p>
+                            <img src="${refund.idImage}" alt="ID" onclick="openLightbox('${refund.idImage}')">
                         </div>
                     </div>
 
-                    <div style="display:flex; gap:0.5rem; align-items:center; margin-top:0.75rem; flex-wrap:wrap;">
-                        <select id="admin-refund-status-${idx}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1; max-width:200px;">
+                    <div style="display:flex; gap:0.5rem; align-items:center; margin-top:0.85rem; flex-wrap:wrap;">
+                        <select id="admin-refund-status-${idx}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1; max-width:220px;">
                             <option value="Pending Review" ${refund.status === 'Pending Review' ? 'selected' : ''}>Pending Review</option>
                             <option value="Processing" ${refund.status === 'Processing' ? 'selected' : ''}>Processing</option>
                             <option value="Processed" ${refund.status === 'Processed' ? 'selected' : ''}>Processed / Refunded</option>
@@ -1664,11 +1780,12 @@
 
             listContainer.innerHTML = globalState.orders.map((ord, index) => `
                 <div class="admin-order-card">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem; flex-wrap:wrap; gap:0.3rem;">
                         <strong>${ord.id} (@${ord.customerUsername || 'user'} - ${ord.customerName})</strong>
                         <span style="color:#64748b;">${ord.date}</span>
                     </div>
-                    <div style="color:#475569; margin-bottom:0.5rem;">Items: ${ord.items} | Total Paid: ${ord.totalPaid || 'N/A'} | Phone: ${ord.phone}</div>
+                    <div style="color:#475569; margin-bottom:0.4rem;">Items: ${ord.items} | Total Paid: ${ord.totalPaid || 'N/A'} | Phone: ${ord.phone}</div>
+                    <div style="color:#475569; margin-bottom:0.5rem; font-size:0.82rem;">📍 ${ord.address || 'N/A'}</div>
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
                         <select id="admin-status-${index}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1;">
                             <option value="Order Placed - Processing" ${ord.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
