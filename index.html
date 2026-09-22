@@ -390,8 +390,9 @@
                 <div class="admin-section-box">
                     <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Manage Catalog Inventory & Status (Global Sync)</h4>
                     <div id="admin-product-list" style="border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem; background: white;"></div>
-                    <!-- NEW: FORCE SYNC BUTTON ADDED HERE -->
+                    <!-- NEW BUTTONS ADDED HERE -->
                     <button class="btn-primary" onclick="forcePushToFirebase()" style="width:100%; margin-top:1rem; background: #16a34a;">🚀 Force Sync Local Products to Firebase</button>
+                    <button class="btn-primary" onclick="factoryResetStore()" style="width:100%; margin-top:0.5rem; background: #dc2626;">🔄 Factory Reset (Fix Frozen App / Restore Defaults)</button>
                 </div>
             </div>
 
@@ -1577,10 +1578,8 @@
 
             modalGrid.innerHTML = globalState.reviews.map(r => `
                 <div class="review-card" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; font-size: 0.9rem;">
-                    <valuediv class="stars" style="color: var(--accent);.trim();
-            margin-bottom:  if0.3rem;">${'★'.repeat(r (!.commentrating)}${'☆'.repeat()5 - {
- r.rating)}</div>
-                                   <p style="margin:  alert0.3rem 0; color: #334155(";">"${r.comment}"Please</p>
+                    <div class="stars" style="color: var(--accent); margin-bottom: 0.3rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                    <p style="margin: 0.3rem 0; color: #334155;">"${r.comment}"</p>
                     <span class="author" style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block;">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
                 </div>
             `).join('');
@@ -1625,7 +1624,9 @@
         }
 
         window.submitReview = function() {
-            const comment = document.getElementById('review-comment'). write a short review comment.");
+            const comment = document.getElementById('review-comment').value.trim();
+            if (!comment) {
+                alert("Please write a short review comment.");
                 return;
             }
 
@@ -1881,11 +1882,25 @@
             `).join('');
         }
 
-        // NEW: FORCE SYNC FUNCTION ADDED HERE
         window.forcePushToFirebase = function() {
             if (confirm("Push all products currently on this phone to Firebase so other devices can see them?")) {
                 saveStateToFirebase();
                 alert("Syncing to Firebase! Check your other phone in 5 seconds.");
+            }
+        };
+
+        // NEW: FACTORY RESET FUNCTION
+        window.factoryResetStore = function() {
+            if (confirm("WARNING: This will wipe your local cache and restore the default products. Use this if the app is frozen or products disappeared. Are you sure?")) {
+                const DBDeleteRequest = indexedDB.deleteDatabase("SwiftSelectDB");
+                DBDeleteRequest.onsuccess = function() {
+                    localStorage.clear();
+                    window.location.reload(true);
+                };
+                DBDeleteRequest.onerror = function() {
+                    localStorage.clear();
+                    window.location.reload(true);
+                };
             }
         };
 
@@ -1986,21 +2001,17 @@
                 document.getElementById('admin-price-usd').value = '';
                 document.getElementById('admin-price-ngn').value = '';
                 document.getElementById('admin-desc').value = '';
-                document.getElementById('admin-shipping();
-').value = '';
+                document.getElementById('admin-shipping').value = '';
                 adminSelectedImages = [];
                 adminSelectedVideos = [];
                 renderAdminImagePreviews();
                 renderAdminVideoPreviews();
                 
                 addBtn.innerText = "Save New Product Globally";
-                addBtn.dis            }
-abled = false;
-                       showToast('Product successfully added and synced globally };
-
-!');
+                addBtn.disabled = false;
+                showToast('Product successfully added and synced globally!');
             } catch (err) {
-                console.error("       Add product error:", err);
+                console.error("Add product error:", err);
                 alert(err.message || "Error reading files. Make sure the video/image files are valid or smaller in size.");
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
@@ -2079,7 +2090,11 @@ abled = false;
                 if (existingItem.quantity <= 0) {
                     cart = cart.filter(item => item.id !== productId);
                 }
-                updateCartUI window.removeFromCart = function(productId) {
+                updateCartUI();
+            }
+        };
+
+        window.removeFromCart = function(productId) {
             cart = cart.filter(item => item.id !== productId);
             updateCartUI();
             showToast("Item removed from cart");
