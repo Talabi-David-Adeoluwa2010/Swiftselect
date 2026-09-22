@@ -195,7 +195,7 @@
         .refund-policy-text { font-size: 0.9rem; line-height: 1.6; color: #334155; }
 
         /* ============================= */
-        /* NEW: FULL-PAGE VIEWS (Orders & Admin) */
+        /* FULL-PAGE VIEWS (Orders & Admin) */
         /* ============================= */
         .full-page-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1500; display: none; flex-direction: column; overflow: hidden; }
         .full-page-view.active { display: flex; }
@@ -208,7 +208,7 @@
         .orders-section > p { font-size: 0.85rem; color: #64748b; margin: 0 0 1rem; }
 
         /* ============================= */
-        /* NEW: ADMIN PAGE TABS */
+        /* ADMIN PAGE TABS */
         /* ============================= */
         .admin-tabs { display: flex; gap: 0.5rem; padding: 0.75rem 1.25rem; background: white; border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
         .admin-tabs::-webkit-scrollbar { display: none; }
@@ -218,7 +218,7 @@
         .admin-tab-content.active { display: block; }
 
         /* ============================= */
-        /* NEW: LIGHTBOX */
+        /* LIGHTBOX */
         /* ============================= */
         .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; padding: 1rem; }
         .lightbox.active { display: flex; }
@@ -298,7 +298,7 @@
     </footer>
 
     <!-- ================================================ -->
-    <!-- NEW: ORDERS & TRACKING FULL PAGE VIEW -->
+    <!-- ORDERS & TRACKING FULL PAGE VIEW -->
     <!-- ================================================ -->
     <div class="full-page-view" id="orders-page">
         <div class="full-page-header">
@@ -329,7 +329,7 @@
     </div>
 
     <!-- ================================================ -->
-    <!-- NEW: ADMIN FULL PAGE VIEW -->
+    <!-- ADMIN FULL PAGE VIEW -->
     <!-- ================================================ -->
     <div class="full-page-view" id="admin-page">
         <div class="full-page-header">
@@ -364,15 +364,18 @@
 
             <!-- Products Tab -->
             <div class="admin-tab-content" id="admin-tab-products">
-                <div class="admin-section-box">
-                    <h4 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1.05rem; color: #0f172a;">Add New Product (Global Catalog)</h4>
-                    <div id="add-product-form-container">
+                <div class="admin-section-box" id="add-product-form-container">
+                    <h4 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1.05rem; color: #0f172a;" id="admin-form-title">Add New Product (Global Catalog)</h4>
+                    <div id="admin-form-body">
                         <input type="text" id="admin-name" placeholder="Product Name">
                         <div style="display: flex; gap: 0.5rem;">
                             <input type="number" step="0.01" id="admin-price-usd" placeholder="Price ($USD)">
                             <input type="number" id="admin-price-ngn" placeholder="Price (₦NGN)">
                         </div>
                         <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
+                        
+                        <!-- NEW: COLOR INPUT -->
+                        <input type="text" id="admin-colors" placeholder="Available Colors (e.g. Red, Blue, Black) - Optional">
                         
                         <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Pictures (Add 3 to 5 pictures):</label>
                         <input type="file" id="admin-image-input" multiple accept="image/*" style="margin-bottom: 0.5rem;">
@@ -384,13 +387,13 @@
 
                         <input type="text" id="admin-shipping" placeholder="Shipping Info (e.g., International Express Hub)">
                         <button class="btn-primary" id="admin-add-btn" onclick="addProduct()" style="width:100%;">Save New Product Globally</button>
+                        <button class="btn-secondary" id="admin-cancel-edit-btn" onclick="cancelEditProduct()" style="width:100%; margin-top:0.5rem; display:none;">Cancel Edit</button>
                     </div>
                 </div>
 
                 <div class="admin-section-box">
                     <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Manage Catalog Inventory & Status (Global Sync)</h4>
                     <div id="admin-product-list" style="border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem; background: white;"></div>
-                    <!-- NEW BUTTONS ADDED HERE -->
                     <button class="btn-primary" onclick="forcePushToFirebase()" style="width:100%; margin-top:1rem; background: #16a34a;">🚀 Force Sync Local Products to Firebase</button>
                     <button class="btn-primary" onclick="factoryResetStore()" style="width:100%; margin-top:0.5rem; background: #dc2626;">🔄 Factory Reset (Fix Frozen App / Restore Defaults)</button>
                 </div>
@@ -412,7 +415,7 @@
     </div>
 
     <!-- ================================================ -->
-    <!-- NEW: LIGHTBOX for full-screen image viewing -->
+    <!-- LIGHTBOX for full-screen image viewing -->
     <!-- ================================================ -->
     <div class="lightbox" id="image-lightbox" onclick="closeLightbox(event)">
         <button class="lightbox-close" onclick="closeLightbox(event, true)">&times;</button>
@@ -466,7 +469,6 @@
                 <input type="text" id="refund-order-id" placeholder="e.g., SWIFT-123456">
             </div>
 
-            <!-- NEW: Full Address field -->
             <div class="refund-form-group">
                 <label>Full Delivery Address *</label>
                 <textarea id="refund-address" rows="2" placeholder="Street address, City, State, Country, Postal Code"></textarea>
@@ -554,6 +556,12 @@
             <div id="detail-video-container" class="detail-video-container"></div>
             <div class="product-stars" style="margin-bottom: 0.5rem;">⭐⭐⭐⭐⭐ (Verified Global Reviews)</div>
             <div id="detail-price" style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.15rem;"></div>
+            
+            <div id="detail-colors-container" style="margin-bottom: 1rem; display: none;">
+                <label style="font-size: 0.85rem; font-weight: 700; color: #0f172a; display: block; margin-bottom: 0.4rem;">Select Color:</label>
+                <div id="detail-color-options" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+            </div>
+
             <div class="shipping-badge">
                 <span>📦</span> <span id="detail-shipping">Estimated delivery: 2 - 4 business days</span>
             </div>
@@ -750,7 +758,8 @@
                     ], 
                     videos: [], 
                     shipping: "Ships within 24 hours from International Hub",
-                    isSoldOut: false
+                    isSoldOut: false,
+                    colors: ["Red", "Black", "Silver"]
                 },
                 { 
                     id: 2, 
@@ -765,7 +774,8 @@
                     ], 
                     videos: [], 
                     shipping: "Ships within 2 business days",
-                    isSoldOut: false
+                    isSoldOut: false,
+                    colors: ["Gold", "Brown"]
                 }
             ],
             users: [
@@ -798,6 +808,7 @@
 
         let adminSelectedImages = [];
         let adminSelectedVideos = [];
+        let editingProductId = null; // NEW: Track if we are editing a product
 
         const faqData = {
             shipping: [
@@ -1097,7 +1108,7 @@
         }
 
         // =========================================
-        // NEW: Orders full-page view functions
+        // Orders full-page view functions
         // =========================================
         window.openOrdersPage = function() {
             renderRecentOrdersList();
@@ -1131,7 +1142,15 @@
                 return;
             }
 
-            grid.innerHTML = filteredProducts.map(product => `
+            grid.innerHTML = filteredProducts.map(product => {
+                let colorsHTML = '';
+                if (product.colors && product.colors.length > 0) {
+                    colorsHTML = `<div class="size-selector" id="colors-${product.id}" style="margin-top: 0.4rem; margin-bottom: 0.4rem;">` +
+                        product.colors.map(color => `<button class="size-btn" onclick="event.stopPropagation(); selectColor('${product.id}', '${color}', this)">${color}</button>`).join('') +
+                    `</div>`;
+                }
+
+                return `
                 <div class="product-card" onclick="openProductDetail(${product.id})">
                     <div class="product-badge ${product.isSoldOut ? 'sold-out' : ''}">${product.isSoldOut ? 'Sold Out' : '-30%'}</div>
                     <img src="${product.images && product.images.length > 0 ? product.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'}" alt="${product.name}">
@@ -1140,12 +1159,22 @@
                         <div class="product-title">${product.name}</div>
                         <div class="product-stars">★★★★★ (48)</div>
                         <div class="product-price">${formatMarketplacePrice(product)}</div>
+                        ${colorsHTML}
                     </div>
                     <button class="btn-marketplace ${product.isSoldOut ? 'disabled' : ''}" onclick="addToCart(event, ${product.id})">
                         ${product.isSoldOut ? 'Sold Out' : 'Add to cart'}
                     </button>
                 </div>
-            `).join('');
+            `}).join('');
+        };
+
+        window.selectColor = function(productId, color, btnElement) {
+            const parent = document.getElementById(`colors-${productId}`);
+            if(parent) {
+                parent.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                btnElement.classList.add('active');
+                selectedColors[productId] = color;
+            }
         };
 
         window.openProductDetail = function(productId) {
@@ -1159,6 +1188,21 @@
             `;
             document.getElementById('detail-desc').innerText = product.description || "No description provided.";
             document.getElementById('detail-shipping').innerText = product.shipping || "Estimated delivery: 2 - 4 business days";
+
+            // Handle Colors in Detail Modal
+            const colorContainer = document.getElementById('detail-colors-container');
+            const colorOptions = document.getElementById('detail-color-options');
+            if (product.colors && product.colors.length > 0) {
+                colorContainer.style.display = 'block';
+                colorOptions.innerHTML = product.colors.map(color => 
+                    `<button class="size-btn" onclick="selectDetailColor('${product.id}', '${color}', this)">${color}</button>`
+                ).join('');
+                selectedColors[product.id] = product.colors[0]; // Default to first
+                colorOptions.querySelector('.size-btn').classList.add('active');
+            } else {
+                colorContainer.style.display = 'none';
+                selectedColors[product.id] = null;
+            }
 
             const imgs = product.images && product.images.length > 0 ? product.images : ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'];
             document.getElementById('detail-image').src = imgs[0];
@@ -1193,12 +1237,19 @@
                 addBtn.className = "btn-marketplace";
                 addBtn.onclick = function(e) {
                     e.stopPropagation();
-                    addToCart(null, product.id);
+                    addToCart(null, product.id, selectedColors[product.id]);
                     toggleDetailModal();
                 };
             }
 
             toggleDetailModal();
+        };
+
+        window.selectDetailColor = function(productId, color, btnElement) {
+            const parent = document.getElementById('detail-color-options');
+            parent.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+            selectedColors[productId] = color;
         };
 
         window.switchDetailImage = function(thumbEl, url) {
@@ -1408,7 +1459,7 @@
             }
 
             const orderId = "SWIFT-" + Math.floor(100000 + Math.random() * 900000);
-            const orderItemsText = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
+            const orderItemsText = cart.map(item => `${item.name} ${item.selectedColor ? `(Color: ${item.selectedColor})` : ''} (x${item.quantity})`).join(', ');
 
             const paystack = new PaystackPop();
             paystack.newTransaction({
@@ -1651,7 +1702,7 @@
         };
 
         // =========================================
-        // NEW: LIGHTBOX functions
+        // LIGHTBOX functions
         // =========================================
         window.openLightbox = function(src) {
             document.getElementById('lightbox-img').src = src;
@@ -1686,10 +1737,10 @@
         window.closeAdminPage = function() {
             document.getElementById('admin-page').classList.remove('active');
             document.body.classList.remove('no-scroll');
+            cancelEditProduct(); // Ensure form resets on close
         };
 
         window.toggleAdminModal = function() {
-            // For backwards compatibility - if admin page is open, close it
             if (document.getElementById('admin-page').classList.contains('active')) {
                 closeAdminPage();
             } else {
@@ -1873,6 +1924,7 @@
                         </div>
                     </div>
                     <div class="admin-actions">
+                        <button class="btn-primary" style="font-size:0.75rem; padding:0.4rem 0.7rem; background: #f59e0b;" onclick="editProduct(${product.id})">Edit</button>
                         <button class="${product.isSoldOut ? 'btn-primary' : 'btn-secondary'}" style="font-size:0.75rem; padding:0.4rem 0.7rem;" onclick="toggleSoldOut(${product.id})">
                             ${product.isSoldOut ? 'Mark In Stock' : 'Mark Sold Out'}
                         </button>
@@ -1889,7 +1941,6 @@
             }
         };
 
-        // NEW: FACTORY RESET FUNCTION
         window.factoryResetStore = function() {
             if (confirm("WARNING: This will wipe your local cache and restore the default products. Use this if the app is frozen or products disappeared. Are you sure?")) {
                 const DBDeleteRequest = indexedDB.deleteDatabase("SwiftSelectDB");
@@ -1902,6 +1953,50 @@
                     window.location.reload(true);
                 };
             }
+        };
+
+        window.editProduct = function(productId) {
+            const product = globalState.products.find(p => p.id === productId);
+            if (!product) return;
+
+            editingProductId = productId;
+            document.getElementById('admin-name').value = product.name;
+            document.getElementById('admin-price-usd').value = product.priceUSD;
+            document.getElementById('admin-price-ngn').value = product.priceNGN;
+            document.getElementById('admin-desc').value = product.description || '';
+            document.getElementById('admin-shipping').value = product.shipping || '';
+            document.getElementById('admin-colors').value = product.colors ? product.colors.join(', ') : '';
+
+            adminSelectedImages = []; 
+            renderAdminImagePreviews();
+            
+            adminSelectedVideos = []; 
+            renderAdminVideoPreviews();
+
+            document.getElementById('admin-add-btn').innerText = "Update Product Globally";
+            document.getElementById('admin-cancel-edit-btn').style.display = 'block';
+            document.getElementById('admin-form-title').innerText = "Edit Product (Leave images blank to keep existing)";
+            
+            document.getElementById('add-product-form-container').scrollIntoView({behavior: 'smooth'});
+        };
+
+        window.cancelEditProduct = function() {
+            editingProductId = null;
+            document.getElementById('admin-name').value = '';
+            document.getElementById('admin-price-usd').value = '';
+            document.getElementById('admin-price-ngn').value = '';
+            document.getElementById('admin-desc').value = '';
+            document.getElementById('admin-shipping').value = '';
+            document.getElementById('admin-colors').value = '';
+            
+            adminSelectedImages = [];
+            adminSelectedVideos = [];
+            renderAdminImagePreviews();
+            renderAdminVideoPreviews();
+
+            document.getElementById('admin-add-btn').innerText = "Save New Product Globally";
+            document.getElementById('admin-cancel-edit-btn').style.display = 'none';
+            document.getElementById('admin-form-title').innerText = "Add New Product (Global Catalog)";
         };
 
         window.toggleSoldOut = function(productId) {
@@ -1931,89 +2026,119 @@
             const priceNGN = parseFloat(document.getElementById('admin-price-ngn').value);
             const description = document.getElementById('admin-desc').value.trim();
             const shipping = document.getElementById('admin-shipping').value.trim();
+            
+            // Process Colors
+            const colorsInput = document.getElementById('admin-colors').value.trim();
+            const colorsArray = colorsInput ? colorsInput.split(',').map(c => c.trim()).filter(c => c !== '') : [];
 
             if (!name || isNaN(priceUSD) || isNaN(priceNGN)) {
                 alert('Please fill in product name and pricing ($ and ₦).');
                 return;
             }
 
-            if (adminSelectedImages.length < 3 || adminSelectedImages.length > 5) {
+            // Validate images for new products only (edit can keep existing)
+            if (!editingProductId && (adminSelectedImages.length < 3 || adminSelectedImages.length > 5)) {
                 alert('Please select between 3 to 5 pictures for the product.');
                 return;
             }
 
             const addBtn = document.getElementById('admin-add-btn');
-            addBtn.innerText = "Processing files & adding...";
+            addBtn.innerText = "Processing files...";
             addBtn.disabled = true;
 
             try {
                 let imagesBase64 = [];
-                for (let i = 0; i < adminSelectedImages.length; i++) {
-                    try {
-                        const compressedImg = await compressImage(adminSelectedImages[i], 800, 0.65);
-                        imagesBase64.push(compressedImg);
-                    } catch (imgErr) {
-                        console.warn("Image compression fallback triggered:", imgErr);
+                if (adminSelectedImages.length > 0) {
+                    if (adminSelectedImages.length < 3 || adminSelectedImages.length > 5) {
+                        throw new Error("You must select between 3 to 5 new pictures if you choose to update them.");
+                    }
+                    for (let i = 0; i < adminSelectedImages.length; i++) {
                         try {
+                            const compressedImg = await compressImage(adminSelectedImages[i], 800, 0.65);
+                            imagesBase64.push(compressedImg);
+                        } catch (imgErr) {
                             const fallbackBase64 = await readFileAsBase64(adminSelectedImages[i]);
                             imagesBase64.push(fallbackBase64);
-                        } catch (innerErr) {
-                            console.error("Failed to read image file:", innerErr);
                         }
                     }
-                }
-
-                if (imagesBase64.length === 0) {
+                } else if (editingProductId) {
+                    // Keep existing images
+                    const existingProduct = globalState.products.find(p => p.id === editingProductId);
+                    imagesBase64 = existingProduct.images;
+                } else {
                     throw new Error("Could not process any of the selected images. Please try smaller files.");
                 }
 
                 let videosBase64 = [];
-                for (let i = 0; i < adminSelectedVideos.length; i++) {
-                    if (adminSelectedVideos[i].size > 2 * 1024 * 1024) {
-                        throw new Error(`Video "${adminSelectedVideos[i].name}" exceeds 2MB limit. Please select a smaller video clip.`);
+                if (adminSelectedVideos.length > 0) {
+                    for (let i = 0; i < adminSelectedVideos.length; i++) {
+                        if (adminSelectedVideos[i].size > 2 * 1024 * 1024) {
+                            throw new Error(`Video "${adminSelectedVideos[i].name}" exceeds 2MB limit. Please select a smaller video clip.`);
+                        }
+                        try {
+                            const vidBase64 = await readFileAsBase64(adminSelectedVideos[i]);
+                            videosBase64.push(vidBase64);
+                        } catch (vidErr) {
+                            console.warn("Video read warning, skipping video:", vidErr);
+                        }
                     }
-                    try {
-                        const vidBase64 = await readFileAsBase64(adminSelectedVideos[i]);
-                        videosBase64.push(vidBase64);
-                    } catch (vidErr) {
-                        console.warn("Video read warning, skipping video:", vidErr);
-                    }
+                } else if (editingProductId) {
+                    const existingProduct = globalState.products.find(p => p.id === editingProductId);
+                    videosBase64 = existingProduct.videos || [];
                 }
 
-                const newProduct = { 
-                    id: Date.now(), 
-                    name, 
-                    priceUSD, 
-                    priceNGN, 
-                    description, 
-                    images: imagesBase64, 
-                    videos: videosBase64, 
-                    shipping: shipping || "Ships in 2 - 3 business days",
-                    isSoldOut: false
-                };
+                if (editingProductId) {
+                    // Update existing product
+                    const index = globalState.products.findIndex(p => p.id === editingProductId);
+                    globalState.products[index] = {
+                        ...globalState.products[index],
+                        name, priceUSD, priceNGN, description,
+                        images: imagesBase64,
+                        videos: videosBase64,
+                        shipping: shipping || "Ships in 2 - 3 business days",
+                        colors: colorsArray
+                    };
+                    showToast('Product updated successfully!');
+                    cancelEditProduct(); // reset form
+                } else {
+                    // Create new product
+                    const newProduct = { 
+                        id: Date.now(), 
+                        name, priceUSD, priceNGN, description, 
+                        images: imagesBase64, 
+                        videos: videosBase64, 
+                        shipping: shipping || "Ships in 2 - 3 business days",
+                        isSoldOut: false,
+                        colors: colorsArray
+                    };
+                    globalState.products.push(newProduct);
+                    
+                    // Clear form
+                    document.getElementById('admin-name').value = '';
+                    document.getElementById('admin-price-usd').value = '';
+                    document.getElementById('admin-price-ngn').value = '';
+                    document.getElementById('admin-desc').value = '';
+                    document.getElementById('admin-shipping').value = '';
+                    document.getElementById('admin-colors').value = '';
+                    adminSelectedImages = [];
+                    adminSelectedVideos = [];
+                    renderAdminImagePreviews();
+                    renderAdminVideoPreviews();
+                    
+                    showToast('Product successfully added and synced globally!');
+                }
 
-                globalState.products.push(newProduct);
                 saveStateToFirebase();
                 renderProducts();
                 renderAdminProductList();
-
-                document.getElementById('admin-name').value = '';
-                document.getElementById('admin-price-usd').value = '';
-                document.getElementById('admin-price-ngn').value = '';
-                document.getElementById('admin-desc').value = '';
-                document.getElementById('admin-shipping').value = '';
-                adminSelectedImages = [];
-                adminSelectedVideos = [];
-                renderAdminImagePreviews();
-                renderAdminVideoPreviews();
                 
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
-                showToast('Product successfully added and synced globally!');
+
             } catch (err) {
                 console.error("Add product error:", err);
                 alert(err.message || "Error reading files. Make sure the video/image files are valid or smaller in size.");
-                addBtn.innerText = "Save New Product Globally";
+                addBtn.innerText = editingProductId ? "Update Product Globally" : "Save New Product Globally";
                 addBtn.disabled = false;
             }
         };
@@ -2064,7 +2189,7 @@
             });
         }
 
-        window.addToCart = function(event, productId) {
+        window.addToCart = function(event, productId, chosenColor = null) {
             if (event) event.stopPropagation();
             const product = globalState.products.find(p => p.id === productId);
             if (product.isSoldOut) {
@@ -2072,30 +2197,41 @@
                 return;
             }
 
-            const existingItem = cart.find(item => item.id === productId);
+            // If colors exist and no color chosen, warn them
+            let finalColor = chosenColor;
+            if (product.colors && product.colors.length > 0 && !finalColor) {
+                // Check if already selected from card buttons
+                finalColor = selectedColors[productId];
+                if (!finalColor) {
+                    alert("Please select a color first!");
+                    return;
+                }
+            }
+
+            const existingItem = cart.find(item => item.id === productId && item.selectedColor === finalColor);
             if (existingItem) {
                 existingItem.quantity++;
             } else {
-                cart.push({ ...product, quantity: 1 });
+                cart.push({ ...product, quantity: 1, selectedColor: finalColor });
             }
 
             updateCartUI();
-            showToast(`Added ${product.name} to cart!`);
+            showToast(`Added ${product.name}${finalColor ? ` (${finalColor})` : ''} to cart!`);
         };
 
-        window.changeQuantity = function(productId, delta) {
-            const existingItem = cart.find(item => item.id === productId);
+        window.changeQuantity = function(productId, delta, color) {
+            const existingItem = cart.find(item => item.id === productId && item.selectedColor === color);
             if (existingItem) {
                 existingItem.quantity += delta;
                 if (existingItem.quantity <= 0) {
-                    cart = cart.filter(item => item.id !== productId);
+                    cart = cart.filter(item => !(item.id === productId && item.selectedColor === color));
                 }
                 updateCartUI();
             }
         };
 
-        window.removeFromCart = function(productId) {
-            cart = cart.filter(item => item.id !== productId);
+        window.removeFromCart = function(productId, color) {
+            cart = cart.filter(item => !(item.id === productId && item.selectedColor === color));
             updateCartUI();
             showToast("Item removed from cart");
         };
@@ -2123,14 +2259,15 @@
                         <img src="${imgUrl}" alt="${item.name}">
                         <div class="cart-item-details">
                             <strong>${item.name}</strong><br>
+                            ${item.selectedColor ? `<small style="color:#4f46e5; font-weight:600; display:block;">Color: ${item.selectedColor}</small>` : ''}
                             <small style="color:#64748b;">$${(item.priceUSD * item.quantity).toFixed(2)} / ₦${(item.priceNGN * item.quantity).toLocaleString()}</small>
                             <div class="cart-qty-controls">
-                                <button class="cart-qty-btn" onclick="changeQuantity(${item.id}, -1)">-</button>
+                                <button class="cart-qty-btn" onclick="changeQuantity(${item.id}, -1, '${item.selectedColor || ''}')">-</button>
                                 <span style="font-size: 0.85rem; font-weight: 700;">${item.quantity}</span>
-                                <button class="cart-qty-btn" onclick="changeQuantity(${item.id}, 1)">+</button>
+                                <button class="cart-qty-btn" onclick="changeQuantity(${item.id}, 1, '${item.selectedColor || ''}')">+</button>
                             </div>
                         </div>
-                        <button class="btn-small" onclick="removeFromCart(${item.id})">Remove</button>
+                        <button class="btn-small" onclick="removeFromCart(${item.id}, '${item.selectedColor || ''}')">Remove</button>
                     </div>
                 `;
             }).join('');
