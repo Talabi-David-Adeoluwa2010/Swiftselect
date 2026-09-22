@@ -802,13 +802,14 @@
 
         let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
         let cart = [];
+        let selectedColors = {}; // <--- FIXED: ADDED THE MISSING VARIABLE HERE
         let currentRatingOrderId = null;
         let selectedStarCount = 5;
         let appliedDiscountPercent = 0; 
 
         let adminSelectedImages = [];
         let adminSelectedVideos = [];
-        let editingProductId = null; // NEW: Track if we are editing a product
+        let editingProductId = null; // Track if we are editing a product
 
         const faqData = {
             shipping: [
