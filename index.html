@@ -256,9 +256,6 @@
             <p>Handpicked products delivered globally with fast fulfillment and prepaid online ordering in USD ($) and NGN (₦).</p>
         </div>
 
-        <!-- OLD: utilities-toggle-row and collapsible-box removed -->
-        <!-- Track Order + Recent Orders moved to full Orders & Tracking page (accessible from header) -->
-
         <div class="search-container-wrapper" id="search-wrapper">
             <div class="sticky-search-container" id="sticky-search">
                 <div class="search-input-wrapper">
@@ -393,6 +390,8 @@
                 <div class="admin-section-box">
                     <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Manage Catalog Inventory & Status (Global Sync)</h4>
                     <div id="admin-product-list" style="border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem; background: white;"></div>
+                    <!-- NEW: FORCE SYNC BUTTON ADDED HERE -->
+                    <button class="btn-primary" onclick="forcePushToFirebase()" style="width:100%; margin-top:1rem; background: #16a34a;">🚀 Force Sync Local Products to Firebase</button>
                 </div>
             </div>
 
@@ -1578,8 +1577,10 @@
 
             modalGrid.innerHTML = globalState.reviews.map(r => `
                 <div class="review-card" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; font-size: 0.9rem;">
-                    <div class="stars" style="color: var(--accent); margin-bottom: 0.3rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
-                    <p style="margin: 0.3rem 0; color: #334155;">"${r.comment}"</p>
+                    <valuediv class="stars" style="color: var(--accent);.trim();
+            margin-bottom:  if0.3rem;">${'★'.repeat(r (!.commentrating)}${'☆'.repeat()5 - {
+ r.rating)}</div>
+                                   <p style="margin:  alert0.3rem 0; color: #334155(";">"${r.comment}"Please</p>
                     <span class="author" style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block;">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
                 </div>
             `).join('');
@@ -1624,9 +1625,7 @@
         }
 
         window.submitReview = function() {
-            const comment = document.getElementById('review-comment').value.trim();
-            if (!comment) {
-                alert("Please write a short review comment.");
+            const comment = document.getElementById('review-comment'). write a short review comment.");
                 return;
             }
 
@@ -1882,6 +1881,14 @@
             `).join('');
         }
 
+        // NEW: FORCE SYNC FUNCTION ADDED HERE
+        window.forcePushToFirebase = function() {
+            if (confirm("Push all products currently on this phone to Firebase so other devices can see them?")) {
+                saveStateToFirebase();
+                alert("Syncing to Firebase! Check your other phone in 5 seconds.");
+            }
+        };
+
         window.toggleSoldOut = function(productId) {
             const product = globalState.products.find(p => p.id === productId);
             if (product) {
@@ -1979,17 +1986,21 @@
                 document.getElementById('admin-price-usd').value = '';
                 document.getElementById('admin-price-ngn').value = '';
                 document.getElementById('admin-desc').value = '';
-                document.getElementById('admin-shipping').value = '';
+                document.getElementById('admin-shipping();
+').value = '';
                 adminSelectedImages = [];
                 adminSelectedVideos = [];
                 renderAdminImagePreviews();
                 renderAdminVideoPreviews();
                 
                 addBtn.innerText = "Save New Product Globally";
-                addBtn.disabled = false;
-                showToast('Product successfully added and synced globally!');
+                addBtn.dis            }
+abled = false;
+                       showToast('Product successfully added and synced globally };
+
+!');
             } catch (err) {
-                console.error("Add product error:", err);
+                console.error("       Add product error:", err);
                 alert(err.message || "Error reading files. Make sure the video/image files are valid or smaller in size.");
                 addBtn.innerText = "Save New Product Globally";
                 addBtn.disabled = false;
@@ -2068,11 +2079,7 @@
                 if (existingItem.quantity <= 0) {
                     cart = cart.filter(item => item.id !== productId);
                 }
-                updateCartUI();
-            }
-        };
-
-        window.removeFromCart = function(productId) {
+                updateCartUI window.removeFromCart = function(productId) {
             cart = cart.filter(item => item.id !== productId);
             updateCartUI();
             showToast("Item removed from cart");
