@@ -347,7 +347,7 @@
                 <div id="track-result-container" style="display: none;" class="track-result-box"></div>
             </div>
 
-            <!-- NEW: Refund Status Tracker -->
+            <!-- Refund Status Tracker -->
             <div class="orders-section" id="refund-tracking-section" style="background: linear-gradient(135deg, #fffbeb, #fff7ed); border-color: #fde68a;">
                 <h3>💸 Track Your Refund Status</h3>
                 <p>Enter your Refund ID (e.g., REF-XXXXXXXX) or the original Order ID to check the status of your refund request.</p>
@@ -358,7 +358,7 @@
                 <div id="refund-track-result" style="display: none;" class="track-result-box"></div>
             </div>
 
-            <!-- NEW: My Refund Requests list -->
+            <!-- My Refund Requests list -->
             <div class="orders-section">
                 <div class="recent-orders-header">
                     <h3>📋 Your Refund Requests</h3>
@@ -847,7 +847,7 @@
         // =============================================================
         // FIREBASE NODE REFERENCES
         // -------------------------------------------------------------
-        // Orders and refunds now live in their OWN top-level nodes so
+        // Orders and refunds live in their OWN top-level nodes so
         // that every write is merged atomically via transactions.
         // This means one customer's new order can NEVER overwrite
         // another customer's existing orders, anywhere in the world.
@@ -1005,13 +1005,11 @@
         // different customers around the world NEVER overwrite each other.
         // =============================================================
         async function saveOrderToFirebase(orderRecord) {
-            // 1) Update local state instantly so UI feels snappy
             const localIdx = globalState.orders.findIndex(o => String(o.id) === String(orderRecord.id));
             if (localIdx === -1) globalState.orders.push(orderRecord);
             else globalState.orders[localIdx] = orderRecord;
             await persistCache();
 
-            // 2) Atomically merge into the global orders node
             try {
                 await runTransaction(ordersRef, (current) => {
                     const arr = normalizeToArray(current);
@@ -1279,10 +1277,8 @@
 
                 if (!globalState.refunds) globalState.refunds = [];
 
-                // Global atomic sync
                 await saveRefundToFirebase(newRefund);
 
-                // Clear the form
                 document.getElementById('refund-name').value = '';
                 document.getElementById('refund-order-id').value = '';
                 document.getElementById('refund-address').value = '';
@@ -1297,17 +1293,13 @@
                 document.getElementById('refund-receipt-label').innerText = 'Click to upload payment receipt (JPG, PNG)';
                 document.getElementById('refund-id-label').innerText = 'Click to upload ID (JPG, PNG)';
 
-                // Store the ID so the "Check My Refund Status" button can autofill it
                 lastSubmittedRefundId = refundId;
 
-                // Close the refund form modal
                 document.getElementById('refund-modal').classList.remove('active');
 
-                // Show the success popup
                 document.getElementById('refund-success-id').innerText = refundId;
                 document.getElementById('refund-success-modal').classList.add('active');
 
-                // Refresh the customer's refund list
                 renderMyRefundsList();
 
                 showToast("✅ Refund request submitted successfully!");
@@ -1964,8 +1956,6 @@
                 hasReviewed: false
             };
 
-            // ATOMIC global write — this order is now permanently stored
-            // alongside every other customer's orders worldwide.
             await saveOrderToFirebase(newOrderRecord);
 
             renderRecentOrdersList();
@@ -2171,7 +2161,6 @@
             const order = globalState.orders.find(o => String(o.id) === String(currentRatingOrderId));
             if (order) {
                 order.hasReviewed = true;
-                // persist the hasReviewed flag globally
                 updateOrderStatusInFirebase(order.id, order.status);
             }
 
@@ -2250,7 +2239,6 @@
 
         // =============================================================
         // ADMIN: Show ALL global refunds from ALL customers
-        // Status changes here broadcast instantly to every customer device.
         // =============================================================
         function renderAdminRefundList() {
             const container = document.getElementById('admin-refunds-list');
@@ -2310,7 +2298,6 @@
             if (!selectEl) return;
             const newStatus = selectEl.value;
 
-            // Instant local UI update
             const idx = globalState.refunds.findIndex(r => String(r.id) === String(refundId));
             if (idx !== -1) globalState.refunds[idx].status = newStatus;
 
@@ -2323,8 +2310,6 @@
 
         // =============================================================
         // ADMIN: Show ALL global orders from ALL customers instantly.
-        // Status changes here broadcast to the customer worldwide
-        // and reflect immediately in their tracker.
         // =============================================================
         function renderAdminOrderList() {
             const listContainer = document.getElementById('admin-orders-list');
@@ -2367,7 +2352,6 @@
             if (!selectEl) return;
             const newStatus = selectEl.value;
 
-            // Instant local UI update
             const idx = globalState.orders.findIndex(o => String(o.id) === String(orderId));
             if (idx !== -1) globalState.orders[idx].status = newStatus;
 
@@ -2874,11 +2858,21 @@
             }
         }
 
-        await migrateLegacyDataIfNeeded();
+        // =============================================================
+        // BOOT SEQUENCE — OPTIMIZED FOR INSTANT RENDER
+        // -------------------------------------------------------------
+        // 1. Render cached products IMMEDIATELY (no waiting on Firebase)
+        // 2. Attach realtime listeners (they will refresh UI on data)
+        // 3. Run one-time legacy migration in the BACKGROUND (never
+        //    blocks the initial paint).
+        // =============================================================
 
-        // =============================================================
-        // REALTIME LISTENERS (registered after every helper is defined)
-        // =============================================================
+        // Step 1: Render cache right away.
+        // `isProductsLoaded` was already set to true above if the cache
+        // had products, so this will paint them instantly.
+        initApp();
+
+        // Step 2: Attach realtime listeners (live updates from Firebase).
 
         // --- Catalog / Users / Reviews / Promo Codes ---
         onValue(stateRef, async (snapshot) => {
@@ -2916,7 +2910,13 @@
             refreshRefundDependentUI();
         });
 
-        initApp();
+        // Step 3: Run one-time legacy migration in the background.
+        // Skipped on every subsequent reload thanks to the localStorage flag.
+        if (!localStorage.getItem('swift_migration_done_v6')) {
+            migrateLegacyDataIfNeeded()
+                .then(() => localStorage.setItem('swift_migration_done_v6', '1'))
+                .catch(e => console.warn('Migration skipped:', e));
+        }
     </script>
 </body>
 </html>
