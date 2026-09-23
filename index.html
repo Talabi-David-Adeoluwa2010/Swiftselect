@@ -111,6 +111,10 @@
         .btn-marketplace:hover { background: #ea580c; }
         .btn-marketplace.disabled { background: #cbd5e1; cursor: not-allowed; }
 
+        /* Loading spinner */
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid #e0e7ff; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.9s linear infinite; }
+
         /* Product color selector styles */
         .size-selector { display: flex; gap: 0.35rem; flex-wrap: wrap; }
         .size-btn { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.3rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; }
@@ -130,7 +134,6 @@
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 1rem; box-sizing: border-box; }
         .modal.active { display: flex; }
-        /* FIXED: max-height changed to 85vh to prevent Paystack badge overlap */
         .modal-content { background: white; padding: 2.25rem; border-radius: 20px; width: 100%; max-width: 520px; box-sizing: border-box; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
@@ -201,9 +204,6 @@
         .file-preview { margin-top: 0.5rem; max-width: 100px; border-radius: 8px; display: none; }
         .refund-policy-text { font-size: 0.9rem; line-height: 1.6; color: #334155; }
 
-        /* ============================= */
-        /* FULL-PAGE VIEWS (Orders & Admin) */
-        /* ============================= */
         .full-page-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1500; display: none; flex-direction: column; overflow: hidden; }
         .full-page-view.active { display: flex; }
         .full-page-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; background: white; border-bottom: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); flex-shrink: 0; gap: 0.75rem; }
@@ -214,9 +214,6 @@
         .orders-section h3 { margin: 0 0 0.4rem; font-size: 1.15rem; color: #0f172a; }
         .orders-section > p { font-size: 0.85rem; color: #64748b; margin: 0 0 1rem; }
 
-        /* ============================= */
-        /* ADMIN PAGE TABS */
-        /* ============================= */
         .admin-tabs { display: flex; gap: 0.5rem; padding: 0.75rem 1.25rem; background: white; border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
         .admin-tabs::-webkit-scrollbar { display: none; }
         .admin-tab { flex-shrink: 0; background: transparent; border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.82rem; color: #64748b; cursor: pointer; transition: all 0.2s; font-family: inherit; }
@@ -224,9 +221,6 @@
         .admin-tab-content { display: none; }
         .admin-tab-content.active { display: block; }
 
-        /* ============================= */
-        /* LIGHTBOX */
-        /* ============================= */
         .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; padding: 1rem; }
         .lightbox.active { display: flex; }
         .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
@@ -249,7 +243,6 @@
             <span id="user-greeting"></span>
             <button class="btn-nav-link" onclick="openReviewsModal()">⭐ Ratings & Reviews</button>
             <button class="btn-nav-link" onclick="openOrdersPage()">📦 Orders & Tracking</button>
-            <!-- FIXED: Links updated to point to the new standalone pages -->
             <a href="shipping.html" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">🚚 Shipping Policy</a>
             <a href="refund.html" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">📜 Refund Policy</a>
             <button class="btn-secondary" onclick="toggleRefundModal()">🔄 Request Refund</button>
@@ -306,9 +299,6 @@
         <p>&copy; 2026 SwiftSelect. All rights reserved. <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
     </footer>
 
-    <!-- ================================================ -->
-    <!-- ORDERS & TRACKING FULL PAGE VIEW -->
-    <!-- ================================================ -->
     <div class="full-page-view" id="orders-page">
         <div class="full-page-header">
             <button class="btn-secondary" onclick="closeOrdersPage()" style="padding:0.5rem 1rem;">← Back</button>
@@ -337,9 +327,6 @@
         </div>
     </div>
 
-    <!-- ================================================ -->
-    <!-- ADMIN FULL PAGE VIEW -->
-    <!-- ================================================ -->
     <div class="full-page-view" id="admin-page">
         <div class="full-page-header">
             <h2>🔧 Admin Management Dashboard</h2>
@@ -353,7 +340,6 @@
         </div>
         <div class="full-page-body">
 
-            <!-- Refunds Tab -->
             <div class="admin-tab-content active" id="admin-tab-refunds">
                 <div class="admin-section-box" style="background: #fff7ed; border-color: #ffedd5;">
                     <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">💸 Refund & Complaint Requests</h4>
@@ -362,7 +348,6 @@
                 </div>
             </div>
 
-            <!-- Orders Tab -->
             <div class="admin-tab-content" id="admin-tab-orders">
                 <div class="admin-section-box">
                     <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders Tracker</h4>
@@ -371,7 +356,6 @@
                 </div>
             </div>
 
-            <!-- Products Tab -->
             <div class="admin-tab-content" id="admin-tab-products">
                 <div class="admin-section-box" id="add-product-form-container">
                     <h4 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1.05rem; color: #0f172a;" id="admin-form-title">Add New Product (Global Catalog)</h4>
@@ -407,7 +391,6 @@
                 </div>
             </div>
 
-            <!-- Promos Tab -->
             <div class="admin-tab-content" id="admin-tab-promos">
                 <div class="admin-section-box">
                     <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Promo Code Management (5% Discount)</h4>
@@ -422,15 +405,11 @@
         </div>
     </div>
 
-    <!-- ================================================ -->
-    <!-- LIGHTBOX for full-screen image viewing -->
-    <!-- ================================================ -->
     <div class="lightbox" id="image-lightbox" onclick="closeLightbox(event)">
         <button class="lightbox-close" onclick="closeLightbox(event, true)">&times;</button>
         <img id="lightbox-img" src="" alt="Full view">
     </div>
 
-    <!-- Shipping Policy Modal -->
     <div class="modal" id="shipping-policy-modal">
         <div class="modal-content" style="max-width: 600px; padding: 0; overflow: hidden;">
             <div style="background: linear-gradient(135deg, var(--primary), #9333ea); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; color: white;">
@@ -447,7 +426,6 @@
                     <h2 style="margin: 0; font-size: 1.35rem; color: #0f172a;">Shipping Policy</h2>
                 </div>
 
-                <!-- FIXED: Added padding-bottom 80px to prevent Paystack badge overlap -->
                 <div class="shipping-policy-text" style="font-size: 0.95rem; line-height: 1.7; color: #334155; padding-bottom: 80px;">
                     <p><strong>Last Updated:</strong> 11/09/2026</p>
                     <p>Thank you for shopping at SwiftSelect. We are committed to delivering your order safely and on time.</p>
@@ -487,7 +465,6 @@
         </div>
     </div>
 
-    <!-- Refund Policy Modal -->
     <div class="modal" id="refund-policy-modal">
         <div class="modal-content" style="max-width: 600px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -515,7 +492,6 @@
         </div>
     </div>
 
-    <!-- Refund Request Modal -->
     <div class="modal" id="refund-modal">
         <div class="modal-content" style="max-width: 550px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -582,7 +558,6 @@
         </div>
     </div>
 
-    <!-- AI Help & FAQ Modal -->
     <div class="modal" id="help-modal">
         <div class="modal-content" style="max-width: 600px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -609,7 +584,6 @@
         </div>
     </div>
 
-    <!-- Product Detail Modal -->
     <div class="modal" id="detail-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -635,7 +609,6 @@
         </div>
     </div>
 
-    <!-- User Account Authentication Modal -->
     <div class="modal" id="auth-modal">
         <div class="modal-content">
             <div class="auth-tabs">
@@ -663,7 +636,6 @@
         </div>
     </div>
 
-    <!-- Recommendations Modal -->
     <div class="modal" id="reviews-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -675,7 +647,6 @@
         </div>
     </div>
 
-    <!-- Billing & Checkout Modal -->
     <div class="modal" id="billing-modal">
         <div class="modal-content">
             <h3>Prepaid Checkout & Delivery</h3>
@@ -702,7 +673,6 @@
         </div>
     </div>
 
-    <!-- Customer Rating & Review Modal -->
     <div class="modal" id="rating-modal">
         <div class="modal-content">
             <h3>⭐ Rate Your Delivered Order</h3>
@@ -721,7 +691,6 @@
         </div>
     </div>
 
-    <!-- Slide-out Cart Drawer -->
     <div class="cart-modal" id="cart-modal">
         <div class="cart-header">
             <h3 style="margin:0;">Your Shopping Cart</h3>
@@ -808,41 +777,14 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // =============================================================
+        // GLOBAL STATE — Starts EMPTY so no dummy products ever show
+        // =============================================================
+        const CACHE_VERSION = 3; // Bump this to force clients to discard old caches with dummy products
+
         let globalState = {
-            products: [
-                { 
-                    id: 1, 
-                    name: "Smart Gadget Pro", 
-                    priceUSD: 49.99, 
-                    priceNGN: 75000, 
-                    description: "The ultimate next-gen smart gadget designed for maximum productivity and long battery life. Highly recommended for daily wear and international tech enthusiasts.", 
-                    images: [
-                        "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80",
-                        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
-                        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80"
-                    ], 
-                    videos: [], 
-                    shipping: "Ships within 24 hours from International Hub",
-                    isSoldOut: false,
-                    colors: ["Red", "Black", "Silver"]
-                },
-                { 
-                    id: 2, 
-                    name: "Minimalist Watch", 
-                    priceUSD: 29.99, 
-                    priceNGN: 45000, 
-                    description: "Clean aesthetic lines combined with premium strap durability. Water-resistant and crafted to match any formal or casual look worldwide.", 
-                    images: [
-                        "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600&auto=format&fit=crop&q=80",
-                        "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80",
-                        "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80"
-                    ], 
-                    videos: [], 
-                    shipping: "Ships within 2 business days",
-                    isSoldOut: false,
-                    colors: ["Gold", "Brown"]
-                }
-            ],
+            _cacheVersion: CACHE_VERSION,
+            products: [],   // <-- No more default products!
             users: [
                 { username: "admin", name: "Administrator", email: "admin@swiftselect.com", password: "admin" }
             ],
@@ -855,11 +797,20 @@
             refunds: []
         };
 
+        // Flag: has Firebase finished loading products?
+        let isProductsLoaded = false;
+
+        // Load cached state ONLY if it matches current cache version (prevents stale dummy data)
         try {
             const cached = await dbHelper.get('swift_cached_state');
-            if (cached && cached.products) {
+            if (cached && cached._cacheVersion === CACHE_VERSION && cached.products) {
                 globalState = cached;
                 if (!globalState.refunds) globalState.refunds = [];
+                if (!globalState.users || globalState.users.length === 0) {
+                    globalState.users = [{ username: "admin", name: "Administrator", email: "admin@swiftselect.com", password: "admin" }];
+                }
+            } else {
+                console.log("Cache outdated or missing. Awaiting Firebase sync...");
             }
         } catch (e) {
             console.error("IndexedDB cache load error:", e);
@@ -930,14 +881,22 @@
                 if (data.promoCodes) globalState.promoCodes = data.promoCodes;
                 if (data.refunds) globalState.refunds = data.refunds;
                 
+                // Always keep our cache version stamped
+                globalState._cacheVersion = CACHE_VERSION;
+
                 try {
                     await dbHelper.save('swift_cached_state', globalState);
                 } catch (e) {
                     console.warn("IndexedDB save error during sync:", e);
                 }
             } else {
+                // Firebase is empty — write our clean state without dummy products
                 set(stateRef, globalState);
             }
+
+            // Firebase has responded, we can stop showing "Loading..."
+            isProductsLoaded = true;
+
             renderProducts();
             renderReviews();
             renderRecentOrdersList();
@@ -948,14 +907,20 @@
         });
 
         async function saveStateToFirebase() {
+            // Always stamp the current cache version before saving
+            globalState._cacheVersion = CACHE_VERSION;
+
             try {
                 await dbHelper.save('swift_cached_state', globalState);
             } catch (e) {
                 console.warn("IndexedDB save error:", e);
             }
-            set(stateRef, globalState).catch((error) => {
+            try {
+                await set(stateRef, globalState);
+            } catch (error) {
                 console.error("Firebase sync error:", error);
-            });
+                showToast("⚠️ Sync failed. Check your internet and try again.");
+            }
         }
 
         function initApp() {
@@ -1199,13 +1164,39 @@
             `;
         }
 
+        // =============================================================
+        // RENDER PRODUCTS — Shows "Loading products..." until Firebase responds
+        // =============================================================
         window.renderProducts = function(filter = "") {
             const grid = document.getElementById('product-grid');
             if (!grid) return;
+
+            // Show loading state until Firebase has responded
+            if (!isProductsLoaded) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;">
+                        <div class="loading-spinner" style="margin: 0 auto 1.25rem;"></div>
+                        <p style="color: #0f172a; font-size: 1.05rem; font-weight: 700; margin: 0;">Loading products...</p>
+                        <p style="color: #94a3b8; font-size: 0.82rem; margin-top: 0.5rem;">Syncing with global catalog</p>
+                    </div>
+                `;
+                return;
+            }
+
             const filteredProducts = globalState.products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
 
             if (filteredProducts.length === 0) {
-                grid.innerHTML = '<p style="color: #64748b; grid-column: 1/-1; text-align: center; padding: 2rem;">No products found matching your search.</p>';
+                if (filter.trim() === "") {
+                    grid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;">
+                            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🛍️</div>
+                            <p style="color: #0f172a; font-size: 1.05rem; font-weight: 700; margin: 0;">No products available yet</p>
+                            <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.5rem;">New items will appear here soon. Check back shortly!</p>
+                        </div>
+                    `;
+                } else {
+                    grid.innerHTML = '<p style="color: #64748b; grid-column: 1/-1; text-align: center; padding: 2rem;">No products found matching your search.</p>';
+                }
                 return;
             }
 
@@ -2033,9 +2024,9 @@
             adminSelectedVideos = []; 
             renderAdminVideoPreviews();
 
-            document.getElementById('admin-add-btn').innerText = "Update Product Globally";
+            document.getElementById('admin-add-btn').innerText = "💾 Update Product Globally";
             document.getElementById('admin-cancel-edit-btn').style.display = 'block';
-            document.getElementById('admin-form-title').innerText = "Edit Product (Leave images blank to keep existing)";
+            document.getElementById('admin-form-title').innerText = "✏️ Edit Product (Leave images blank to keep existing)";
             
             document.getElementById('add-product-form-container').scrollIntoView({behavior: 'smooth'});
         };
@@ -2080,6 +2071,9 @@
             }
         };
 
+        // =============================================================
+        // ADD / EDIT PRODUCT — Now with guaranteed Firebase sync
+        // =============================================================
         window.addProduct = async function() {
             const name = document.getElementById('admin-name').value.trim();
             const priceUSD = parseFloat(document.getElementById('admin-price-usd').value);
@@ -2100,8 +2094,9 @@
                 return;
             }
 
+            const isEditing = !!editingProductId;
             const addBtn = document.getElementById('admin-add-btn');
-            addBtn.innerText = "Processing files...";
+            addBtn.innerText = isEditing ? "Updating product globally..." : "Processing files...";
             addBtn.disabled = true;
 
             try {
@@ -2144,18 +2139,39 @@
                     videosBase64 = existingProduct.videos || [];
                 }
 
-                if (editingProductId) {
+                if (isEditing) {
+                    // Find the product and REPLACE it with updated data
                     const index = globalState.products.findIndex(p => p.id === editingProductId);
-                    globalState.products[index] = {
+                    if (index === -1) {
+                        throw new Error("Product not found. It may have been deleted on another device.");
+                    }
+
+                    const updatedProduct = {
                         ...globalState.products[index],
-                        name, priceUSD, priceNGN, description,
+                        name,
+                        priceUSD,
+                        priceNGN,
+                        description,
                         images: imagesBase64,
                         videos: videosBase64,
                         shipping: shipping || "Ships in 2 - 3 business days",
                         colors: colorsArray
                     };
-                    showToast('Product updated successfully!');
+
+                    // Replace the array item (this is the critical update step)
+                    globalState.products[index] = updatedProduct;
+
+                    // Reset edit state FIRST (before sync, so UI feels responsive)
                     cancelEditProduct();
+
+                    // Re-render locally so admin sees the change immediately
+                    renderProducts();
+                    renderAdminProductList();
+
+                    // Now push the change to Firebase + IndexedDB
+                    await saveStateToFirebase();
+
+                    showToast('✅ Product updated & synced globally!');
                 } else {
                     const newProduct = { 
                         id: Date.now(), 
@@ -2168,6 +2184,7 @@
                     };
                     globalState.products.push(newProduct);
                     
+                    // Clear form
                     document.getElementById('admin-name').value = '';
                     document.getElementById('admin-price-usd').value = '';
                     document.getElementById('admin-price-ngn').value = '';
@@ -2178,21 +2195,22 @@
                     adminSelectedVideos = [];
                     renderAdminImagePreviews();
                     renderAdminVideoPreviews();
-                    
-                    showToast('Product successfully added and synced globally!');
+
+                    renderProducts();
+                    renderAdminProductList();
+
+                    await saveStateToFirebase();
+
+                    showToast('✅ Product added & synced globally!');
                 }
 
-                saveStateToFirebase();
-                renderProducts();
-                renderAdminProductList();
-                
-                addBtn.innerText = "Save New Product Globally";
+                addBtn.innerText = isEditing ? "💾 Update Product Globally" : "Save New Product Globally";
                 addBtn.disabled = false;
 
             } catch (err) {
-                console.error("Add product error:", err);
-                alert(err.message || "Error reading files. Make sure the video/image files are valid or smaller in size.");
-                addBtn.innerText = editingProductId ? "Update Product Globally" : "Save New Product Globally";
+                console.error("Add/Edit product error:", err);
+                alert(err.message || "Error processing files. Make sure the video/image files are valid or smaller in size.");
+                addBtn.innerText = isEditing ? "💾 Update Product Globally" : "Save New Product Globally";
                 addBtn.disabled = false;
             }
         };
