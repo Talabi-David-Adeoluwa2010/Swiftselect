@@ -75,6 +75,7 @@
         .recent-order-item { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; gap: 1rem; transition: background 0.2s; }
         .recent-order-item:hover { background: #f1f5f9; }
         .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
+        .refund-pill { font-family: monospace; background: #fef3c7; color: #92400e; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
 
         .search-container-wrapper { margin-bottom: 1.25rem; }
         .sticky-search-container { position: sticky; top: 110px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
@@ -226,6 +227,36 @@
         .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
         .lightbox-close { position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.15); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 1.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
         .lightbox-close:hover { background: rgba(255,255,255,0.3); }
+
+        /* Refund success popup animation */
+        @keyframes checkPop {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .refund-check-icon {
+            width: 78px; height: 78px; background: #dcfce7; color: #16a34a;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2.75rem; margin: 0 auto 1rem; font-weight: 800;
+            animation: checkPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 24px rgba(22, 163, 74, 0.25);
+        }
+        .refund-id-box {
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .refund-status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
     </style>
 </head>
 <body>
@@ -316,6 +347,26 @@
                 <div id="track-result-container" style="display: none;" class="track-result-box"></div>
             </div>
 
+            <!-- NEW: Refund Status Tracker -->
+            <div class="orders-section" id="refund-tracking-section" style="background: linear-gradient(135deg, #fffbeb, #fff7ed); border-color: #fde68a;">
+                <h3>💸 Track Your Refund Status</h3>
+                <p>Enter your Refund ID (e.g., REF-XXXXXXXX) or the original Order ID to check the status of your refund request.</p>
+                <div class="track-row">
+                    <input type="text" id="refund-track-input" placeholder="e.g., REF-1234567890 or SWIFT-483920">
+                    <button class="btn-primary" onclick="trackRefund()" style="width: auto; padding: 0 1.25rem; background: #f59e0b;">Search</button>
+                </div>
+                <div id="refund-track-result" style="display: none;" class="track-result-box"></div>
+            </div>
+
+            <!-- NEW: My Refund Requests list -->
+            <div class="orders-section">
+                <div class="recent-orders-header">
+                    <h3>📋 Your Refund Requests</h3>
+                </div>
+                <p>All refund requests submitted from your account. Statuses update live as our team reviews them.</p>
+                <div class="recent-orders-list" id="my-refunds-list"></div>
+            </div>
+
             <div class="orders-section">
                 <div class="recent-orders-header">
                     <h3 id="recent-orders-title">Your Recent Orders</h3>
@@ -342,8 +393,8 @@
 
             <div class="admin-tab-content active" id="admin-tab-refunds">
                 <div class="admin-section-box" style="background: #fff7ed; border-color: #ffedd5;">
-                    <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">💸 Refund & Complaint Requests</h4>
-                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Review customer refund requests. Click on receipt/ID images to view them full-screen. Update status to notify the system.</p>
+                    <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">💸 Global Refund & Complaint Requests</h4>
+                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All refund requests from every customer worldwide appear here in real-time. Click on receipt/ID images to view them full-screen. Update the status to notify the customer instantly.</p>
                     <div id="admin-refunds-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
                 </div>
             </div>
@@ -351,7 +402,7 @@
             <div class="admin-tab-content" id="admin-tab-orders">
                 <div class="admin-section-box">
                     <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Global Customer Orders Tracker</h4>
-                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and countries are shown below. Setting status to <strong>"Delivered Successfully"</strong> unlocks the rating prompt for the recipient user.</p>
+                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All customer orders across all devices and countries appear here in real-time. Setting status to <strong>"Delivered Successfully"</strong> unlocks the rating prompt for the recipient user.</p>
                     <div id="admin-orders-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
                 </div>
             </div>
@@ -555,6 +606,22 @@
 
             <button class="btn-primary" onclick="submitRefundRequest()" style="width:100%; margin-bottom:0.75rem;">Submit Refund Request</button>
             <button class="btn-secondary" onclick="toggleRefundModal()" style="width:100%;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- NEW: Refund Success Modal -->
+    <div class="modal" id="refund-success-modal">
+        <div class="modal-content" style="max-width: 460px; text-align: center;">
+            <div class="refund-check-icon">✓</div>
+            <h3 style="margin: 0 0 0.5rem; font-size: 1.25rem; color: #0f172a;">Refund Request Submitted!</h3>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.25rem; line-height: 1.5;">Your refund request has been received successfully. Our team will review it within <strong>3-5 business days</strong>.</p>
+            <div class="refund-id-box">
+                <p style="font-size: 0.75rem; color: #64748b; margin: 0 0 0.3rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Your Refund ID</p>
+                <p style="font-family: monospace; font-size: 1.15rem; font-weight: 800; color: #4f46e5; margin: 0;" id="refund-success-id">REF-XXXXXX</p>
+            </div>
+            <p style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 1.25rem;">📌 Save this ID. You can use it anytime to check your refund status.</p>
+            <button class="btn-primary" onclick="closeRefundSuccessAndViewStatus()" style="width:100%; margin-bottom:0.5rem;">Check My Refund Status</button>
+            <button class="btn-secondary" onclick="toggleRefundSuccessModal()" style="width:100%;">Close</button>
         </div>
     </div>
 
@@ -778,13 +845,13 @@
         const db = getDatabase(app);
 
         // =============================================================
-        // GLOBAL STATE — Starts EMPTY so no dummy products ever show
+        // GLOBAL STATE
         // =============================================================
-        const CACHE_VERSION = 4; // Bumped to force clients to discard old caches
+        const CACHE_VERSION = 5; // Bumped for the new refund-tracking feature
 
         let globalState = {
             _cacheVersion: CACHE_VERSION,
-            products: [],   // <-- No more default products!
+            products: [],
             users: [
                 { username: "admin", name: "Administrator", email: "admin@swiftselect.com", password: "admin" }
             ],
@@ -797,10 +864,11 @@
             refunds: []
         };
 
-        // Flag: has Firebase finished loading products?
         let isProductsLoaded = false;
 
-        // Load cached state ONLY if it matches current cache version
+        // Track the ID of the last refund the customer just submitted
+        let lastSubmittedRefundId = null;
+
         try {
             const cached = await dbHelper.get('swift_cached_state');
             if (cached && cached._cacheVersion === CACHE_VERSION && cached.products) {
@@ -810,10 +878,6 @@
                     globalState.users = [{ username: "admin", name: "Administrator", email: "admin@swiftselect.com", password: "admin" }];
                 }
 
-                // =========================================================
-                // THE FIX: If cache has products, we are ready IMMEDIATELY.
-                // Don't wait for Firebase — show cached products to user now.
-                // =========================================================
                 if (globalState.products.length > 0) {
                     isProductsLoaded = true;
                     console.log("✅ Cache hit:", globalState.products.length, "products loaded instantly.");
@@ -903,18 +967,30 @@
                 set(stateRef, globalState);
             }
 
-            // Firebase has responded — stop showing "Loading..."
             isProductsLoaded = true;
 
             renderProducts();
             renderReviews();
             renderRecentOrdersList();
+            renderMyRefundsList();
+
             const adminPage = document.getElementById('admin-page');
             if (adminPage && adminPage.classList.contains('active')) {
                 renderAdminDashboard();
             }
+
+            // Auto-refresh refund tracker results if user is looking at one
+            const refundResultBox = document.getElementById('refund-track-result');
+            const refundInput = document.getElementById('refund-track-input');
+            if (refundResultBox && refundResultBox.style.display !== 'none' && refundInput && refundInput.value.trim()) {
+                trackRefund();
+            }
         });
 
+        // =============================================================
+        // SAVE STATE — with server-side merge to prevent data loss when
+        // multiple customers place orders / refunds at the same time.
+        // =============================================================
         async function saveStateToFirebase() {
             globalState._cacheVersion = CACHE_VERSION;
 
@@ -923,7 +999,32 @@
             } catch (e) {
                 console.warn("IndexedDB save error:", e);
             }
+
             try {
+                // Merge with latest server data to avoid overwriting other
+                // customers' orders/refunds that we haven't received yet.
+                const snapshot = await get(stateRef);
+                const serverData = snapshot.val();
+                if (serverData) {
+                    // Merge orders (keep all unique by id)
+                    const serverOrders = serverData.orders || [];
+                    const localOrderIds = new Set(globalState.orders.map(o => String(o.id)));
+                    serverOrders.forEach(so => {
+                        if (!localOrderIds.has(String(so.id))) {
+                            globalState.orders.push(so);
+                        }
+                    });
+
+                    // Merge refunds (keep all unique by id)
+                    const serverRefunds = serverData.refunds || [];
+                    const localRefundIds = new Set(globalState.refunds.map(r => String(r.id)));
+                    serverRefunds.forEach(sr => {
+                        if (!localRefundIds.has(String(sr.id))) {
+                            globalState.refunds.push(sr);
+                        }
+                    });
+                }
+
                 await set(stateRef, globalState);
             } catch (error) {
                 console.error("Firebase sync error:", error);
@@ -935,6 +1036,7 @@
             renderProducts();
             updateAuthUI();
             renderRecentOrdersList();
+            renderMyRefundsList();
             renderReviews();
             setupStickySearchScrollObserver();
             setupAdminMediaUploadHandlers();
@@ -992,6 +1094,29 @@
             document.getElementById('refund-modal').classList.toggle('active');
         };
 
+        // =============================================================
+        // NEW: Refund Success Modal controls
+        // =============================================================
+        window.toggleRefundSuccessModal = function() {
+            document.getElementById('refund-success-modal').classList.toggle('active');
+        };
+
+        window.closeRefundSuccessAndViewStatus = function() {
+            document.getElementById('refund-success-modal').classList.remove('active');
+            openOrdersPage();
+            setTimeout(() => {
+                const section = document.getElementById('refund-tracking-section');
+                if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                if (lastSubmittedRefundId) {
+                    document.getElementById('refund-track-input').value = lastSubmittedRefundId;
+                    trackRefund();
+                }
+            }, 400);
+        };
+
+        // =============================================================
+        // SUBMIT REFUND — now shows the success popup
+        // =============================================================
         window.submitRefundRequest = async function() {
             const name = document.getElementById('refund-name').value.trim();
             const orderId = document.getElementById('refund-order-id').value.trim();
@@ -1026,10 +1151,13 @@
                 const receiptBase64 = await readFileAsBase64(receiptFile);
                 const idBase64 = await readFileAsBase64(idFile);
 
+                const refundId = "REF-" + Date.now();
+
                 const newRefund = {
-                    id: "REF-" + Date.now(),
+                    id: refundId,
                     customerName: name,
                     customerEmail: currentUser ? currentUser.email : "Guest",
+                    customerUsername: currentUser ? currentUser.username : "guest",
                     orderId: orderId,
                     address: address,
                     reason: reason,
@@ -1046,6 +1174,7 @@
                 globalState.refunds.push(newRefund);
                 await saveStateToFirebase();
 
+                // Clear the form
                 document.getElementById('refund-name').value = '';
                 document.getElementById('refund-order-id').value = '';
                 document.getElementById('refund-address').value = '';
@@ -1060,12 +1189,184 @@
                 document.getElementById('refund-receipt-label').innerText = 'Click to upload payment receipt (JPG, PNG)';
                 document.getElementById('refund-id-label').innerText = 'Click to upload ID (JPG, PNG)';
 
-                toggleRefundModal();
-                showToast("Refund request submitted successfully! Our team will review it.");
+                // Store the ID so the "Check My Refund Status" button can autofill it
+                lastSubmittedRefundId = refundId;
+
+                // Close the refund form modal
+                document.getElementById('refund-modal').classList.remove('active');
+
+                // Show the new success popup
+                document.getElementById('refund-success-id').innerText = refundId;
+                document.getElementById('refund-success-modal').classList.add('active');
+
+                // Refresh the customer's refund list
+                renderMyRefundsList();
+
+                showToast("✅ Refund request submitted successfully!");
             } catch (error) {
                 console.error("Refund submission error:", error);
                 alert("Error processing your files. Please try again with smaller images.");
             }
+        };
+
+        // =============================================================
+        // NEW: Track a refund by Refund ID or Order ID
+        // =============================================================
+        window.trackRefund = function() {
+            const query = document.getElementById('refund-track-input').value.trim();
+            const resultBox = document.getElementById('refund-track-result');
+
+            if (!query) {
+                alert("Please enter your Refund ID or Order ID.");
+                return;
+            }
+
+            const refunds = globalState.refunds || [];
+            const q = query.toLowerCase();
+            const found = refunds.find(r =>
+                (r.id && r.id.toLowerCase() === q) ||
+                (r.orderId && r.orderId.toLowerCase() === q)
+            );
+
+            resultBox.style.display = 'block';
+
+            if (!found) {
+                resultBox.innerHTML = `
+                    <div style="text-align: center; padding: 0.5rem;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+                        <p style="color: #dc2626; margin: 0; font-weight: 700;">No refund request found</p>
+                        <p style="color: #64748b; font-size: 0.85rem; margin: 0.35rem 0 0;">We couldn't find a refund matching "<strong>${query}</strong>". Please double-check your Refund ID or Order ID.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const statusColors = {
+                "Pending Review": "#f59e0b",
+                "Processing": "#3b82f6",
+                "Processed": "#16a34a",
+                "Processed / Refunded": "#16a34a",
+                "Rejected": "#dc2626"
+            };
+            const statusIcons = {
+                "Pending Review": "⏳",
+                "Processing": "🔄",
+                "Processed": "✅",
+                "Processed / Refunded": "✅",
+                "Rejected": "❌"
+            };
+            const statusMessages = {
+                "Pending Review": "Your request is queued for review. Our team will assess it within 3-5 business days.",
+                "Processing": "Great news! Your refund is being processed. Funds will be disbursed shortly.",
+                "Processed": "Your refund has been completed. Please check your bank account within 5-7 business days.",
+                "Processed / Refunded": "Your refund has been completed. Please check your bank account within 5-7 business days.",
+                "Rejected": "Your refund request was not approved. Please contact support at 08024300891 for more details."
+            };
+
+            const statusColor = statusColors[found.status] || "#64748b";
+            const statusIcon = statusIcons[found.status] || "•";
+            const statusMsg = statusMessages[found.status] || "Please contact support for more details.";
+
+            resultBox.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                    <div>
+                        <p style="margin: 0 0 0.15rem; font-size: 0.72rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Refund ID</p>
+                        <p style="margin: 0; font-family: monospace; font-weight: 800; color: #4f46e5; font-size: 1rem;">${found.id}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="margin: 0 0 0.15rem; font-size: 0.72rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Status</p>
+                        <span class="refund-status-badge" style="background: ${statusColor}22; color: ${statusColor}; border: 1px solid ${statusColor}55;">
+                            ${statusIcon} ${found.status}
+                        </span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div>
+                        <p style="margin: 0 0 0.15rem; font-size: 0.72rem; color: #64748b; font-weight: 700;">Order ID</p>
+                        <p style="margin: 0; font-size: 0.9rem; color: #0f172a; font-weight: 600;">${found.orderId}</p>
+                    </div>
+                    <div>
+                        <p style="margin: 0 0 0.15rem; font-size: 0.72rem; color: #64748b; font-weight: 700;">Submitted On</p>
+                        <p style="margin: 0; font-size: 0.9rem; color: #0f172a; font-weight: 600;">${found.date}</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 0.75rem;">
+                    <p style="margin: 0 0 0.15rem; font-size: 0.72rem; color: #64748b; font-weight: 700;">Reason Submitted</p>
+                    <p style="margin: 0; font-size: 0.88rem; color: #334155;">${found.reason}</p>
+                </div>
+
+                <div style="background: ${statusColor}15; border-left: 4px solid ${statusColor}; padding: 0.85rem 1rem; border-radius: 0 10px 10px 0;">
+                    <p style="margin: 0; font-size: 0.85rem; color: #334155; line-height: 1.5;"><strong>${statusIcon} Update:</strong> ${statusMsg}</p>
+                </div>
+            `;
+        };
+
+        // =============================================================
+        // NEW: Show customer's own refund requests
+        // =============================================================
+        window.renderMyRefundsList = function() {
+            const container = document.getElementById('my-refunds-list');
+            if (!container) return;
+
+            if (!currentUser) {
+                container.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; margin: 1rem 0; text-align: center;">Please log in to view your refund requests.</p>';
+                return;
+            }
+
+            const myRefunds = (globalState.refunds || []).filter(r => {
+                // Match by email or username
+                const emailMatch = r.customerEmail && r.customerEmail.toLowerCase() === currentUser.email.toLowerCase();
+                const userMatch = r.customerUsername && r.customerUsername.toLowerCase() === currentUser.username.toLowerCase();
+                return emailMatch || userMatch;
+            });
+
+            if (myRefunds.length === 0) {
+                container.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; margin: 1rem 0; text-align: center;">You have not submitted any refund requests yet.</p>';
+                return;
+            }
+
+            const statusColors = {
+                "Pending Review": "#f59e0b",
+                "Processing": "#3b82f6",
+                "Processed": "#16a34a",
+                "Processed / Refunded": "#16a34a",
+                "Rejected": "#dc2626"
+            };
+            const statusIcons = {
+                "Pending Review": "⏳",
+                "Processing": "🔄",
+                "Processed": "✅",
+                "Processed / Refunded": "✅",
+                "Rejected": "❌"
+            };
+
+            container.innerHTML = [...myRefunds].reverse().map(r => {
+                const statusColor = statusColors[r.status] || "#64748b";
+                const statusIcon = statusIcons[r.status] || "•";
+                return `
+                    <div class="recent-order-item">
+                        <div style="min-width: 0; flex: 1;">
+                            <span class="refund-pill">${r.id}</span>
+                            <div style="color: #64748b; font-size: 0.75rem; margin-top: 0.4rem;">Order: <strong>${r.orderId}</strong></div>
+                            <div style="color: #64748b; font-size: 0.72rem; margin-top: 0.15rem;">Submitted: ${r.date}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem;">
+                            <span class="refund-status-badge" style="background: ${statusColor}22; color: ${statusColor}; border: 1px solid ${statusColor}55;">
+                                ${statusIcon} ${r.status}
+                            </span>
+                            <button class="btn-small" onclick="fillRefundTrackInput('${r.id}')">View Details</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        window.fillRefundTrackInput = function(refundId) {
+            document.getElementById('refund-track-input').value = refundId;
+            trackRefund();
+            document.getElementById('refund-track-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
 
         function setupAdminMediaUploadHandlers() {
@@ -1152,6 +1453,7 @@
 
         window.openOrdersPage = function() {
             renderRecentOrdersList();
+            renderMyRefundsList();
             document.getElementById('orders-page').classList.add('active');
             document.body.classList.add('no-scroll');
         };
@@ -1161,6 +1463,8 @@
             document.body.classList.remove('no-scroll');
             document.getElementById('track-result-container').style.display = 'none';
             document.getElementById('track-input').value = '';
+            document.getElementById('refund-track-result').style.display = 'none';
+            document.getElementById('refund-track-input').value = '';
         };
 
         function formatMarketplacePrice(product) {
@@ -1172,15 +1476,10 @@
             `;
         }
 
-        // =============================================================
-        // RENDER PRODUCTS
-        // Shows "Loading..." ONLY if we have no cache AND Firebase hasn't responded
-        // =============================================================
         window.renderProducts = function(filter = "") {
             const grid = document.getElementById('product-grid');
             if (!grid) return;
 
-            // Show loading state ONLY if we truly have nothing to show
             if (!isProductsLoaded) {
                 grid.innerHTML = `
                     <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;">
@@ -1356,6 +1655,7 @@
                 authBtn.className = "btn-secondary";
             }
             renderRecentOrdersList();
+            renderMyRefundsList();
         };
 
         window.handleAuthClick = function() {
@@ -1825,21 +2125,33 @@
             renderAdminPromoList();
         }
 
+        // =============================================================
+        // ADMIN: Show ALL global refunds from ALL customers
+        // =============================================================
         function renderAdminRefundList() {
             const container = document.getElementById('admin-refunds-list');
             if (!container) return;
 
             if (!globalState.refunds || globalState.refunds.length === 0) {
-                container.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; padding: 1rem;">No refund requests logged yet.</p>';
+                container.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; padding: 1rem;">No refund requests logged yet from any customer worldwide.</p>';
                 return;
             }
 
-            container.innerHTML = globalState.refunds.map((refund, idx) => `
+            // Show newest first
+            const refundsToShow = [...globalState.refunds].reverse();
+
+            container.innerHTML = refundsToShow.map((refund) => {
+                // Find the original index in the array (needed for the update function)
+                const originalIndex = globalState.refunds.findIndex(r => r.id === refund.id);
+
+                return `
                 <div class="admin-refund-card">
                     <div class="admin-refund-header">
-                        <span>Refund ID: ${refund.id} (@${refund.customerName})</span>
+                        <span>Refund ID: <strong>${refund.id}</strong></span>
                         <span style="color: #dc2626;">${refund.status}</span>
                     </div>
+                    <div class="admin-refund-detail"><strong>Customer:</strong> ${refund.customerName} ${refund.customerUsername ? `(@${refund.customerUsername})` : ''}</div>
+                    <div class="admin-refund-detail"><strong>Email:</strong> ${refund.customerEmail || 'N/A'}</div>
                     <div class="admin-refund-detail"><strong>Order ID:</strong> ${refund.orderId}</div>
                     <div class="admin-refund-detail"><strong>Full Address:</strong> ${refund.address || 'N/A'}</div>
                     <div class="admin-refund-detail"><strong>Reason:</strong> ${refund.reason}</div>
@@ -1860,16 +2172,17 @@
                     </div>
 
                     <div style="display:flex; gap:0.5rem; align-items:center; margin-top:0.85rem; flex-wrap:wrap;">
-                        <select id="admin-refund-status-${idx}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1; max-width:220px;">
+                        <select id="admin-refund-status-${originalIndex}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1; max-width:220px;">
                             <option value="Pending Review" ${refund.status === 'Pending Review' ? 'selected' : ''}>Pending Review</option>
                             <option value="Processing" ${refund.status === 'Processing' ? 'selected' : ''}>Processing</option>
                             <option value="Processed" ${refund.status === 'Processed' ? 'selected' : ''}>Processed / Refunded</option>
                             <option value="Rejected" ${refund.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
                         </select>
-                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateRefundStatus(${idx})">Update Status</button>
+                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateRefundStatus(${originalIndex})">Update Status</button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         window.updateRefundStatus = function(index) {
@@ -1878,8 +2191,13 @@
             saveStateToFirebase();
             showToast(`Refund request marked as: ${newStatus}`);
             renderAdminRefundList();
+            // Also refresh the customer's own list in case admin is also the customer
+            renderMyRefundsList();
         };
 
+        // =============================================================
+        // ADMIN: Show ALL global orders from ALL customers
+        // =============================================================
         function renderAdminOrderList() {
             const listContainer = document.getElementById('admin-orders-list');
             if (!listContainer) return;
@@ -1889,7 +2207,14 @@
                 return;
             }
 
-            listContainer.innerHTML = globalState.orders.map((ord, index) => `
+            // Show newest first
+            const ordersToShow = [...globalState.orders].reverse();
+
+            listContainer.innerHTML = ordersToShow.map((ord) => {
+                // Find original index for update function
+                const originalIndex = globalState.orders.findIndex(o => o.id === ord.id);
+
+                return `
                 <div class="admin-order-card">
                     <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem; flex-wrap:wrap; gap:0.3rem;">
                         <strong>${ord.id} (@${ord.customerUsername || 'user'} - ${ord.customerName})</strong>
@@ -1898,17 +2223,18 @@
                     <div style="color:#475569; margin-bottom:0.4rem;">Items: ${ord.items} | Total Paid: ${ord.totalPaid || 'N/A'} | Phone: ${ord.phone}</div>
                     <div style="color:#475569; margin-bottom:0.5rem; font-size:0.82rem;">📍 ${ord.address || 'N/A'}</div>
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
-                        <select id="admin-status-${index}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1;">
+                        <select id="admin-status-${originalIndex}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1;">
                             <option value="Order Placed - Processing" ${ord.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
                             <option value="Ordered from Supplier / Hub" ${ord.status.includes('Supplier') || ord.status.includes('AliExpress') ? 'selected' : ''}>Ordered from Supplier / Hub</option>
                             <option value="Shipped / In Transit" ${ord.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
                             <option value="Out for Delivery" ${ord.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
                             <option value="Delivered Successfully" ${ord.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
                         </select>
-                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateOrderStatus(${index})">Update Status</button>
+                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateOrderStatus(${originalIndex})">Update Status</button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         window.updateOrderStatus = function(index) {
@@ -2080,9 +2406,6 @@
             }
         };
 
-        // =============================================================
-        // ADD / EDIT PRODUCT — with guaranteed Firebase sync
-        // =============================================================
         window.addProduct = async function() {
             const name = document.getElementById('admin-name').value.trim();
             const priceUSD = parseFloat(document.getElementById('admin-price-usd').value);
@@ -2264,9 +2587,6 @@
             });
         }
 
-        // =============================================================
-        // ✅ FIXED: addToCart — String ID match + null/empty color normalization
-        // =============================================================
         window.addToCart = function(event, productId, chosenColor = null) {
             if (event) event.stopPropagation();
             const product = globalState.products.find(p => String(p.id) === String(productId));
@@ -2300,9 +2620,6 @@
             showToast(`Added ${product.name}${finalColor ? ` (${finalColor})` : ''} to cart!`);
         };
 
-        // =============================================================
-        // ✅ FIXED: changeQuantity — normalize 'none'/''/null and String ID
-        // =============================================================
         window.changeQuantity = function(productId, delta, color) {
             const pid = String(productId);
             const c = (color === undefined || color === null || color === '' || color === 'none') ? null : color;
@@ -2322,9 +2639,6 @@
             }
         };
 
-        // =============================================================
-        // ✅ FIXED: removeFromCart — normalize 'none'/''/null and String ID
-        // =============================================================
         window.removeFromCart = function(productId, color) {
             const pid = String(productId);
             const c = (color === undefined || color === null || color === '' || color === 'none') ? null : color;
@@ -2336,9 +2650,6 @@
             showToast("Item removed from cart");
         };
 
-        // =============================================================
-        // ✅ FIXED: updateCartUI — uses colorArg ('none' fallback) for onclick args
-        // =============================================================
         function updateCartUI() {
             const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             document.getElementById('cart-count').innerText = totalCount;
