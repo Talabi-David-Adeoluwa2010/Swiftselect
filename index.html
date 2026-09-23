@@ -2264,24 +2264,32 @@
             });
         }
 
+        // =============================================================
+        // ✅ FIXED: addToCart — String ID match + null/empty color normalization
+        // =============================================================
         window.addToCart = function(event, productId, chosenColor = null) {
             if (event) event.stopPropagation();
-            const product = globalState.products.find(p => p.id === productId);
+            const product = globalState.products.find(p => String(p.id) === String(productId));
+            if (!product) return;
             if (product.isSoldOut) {
                 alert("Sorry, this item is currently sold out.");
                 return;
             }
 
-            let finalColor = chosenColor;
-            if (product.colors && product.colors.length > 0 && !finalColor) {
-                finalColor = selectedColors[productId];
+            let finalColor = null;
+            if (product.colors && product.colors.length > 0) {
+                finalColor = chosenColor || selectedColors[productId] || product.colors[0];
                 if (!finalColor) {
                     alert("Please select a color first!");
                     return;
                 }
             }
 
-            const existingItem = cart.find(item => item.id === productId && item.selectedColor === finalColor);
+            const existingItem = cart.find(item =>
+                String(item.id) === String(productId) &&
+                (item.selectedColor || null) === (finalColor || null)
+            );
+
             if (existingItem) {
                 existingItem.quantity++;
             } else {
@@ -2292,23 +2300,45 @@
             showToast(`Added ${product.name}${finalColor ? ` (${finalColor})` : ''} to cart!`);
         };
 
+        // =============================================================
+        // ✅ FIXED: changeQuantity — normalize 'none'/''/null and String ID
+        // =============================================================
         window.changeQuantity = function(productId, delta, color) {
-            const existingItem = cart.find(item => item.id === productId && item.selectedColor === color);
+            const pid = String(productId);
+            const c = (color === undefined || color === null || color === '' || color === 'none') ? null : color;
+
+            const existingItem = cart.find(item =>
+                String(item.id) === pid && (item.selectedColor || null) === c
+            );
+
             if (existingItem) {
                 existingItem.quantity += delta;
                 if (existingItem.quantity <= 0) {
-                    cart = cart.filter(item => !(item.id === productId && item.selectedColor === color));
+                    cart = cart.filter(item =>
+                        !(String(item.id) === pid && (item.selectedColor || null) === c)
+                    );
                 }
                 updateCartUI();
             }
         };
 
+        // =============================================================
+        // ✅ FIXED: removeFromCart — normalize 'none'/''/null and String ID
+        // =============================================================
         window.removeFromCart = function(productId, color) {
-            cart = cart.filter(item => !(item.id === productId && item.selectedColor === color));
+            const pid = String(productId);
+            const c = (color === undefined || color === null || color === '' || color === 'none') ? null : color;
+
+            cart = cart.filter(item =>
+                !(String(item.id) === pid && (item.selectedColor || null) === c)
+            );
             updateCartUI();
             showToast("Item removed from cart");
         };
 
+        // =============================================================
+        // ✅ FIXED: updateCartUI — uses colorArg ('none' fallback) for onclick args
+        // =============================================================
         function updateCartUI() {
             const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             document.getElementById('cart-count').innerText = totalCount;
@@ -2327,6 +2357,7 @@
                 totalPriceUSD += item.priceUSD * item.quantity;
                 totalPriceNGN += item.priceNGN * item.quantity;
                 const imgUrl = item.images && item.images.length > 0 ? item.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';
+                const colorArg = item.selectedColor ? item.selectedColor : 'none';
                 return `
                     <div class="cart-item">
                         <img src="${imgUrl}" alt="${item.name}">
@@ -2335,12 +2366,12 @@
                             ${item.selectedColor ? `<small style="color:#4f46e5; font-weight:600; display:block;">Color: ${item.selectedColor}</small>` : ''}
                             <small style="color:#64748b;">$${(item.priceUSD * item.quantity).toFixed(2)} / ₦${(item.priceNGN * item.quantity).toLocaleString()}</small>
                             <div class="cart-qty-controls">
-                                <button class="cart-qty-btn" onclick="changeQuantity(${item.id}, -1, '${item.selectedColor || ''}')">-</button>
+                                <button class="cart-qty-btn" onclick="changeQuantity('${item.id}', -1, '${colorArg}')">-</button>
                                 <span style="font-size: 0.85rem; font-weight: 700;">${item.quantity}</span>
-                                <button class="cart-qty-btn" onclick="changeQuantity(${item.id}, 1, '${item.selectedColor || ''}')">+</button>
+                                <button class="cart-qty-btn" onclick="changeQuantity('${item.id}', 1, '${colorArg}')">+</button>
                             </div>
                         </div>
-                        <button class="btn-small" onclick="removeFromCart(${item.id}, '${item.selectedColor || ''}')">Remove</button>
+                        <button class="btn-small" onclick="removeFromCart('${item.id}', '${colorArg}')">Remove</button>
                     </div>
                 `;
             }).join('');
