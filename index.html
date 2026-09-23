@@ -372,7 +372,7 @@
                     <h3 id="recent-orders-title">Your Recent Orders</h3>
                     <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
                 </div>
-                <p>Manage and view your account's order activity.</p>
+                <p>Manage and view your account's order activity. Every order you have ever placed is kept here permanently.</p>
                 <div class="recent-orders-list" id="recent-orders-list"></div>
             </div>
         </div>
@@ -609,7 +609,7 @@
         </div>
     </div>
 
-    <!-- NEW: Refund Success Modal -->
+    <!-- Refund Success Modal -->
     <div class="modal" id="refund-success-modal">
         <div class="modal-content" style="max-width: 460px; text-align: center;">
             <div class="refund-check-icon">✓</div>
@@ -786,7 +786,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, get, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const IDB_CONFIG = {
             dbName: "SwiftSelectDB",
@@ -845,9 +845,21 @@
         const db = getDatabase(app);
 
         // =============================================================
+        // FIREBASE NODE REFERENCES
+        // -------------------------------------------------------------
+        // Orders and refunds now live in their OWN top-level nodes so
+        // that every write is merged atomically via transactions.
+        // This means one customer's new order can NEVER overwrite
+        // another customer's existing orders, anywhere in the world.
+        // =============================================================
+        const stateRef   = ref(db, 'swiftStoreState');   // products / users / reviews / promos
+        const ordersRef  = ref(db, 'swiftOrders');       // ALL customer orders (global)
+        const refundsRef = ref(db, 'swiftRefunds');      // ALL refund requests (global)
+
+        // =============================================================
         // GLOBAL STATE
         // =============================================================
-        const CACHE_VERSION = 5; // Bumped for the new refund-tracking feature
+        const CACHE_VERSION = 6; // bumped: orders/refunds moved to dedicated nodes
 
         let globalState = {
             _cacheVersion: CACHE_VERSION,
@@ -874,6 +886,7 @@
             if (cached && cached._cacheVersion === CACHE_VERSION && cached.products) {
                 globalState = cached;
                 if (!globalState.refunds) globalState.refunds = [];
+                if (!globalState.orders) globalState.orders = [];
                 if (!globalState.users || globalState.users.length === 0) {
                     globalState.users = [{ username: "admin", name: "Administrator", email: "admin@swiftselect.com", password: "admin" }];
                 }
@@ -896,7 +909,7 @@
         let selectedColors = {};
         let currentRatingOrderId = null;
         let selectedStarCount = 5;
-        let appliedDiscountPercent = 0; 
+        let appliedDiscountPercent = 0;
 
         let adminSelectedImages = [];
         let adminSelectedVideos = [];
@@ -944,91 +957,188 @@
             answerBox.innerHTML = `<strong>Q: ${item.q}</strong><br><br><span style="color: #0f172a; line-height: 1.5;">A: ${item.a}</span>`;
         };
 
-        const stateRef = ref(db, 'swiftStoreState');
-        
-        onValue(stateRef, async (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                if (data.products) globalState.products = data.products;
-                if (data.users) globalState.users = data.users;
-                if (data.orders) globalState.orders = data.orders;
-                if (data.reviews) globalState.reviews = data.reviews;
-                if (data.promoCodes) globalState.promoCodes = data.promoCodes;
-                if (data.refunds) globalState.refunds = data.refunds;
-                
-                globalState._cacheVersion = CACHE_VERSION;
-
-                try {
-                    await dbHelper.save('swift_cached_state', globalState);
-                } catch (e) {
-                    console.warn("IndexedDB save error during sync:", e);
-                }
-            } else {
-                set(stateRef, globalState);
-            }
-
-            isProductsLoaded = true;
-
-            renderProducts();
-            renderReviews();
-            renderRecentOrdersList();
-            renderMyRefundsList();
-
-            const adminPage = document.getElementById('admin-page');
-            if (adminPage && adminPage.classList.contains('active')) {
-                renderAdminDashboard();
-            }
-
-            // Auto-refresh refund tracker results if user is looking at one
-            const refundResultBox = document.getElementById('refund-track-result');
-            const refundInput = document.getElementById('refund-track-input');
-            if (refundResultBox && refundResultBox.style.display !== 'none' && refundInput && refundInput.value.trim()) {
-                trackRefund();
-            }
-        });
-
         // =============================================================
-        // SAVE STATE — with server-side merge to prevent data loss when
-        // multiple customers place orders / refunds at the same time.
+        // HELPERS
         // =============================================================
-        async function saveStateToFirebase() {
-            globalState._cacheVersion = CACHE_VERSION;
+        function normalizeToArray(val) {
+            if (!val) return [];
+            if (Array.isArray(val)) return val.filter(Boolean);
+            if (typeof val === 'object') return Object.values(val).filter(Boolean);
+            return [];
+        }
 
+        function buildStatePayload() {
+            return {
+                _cacheVersion: CACHE_VERSION,
+                products: globalState.products || [],
+                users: globalState.users || [],
+                reviews: globalState.reviews || [],
+                promoCodes: globalState.promoCodes || []
+            };
+        }
+
+        async function persistCache() {
             try {
+                globalState._cacheVersion = CACHE_VERSION;
                 await dbHelper.save('swift_cached_state', globalState);
             } catch (e) {
                 console.warn("IndexedDB save error:", e);
             }
+        }
 
+        // =============================================================
+        // SAVE STATE (catalog / users / reviews / promo codes only)
+        // =============================================================
+        async function saveStateToFirebase() {
+            await persistCache();
             try {
-                // Merge with latest server data to avoid overwriting other
-                // customers' orders/refunds that we haven't received yet.
-                const snapshot = await get(stateRef);
-                const serverData = snapshot.val();
-                if (serverData) {
-                    // Merge orders (keep all unique by id)
-                    const serverOrders = serverData.orders || [];
-                    const localOrderIds = new Set(globalState.orders.map(o => String(o.id)));
-                    serverOrders.forEach(so => {
-                        if (!localOrderIds.has(String(so.id))) {
-                            globalState.orders.push(so);
-                        }
-                    });
-
-                    // Merge refunds (keep all unique by id)
-                    const serverRefunds = serverData.refunds || [];
-                    const localRefundIds = new Set(globalState.refunds.map(r => String(r.id)));
-                    serverRefunds.forEach(sr => {
-                        if (!localRefundIds.has(String(sr.id))) {
-                            globalState.refunds.push(sr);
-                        }
-                    });
-                }
-
-                await set(stateRef, globalState);
+                await set(stateRef, buildStatePayload());
             } catch (error) {
                 console.error("Firebase sync error:", error);
                 showToast("⚠️ Sync failed. Check your internet and try again.");
+            }
+        }
+
+        // =============================================================
+        // ATOMIC ORDER WRITE
+        // Uses a Firebase transaction so concurrent orders from
+        // different customers around the world NEVER overwrite each other.
+        // =============================================================
+        async function saveOrderToFirebase(orderRecord) {
+            // 1) Update local state instantly so UI feels snappy
+            const localIdx = globalState.orders.findIndex(o => String(o.id) === String(orderRecord.id));
+            if (localIdx === -1) globalState.orders.push(orderRecord);
+            else globalState.orders[localIdx] = orderRecord;
+            await persistCache();
+
+            // 2) Atomically merge into the global orders node
+            try {
+                await runTransaction(ordersRef, (current) => {
+                    const arr = normalizeToArray(current);
+                    const idx = arr.findIndex(o => String(o.id) === String(orderRecord.id));
+                    if (idx === -1) arr.push(orderRecord);
+                    else arr[idx] = { ...arr[idx], ...orderRecord };
+                    return arr;
+                });
+            } catch (e) {
+                console.error("Order sync error:", e);
+                showToast("⚠️ Order saved locally — syncing again shortly.");
+            }
+        }
+
+        // =============================================================
+        // ATOMIC REFUND WRITE
+        // =============================================================
+        async function saveRefundToFirebase(refundRecord) {
+            const localIdx = globalState.refunds.findIndex(r => String(r.id) === String(refundRecord.id));
+            if (localIdx === -1) globalState.refunds.push(refundRecord);
+            else globalState.refunds[localIdx] = refundRecord;
+            await persistCache();
+
+            try {
+                await runTransaction(refundsRef, (current) => {
+                    const arr = normalizeToArray(current);
+                    const idx = arr.findIndex(r => String(r.id) === String(refundRecord.id));
+                    if (idx === -1) arr.push(refundRecord);
+                    else arr[idx] = { ...arr[idx], ...refundRecord };
+                    return arr;
+                });
+            } catch (e) {
+                console.error("Refund sync error:", e);
+                showToast("⚠️ Refund saved locally — syncing again shortly.");
+            }
+        }
+
+        // =============================================================
+        // ATOMIC ORDER STATUS UPDATE (Admin -> Customer worldwide)
+        // =============================================================
+        async function updateOrderStatusInFirebase(orderId, newStatus) {
+            const idx = globalState.orders.findIndex(o => String(o.id) === String(orderId));
+            if (idx !== -1) globalState.orders[idx].status = newStatus;
+            await persistCache();
+
+            try {
+                await runTransaction(ordersRef, (current) => {
+                    const arr = normalizeToArray(current);
+                    const target = arr.find(o => String(o.id) === String(orderId));
+                    if (target) target.status = newStatus;
+                    return arr;
+                });
+            } catch (e) {
+                console.error("Order status sync error:", e);
+                showToast("⚠️ Status update may not have synced. Check connection.");
+            }
+        }
+
+        // =============================================================
+        // ATOMIC REFUND STATUS UPDATE (Admin -> Customer worldwide)
+        // =============================================================
+        async function updateRefundStatusInFirebase(refundId, newStatus) {
+            const idx = globalState.refunds.findIndex(r => String(r.id) === String(refundId));
+            if (idx !== -1) globalState.refunds[idx].status = newStatus;
+            await persistCache();
+
+            try {
+                await runTransaction(refundsRef, (current) => {
+                    const arr = normalizeToArray(current);
+                    const target = arr.find(r => String(r.id) === String(refundId));
+                    if (target) target.status = newStatus;
+                    return arr;
+                });
+            } catch (e) {
+                console.error("Refund status sync error:", e);
+                showToast("⚠️ Refund status may not have synced. Check connection.");
+            }
+        }
+
+        // =============================================================
+        // CLEAR A CUSTOMER'S ORDERS (globally)
+        // =============================================================
+        async function clearUserOrdersFromFirebase(username) {
+            const uname = String(username).toLowerCase();
+            globalState.orders = globalState.orders.filter(o => String(o.customerUsername || '').toLowerCase() !== uname);
+            await persistCache();
+
+            try {
+                await runTransaction(ordersRef, (current) => {
+                    const arr = normalizeToArray(current);
+                    return arr.filter(o => String(o.customerUsername || '').toLowerCase() !== uname);
+                });
+            } catch (e) {
+                console.error("Clear orders sync error:", e);
+            }
+        }
+
+        // =============================================================
+        // UI REFRESH HELPERS
+        // =============================================================
+        function refreshOrderDependentUI() {
+            try { renderRecentOrdersList(); } catch (e) { console.warn(e); }
+
+            const adminPage = document.getElementById('admin-page');
+            if (adminPage && adminPage.classList.contains('active')) {
+                try { renderAdminOrderList(); } catch (e) { console.warn(e); }
+            }
+
+            const trackResult = document.getElementById('track-result-container');
+            const trackInput  = document.getElementById('track-input');
+            if (trackResult && trackResult.style.display !== 'none' && trackInput && trackInput.value.trim()) {
+                try { trackOrder(); } catch (e) { console.warn(e); }
+            }
+        }
+
+        function refreshRefundDependentUI() {
+            try { renderMyRefundsList(); } catch (e) { console.warn(e); }
+
+            const adminPage = document.getElementById('admin-page');
+            if (adminPage && adminPage.classList.contains('active')) {
+                try { renderAdminRefundList(); } catch (e) { console.warn(e); }
+            }
+
+            const refundResult = document.getElementById('refund-track-result');
+            const refundInput  = document.getElementById('refund-track-input');
+            if (refundResult && refundResult.style.display !== 'none' && refundInput && refundInput.value.trim()) {
+                try { trackRefund(); } catch (e) { console.warn(e); }
             }
         }
 
@@ -1094,9 +1204,6 @@
             document.getElementById('refund-modal').classList.toggle('active');
         };
 
-        // =============================================================
-        // NEW: Refund Success Modal controls
-        // =============================================================
         window.toggleRefundSuccessModal = function() {
             document.getElementById('refund-success-modal').classList.toggle('active');
         };
@@ -1115,7 +1222,7 @@
         };
 
         // =============================================================
-        // SUBMIT REFUND — now shows the success popup
+        // SUBMIT REFUND — synced globally via transaction
         // =============================================================
         window.submitRefundRequest = async function() {
             const name = document.getElementById('refund-name').value.trim();
@@ -1171,8 +1278,9 @@
                 };
 
                 if (!globalState.refunds) globalState.refunds = [];
-                globalState.refunds.push(newRefund);
-                await saveStateToFirebase();
+
+                // Global atomic sync
+                await saveRefundToFirebase(newRefund);
 
                 // Clear the form
                 document.getElementById('refund-name').value = '';
@@ -1195,7 +1303,7 @@
                 // Close the refund form modal
                 document.getElementById('refund-modal').classList.remove('active');
 
-                // Show the new success popup
+                // Show the success popup
                 document.getElementById('refund-success-id').innerText = refundId;
                 document.getElementById('refund-success-modal').classList.add('active');
 
@@ -1210,7 +1318,7 @@
         };
 
         // =============================================================
-        // NEW: Track a refund by Refund ID or Order ID
+        // TRACK A REFUND BY REFUND ID OR ORDER ID
         // =============================================================
         window.trackRefund = function() {
             const query = document.getElementById('refund-track-input').value.trim();
@@ -1304,7 +1412,7 @@
         };
 
         // =============================================================
-        // NEW: Show customer's own refund requests
+        // SHOW CUSTOMER'S OWN REFUND REQUESTS
         // =============================================================
         window.renderMyRefundsList = function() {
             const container = document.getElementById('my-refunds-list');
@@ -1316,7 +1424,6 @@
             }
 
             const myRefunds = (globalState.refunds || []).filter(r => {
-                // Match by email or username
                 const emailMatch = r.customerEmail && r.customerEmail.toLowerCase() === currentUser.email.toLowerCase();
                 const userMatch = r.customerUsername && r.customerUsername.toLowerCase() === currentUser.username.toLowerCase();
                 return emailMatch || userMatch;
@@ -1842,7 +1949,7 @@
             });
         };
 
-        function finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, paymentMethod, reference) {
+        async function finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, paymentMethod, reference) {
             const newOrderRecord = {
                 id: orderId,
                 customerUsername: currentUser.username,
@@ -1857,8 +1964,10 @@
                 hasReviewed: false
             };
 
-            globalState.orders.push(newOrderRecord);
-            saveStateToFirebase();
+            // ATOMIC global write — this order is now permanently stored
+            // alongside every other customer's orders worldwide.
+            await saveOrderToFirebase(newOrderRecord);
+
             renderRecentOrdersList();
 
             const templateParams = {
@@ -1905,11 +2014,11 @@
                 return;
             }
 
-            const found = globalState.orders.find(o => o.id.toLowerCase() === query.toLowerCase());
+            const found = globalState.orders.find(o => String(o.id).toLowerCase() === query.toLowerCase());
             resultBox.style.display = 'block';
 
             if (found) {
-                if (!currentUser || currentUser.username.toLowerCase() !== found.customerUsername.toLowerCase()) {
+                if (!currentUser || String(found.customerUsername || '').toLowerCase() !== currentUser.username.toLowerCase()) {
                     resultBox.innerHTML = `<p style="color: #dc2626; margin: 0;">Access denied. You can only track orders belonging to your logged-in account (@${currentUser ? currentUser.username : 'guest'}).</p>`;
                     return;
                 }
@@ -1927,6 +2036,11 @@
             }
         };
 
+        // =============================================================
+        // CUSTOMER'S FULL ORDER HISTORY
+        // Shows EVERY order this customer has ever placed — nothing
+        // is ever removed when a new order comes in.
+        // =============================================================
         window.renderRecentOrdersList = function() {
             const listContainer = document.getElementById('recent-orders-list');
             const titleElement = document.getElementById('recent-orders-title');
@@ -1938,9 +2052,16 @@
                 return;
             }
 
-            titleElement.innerText = `Your Recent Orders (@${currentUser.username})`;
+            const uname = String(currentUser.username || '').toLowerCase();
+            const uemail = String(currentUser.email || '').toLowerCase();
 
-            const userOrders = globalState.orders.filter(o => o.customerUsername.toLowerCase() === currentUser.username.toLowerCase());
+            const userOrders = globalState.orders.filter(o => {
+                const orderUser = String(o.customerUsername || '').toLowerCase();
+                const orderEmail = String(o.customerEmail || '').toLowerCase();
+                return orderUser === uname || (uemail && orderEmail === uemail);
+            });
+
+            titleElement.innerText = `Your Orders (@${currentUser.username}) — ${userOrders.length} total`;
 
             if (userOrders.length === 0) {
                 listContainer.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; margin: 1rem 0; text-align: center;">No orders placed yet from this account.</p>';
@@ -1954,6 +2075,7 @@
                         <span style="font-weight: 600; margin-left: 0.25rem;">${order.customerName}</span>
                         <div style="color: #64748b; font-size: 0.75rem; margin-top: 0.15rem;">${order.items} (${order.totalPaid})</div>
                         <div style="color: #64748b; font-size: 0.72rem; margin-top: 0.15rem;">📍 ${order.address || 'N/A'}</div>
+                        <div style="color: #94a3b8; font-size: 0.7rem; margin-top: 0.15rem;">Placed: ${order.date}</div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                         <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">${order.status}</span>
@@ -1970,14 +2092,13 @@
             document.getElementById('track-result-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
 
-        window.clearAllOrders = function() {
+        window.clearAllOrders = async function() {
             if (!currentUser) {
                 alert("Please log in first.");
                 return;
             }
             if (confirm("Are you sure you want to clear your recent orders history?")) {
-                globalState.orders = globalState.orders.filter(o => o.customerUsername.toLowerCase() !== currentUser.username.toLowerCase());
-                saveStateToFirebase();
+                await clearUserOrdersFromFirebase(currentUser.username);
                 renderRecentOrdersList();
                 document.getElementById('track-result-container').style.display = 'none';
                 showToast("Your order history cleared");
@@ -2008,7 +2129,7 @@
         };
 
         window.triggerRatingModal = function(orderId) {
-            const order = globalState.orders.find(o => o.id === orderId);
+            const order = globalState.orders.find(o => String(o.id) === String(orderId));
             if (!order || order.hasReviewed) return;
 
             currentRatingOrderId = orderId;
@@ -2047,9 +2168,11 @@
                 return;
             }
 
-            const order = globalState.orders.find(o => o.id === currentRatingOrderId);
+            const order = globalState.orders.find(o => String(o.id) === String(currentRatingOrderId));
             if (order) {
                 order.hasReviewed = true;
+                // persist the hasReviewed flag globally
+                updateOrderStatusInFirebase(order.id, order.status);
             }
 
             const newReview = {
@@ -2127,6 +2250,7 @@
 
         // =============================================================
         // ADMIN: Show ALL global refunds from ALL customers
+        // Status changes here broadcast instantly to every customer device.
         // =============================================================
         function renderAdminRefundList() {
             const container = document.getElementById('admin-refunds-list');
@@ -2137,13 +2261,9 @@
                 return;
             }
 
-            // Show newest first
             const refundsToShow = [...globalState.refunds].reverse();
 
             container.innerHTML = refundsToShow.map((refund) => {
-                // Find the original index in the array (needed for the update function)
-                const originalIndex = globalState.refunds.findIndex(r => r.id === refund.id);
-
                 return `
                 <div class="admin-refund-card">
                     <div class="admin-refund-header">
@@ -2172,31 +2292,39 @@
                     </div>
 
                     <div style="display:flex; gap:0.5rem; align-items:center; margin-top:0.85rem; flex-wrap:wrap;">
-                        <select id="admin-refund-status-${originalIndex}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1; max-width:220px;">
+                        <select id="admin-refund-status-${refund.id}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1; max-width:220px;">
                             <option value="Pending Review" ${refund.status === 'Pending Review' ? 'selected' : ''}>Pending Review</option>
                             <option value="Processing" ${refund.status === 'Processing' ? 'selected' : ''}>Processing</option>
                             <option value="Processed" ${refund.status === 'Processed' ? 'selected' : ''}>Processed / Refunded</option>
                             <option value="Rejected" ${refund.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
                         </select>
-                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateRefundStatus(${originalIndex})">Update Status</button>
+                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateRefundStatus('${refund.id}')">Update Status</button>
                     </div>
                 </div>
                 `;
             }).join('');
         }
 
-        window.updateRefundStatus = function(index) {
-            const newStatus = document.getElementById(`admin-refund-status-${index}`).value;
-            globalState.refunds[index].status = newStatus;
-            saveStateToFirebase();
-            showToast(`Refund request marked as: ${newStatus}`);
+        window.updateRefundStatus = async function(refundId) {
+            const selectEl = document.getElementById(`admin-refund-status-${refundId}`);
+            if (!selectEl) return;
+            const newStatus = selectEl.value;
+
+            // Instant local UI update
+            const idx = globalState.refunds.findIndex(r => String(r.id) === String(refundId));
+            if (idx !== -1) globalState.refunds[idx].status = newStatus;
+
+            await updateRefundStatusInFirebase(refundId, newStatus);
+
+            showToast(`Refund ${refundId} marked as: ${newStatus}`);
             renderAdminRefundList();
-            // Also refresh the customer's own list in case admin is also the customer
             renderMyRefundsList();
         };
 
         // =============================================================
-        // ADMIN: Show ALL global orders from ALL customers
+        // ADMIN: Show ALL global orders from ALL customers instantly.
+        // Status changes here broadcast to the customer worldwide
+        // and reflect immediately in their tracker.
         // =============================================================
         function renderAdminOrderList() {
             const listContainer = document.getElementById('admin-orders-list');
@@ -2207,13 +2335,9 @@
                 return;
             }
 
-            // Show newest first
             const ordersToShow = [...globalState.orders].reverse();
 
             listContainer.innerHTML = ordersToShow.map((ord) => {
-                // Find original index for update function
-                const originalIndex = globalState.orders.findIndex(o => o.id === ord.id);
-
                 return `
                 <div class="admin-order-card">
                     <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem; flex-wrap:wrap; gap:0.3rem;">
@@ -2222,26 +2346,34 @@
                     </div>
                     <div style="color:#475569; margin-bottom:0.4rem;">Items: ${ord.items} | Total Paid: ${ord.totalPaid || 'N/A'} | Phone: ${ord.phone}</div>
                     <div style="color:#475569; margin-bottom:0.5rem; font-size:0.82rem;">📍 ${ord.address || 'N/A'}</div>
+                    <div style="color:#94a3b8; margin-bottom:0.5rem; font-size:0.75rem;">Customer email: ${ord.customerEmail || 'N/A'}</div>
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
-                        <select id="admin-status-${originalIndex}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1;">
-                            <option value="Order Placed - Processing" ${ord.status.includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
-                            <option value="Ordered from Supplier / Hub" ${ord.status.includes('Supplier') || ord.status.includes('AliExpress') ? 'selected' : ''}>Ordered from Supplier / Hub</option>
-                            <option value="Shipped / In Transit" ${ord.status.includes('Shipped') ? 'selected' : ''}>Shipped / In Transit</option>
-                            <option value="Out for Delivery" ${ord.status.includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
-                            <option value="Delivered Successfully" ${ord.status.includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
+                        <select id="admin-status-${ord.id}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1;">
+                            <option value="Order Placed - Processing" ${String(ord.status).includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
+                            <option value="Ordered from Supplier / Hub" ${String(ord.status).includes('Supplier') ? 'selected' : ''}>Ordered from Supplier / Hub</option>
+                            <option value="Shipped / In Transit" ${String(ord.status).includes('Shipped') || String(ord.status).includes('Transit') ? 'selected' : ''}>Shipped / In Transit</option>
+                            <option value="Out for Delivery" ${String(ord.status).includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
+                            <option value="Delivered Successfully" ${String(ord.status).includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
                         </select>
-                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateOrderStatus(${originalIndex})">Update Status</button>
+                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateOrderStatus('${ord.id}')">Update Status</button>
                     </div>
                 </div>
                 `;
             }).join('');
         }
 
-        window.updateOrderStatus = function(index) {
-            const newStatus = document.getElementById(`admin-status-${index}`).value;
-            globalState.orders[index].status = newStatus;
-            saveStateToFirebase();
-            showToast(`Order ${globalState.orders[index].id} status updated globally!`);
+        window.updateOrderStatus = async function(orderId) {
+            const selectEl = document.getElementById(`admin-status-${orderId}`);
+            if (!selectEl) return;
+            const newStatus = selectEl.value;
+
+            // Instant local UI update
+            const idx = globalState.orders.findIndex(o => String(o.id) === String(orderId));
+            if (idx !== -1) globalState.orders[idx].status = newStatus;
+
+            await updateOrderStatusInFirebase(orderId, newStatus);
+
+            showToast(`Order ${orderId} status updated globally!`);
             renderAdminOrderList();
             renderRecentOrdersList();
         };
@@ -2363,7 +2495,7 @@
             document.getElementById('admin-cancel-edit-btn').style.display = 'block';
             document.getElementById('admin-form-title').innerText = "✏️ Edit Product (Leave images blank to keep existing)";
             
-            document.getElementById('add-product-form-container').scrollIntoView({behavior: 'smooth'});
+            document.getElementById('add-product-form-container').scrollIntoView({behavior:'smooth'});
         };
 
         window.cancelEditProduct = function() {
@@ -2706,6 +2838,83 @@
                 document.body.classList.remove('cart-open');
             }
         };
+
+        // =============================================================
+        // ONE-TIME LEGACY MIGRATION
+        // If orders/refunds existed inside swiftStoreState from the
+        // previous version, copy them into the new dedicated nodes.
+        // =============================================================
+        async function migrateLegacyDataIfNeeded() {
+            try {
+                const [ordersSnap, refundsSnap, stateSnap] = await Promise.all([
+                    get(ordersRef),
+                    get(refundsRef),
+                    get(stateRef)
+                ]);
+
+                const legacy = stateSnap.val() || {};
+
+                if (!ordersSnap.exists() && legacy.orders) {
+                    const arr = normalizeToArray(legacy.orders);
+                    if (arr.length) {
+                        await set(ordersRef, arr);
+                        console.log("✅ Migrated", arr.length, "legacy orders into swiftOrders");
+                    }
+                }
+
+                if (!refundsSnap.exists() && legacy.refunds) {
+                    const arr = normalizeToArray(legacy.refunds);
+                    if (arr.length) {
+                        await set(refundsRef, arr);
+                        console.log("✅ Migrated", arr.length, "legacy refunds into swiftRefunds");
+                    }
+                }
+            } catch (e) {
+                console.warn("Legacy migration check failed (non-fatal):", e);
+            }
+        }
+
+        await migrateLegacyDataIfNeeded();
+
+        // =============================================================
+        // REALTIME LISTENERS (registered after every helper is defined)
+        // =============================================================
+
+        // --- Catalog / Users / Reviews / Promo Codes ---
+        onValue(stateRef, async (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                if (data.products) globalState.products = data.products;
+                if (data.users) globalState.users = data.users;
+                if (data.reviews) globalState.reviews = data.reviews;
+                if (data.promoCodes) globalState.promoCodes = data.promoCodes;
+                globalState._cacheVersion = CACHE_VERSION;
+                await persistCache();
+            } else {
+                await set(stateRef, buildStatePayload());
+            }
+
+            isProductsLoaded = true;
+
+            renderProducts();
+            renderReviews();
+            renderAdminProductList();
+            renderAdminPromoList();
+        });
+
+        // --- ORDERS (global, live, atomic) ---
+        onValue(ordersRef, async (snapshot) => {
+            globalState.orders = normalizeToArray(snapshot.val());
+            await persistCache();
+            refreshOrderDependentUI();
+        });
+
+        // --- REFUNDS (global, live, atomic) ---
+        onValue(refundsRef, async (snapshot) => {
+            globalState.refunds = normalizeToArray(snapshot.val());
+            await persistCache();
+            refreshRefundDependentUI();
+        });
 
         initApp();
     </script>
