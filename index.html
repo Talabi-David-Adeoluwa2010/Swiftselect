@@ -111,6 +111,12 @@
         .btn-marketplace:hover { background: #ea580c; }
         .btn-marketplace.disabled { background: #cbd5e1; cursor: not-allowed; }
 
+        /* Product color selector styles */
+        .size-selector { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+        .size-btn { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.3rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+        .size-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
+        .size-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25); }
+
         .trust-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 3rem 0 2rem; background: white; padding: 2rem; border-radius: 16px; border: 1px solid var(--border); text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
         .trust-item h4 { margin: 0 0 0.3rem; font-size: 1rem; font-weight: 700; color: #0f172a; }
         .trust-item p { margin: 0; font-size: 0.85rem; color: #64748b; }
@@ -242,6 +248,7 @@
             <span id="user-greeting"></span>
             <button class="btn-nav-link" onclick="openReviewsModal()">⭐ Ratings & Reviews</button>
             <button class="btn-nav-link" onclick="openOrdersPage()">📦 Orders & Tracking</button>
+            <button class="btn-secondary" onclick="toggleShippingPolicyModal()">🚚 Shipping Policy</button>
             <button class="btn-secondary" onclick="toggleRefundPolicyModal()">📜 Refund Policy</button>
             <button class="btn-secondary" onclick="toggleRefundModal()">🔄 Request Refund</button>
             <button class="btn-secondary" onclick="toggleHelpModal()">🤖 Help / Support</button>
@@ -374,7 +381,6 @@
                         </div>
                         <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
                         
-                        <!-- NEW: COLOR INPUT -->
                         <input type="text" id="admin-colors" placeholder="Available Colors (e.g. Red, Blue, Black) - Optional">
                         
                         <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Pictures (Add 3 to 5 pictures):</label>
@@ -420,6 +426,62 @@
     <div class="lightbox" id="image-lightbox" onclick="closeLightbox(event)">
         <button class="lightbox-close" onclick="closeLightbox(event, true)">&times;</button>
         <img id="lightbox-img" src="" alt="Full view">
+    </div>
+
+    <!-- Shipping Policy Modal -->
+    <div class="modal" id="shipping-policy-modal">
+        <div class="modal-content" style="max-width: 600px; padding: 0; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, var(--primary), #9333ea); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; color: white;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 38px; height: 38px; background: white; color: var(--primary); display: flex; justify-content: center; align-items: center; border-radius: 10px; font-weight: 800; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">S</div>
+                    <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px;">SwiftSelect</h3>
+                </div>
+                <button class="close-btn" onclick="toggleShippingPolicyModal()" style="color: white; font-size: 1.75rem; opacity: 0.8; transition: opacity 0.2s;">&times;</button>
+            </div>
+            
+            <div style="padding: 2rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <span style="font-size: 1.5rem;">🚚</span>
+                    <h2 style="margin: 0; font-size: 1.35rem; color: #0f172a;">Shipping Policy</h2>
+                </div>
+
+                <div class="shipping-policy-text" style="font-size: 0.95rem; line-height: 1.7; color: #334155;">
+                    <p><strong>Last Updated:</strong> 11/09/2026</p>
+                    <p>Thank you for shopping at SwiftSelect. We are committed to delivering your order safely and on time.</p>
+
+                    <div style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0;">
+                        <p style="margin: 0 0 0.5rem 0; font-weight: 700; color: #14532d;">📦 Shipping Information:</p>
+                        <ul style="margin: 0; padding-left: 1.25rem;">
+                            <li style="margin-bottom: 0.4rem;">All orders are processed within 1-2 business days.</li>
+                            <li style="margin-bottom: 0.4rem;">We ship directly from our international suppliers to your doorstep.</li>
+                            <li>Tracking information will be sent to your email once your order ships.</li>
+                        </ul>
+                    </div>
+
+                    <p><strong>Estimated Delivery Time:</strong></p>
+                    <div style="background: #f8fafc; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+                        <p style="margin: 0 0 0.4rem 0;">🇳🇬 <strong>Within Nigeria:</strong> 7 - 14 business days</p>
+                        <p style="margin: 0;">🌍 <strong>International:</strong> 10 - 21 business days</p>
+                    </div>
+
+                    <p><strong>Shipping Delays:</strong></p>
+                    <p>Please note that shipping times are estimates and may vary due to customs, postal delays, public holidays, or unforeseen circumstances. We are not responsible for delays caused by external factors.</p>
+
+                    <p><strong>Lost or Damaged Items:</strong></p>
+                    <p>If your item is lost in transit or arrives damaged, please contact us immediately at <strong>08024300891</strong>. We will investigate and provide a replacement or refund where applicable.</p>
+
+                    <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0;">
+                        <p style="margin: 0; font-weight: 700; color: #92400e;">📌 Important: Please ensure your delivery address is correct before confirming your order. We are not responsible for orders shipped to incorrect addresses provided by the customer.</p>
+                    </div>
+
+                    <p style="margin-bottom: 0;">For any shipping questions, contact our support team at <strong>08024300891</strong>.</p>
+                </div>
+            </div>
+
+            <div style="padding: 0 2rem 2rem 2rem;">
+                <button class="btn-secondary" onclick="toggleShippingPolicyModal()" style="width:100%; padding: 0.85rem; font-size: 1rem;">Close</button>
+            </div>
+        </div>
     </div>
 
     <!-- Refund Policy Modal -->
@@ -802,14 +864,14 @@
 
         let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
         let cart = [];
-        let selectedColors = {}; // <--- FIXED: ADDED THE MISSING VARIABLE HERE
+        let selectedColors = {};
         let currentRatingOrderId = null;
         let selectedStarCount = 5;
         let appliedDiscountPercent = 0; 
 
         let adminSelectedImages = [];
         let adminSelectedVideos = [];
-        let editingProductId = null; // Track if we are editing a product
+        let editingProductId = null;
 
         const faqData = {
             shipping: [
@@ -941,6 +1003,10 @@
                 });
             }
         }
+
+        window.toggleShippingPolicyModal = function() {
+            document.getElementById('shipping-policy-modal').classList.toggle('active');
+        };
 
         window.toggleRefundPolicyModal = function() {
             document.getElementById('refund-policy-modal').classList.toggle('active');
@@ -1108,9 +1174,6 @@
             });
         }
 
-        // =========================================
-        // Orders full-page view functions
-        // =========================================
         window.openOrdersPage = function() {
             renderRecentOrdersList();
             document.getElementById('orders-page').classList.add('active');
@@ -1190,7 +1253,6 @@
             document.getElementById('detail-desc').innerText = product.description || "No description provided.";
             document.getElementById('detail-shipping').innerText = product.shipping || "Estimated delivery: 2 - 4 business days";
 
-            // Handle Colors in Detail Modal
             const colorContainer = document.getElementById('detail-colors-container');
             const colorOptions = document.getElementById('detail-color-options');
             if (product.colors && product.colors.length > 0) {
@@ -1198,7 +1260,7 @@
                 colorOptions.innerHTML = product.colors.map(color => 
                     `<button class="size-btn" onclick="selectDetailColor('${product.id}', '${color}', this)">${color}</button>`
                 ).join('');
-                selectedColors[product.id] = product.colors[0]; // Default to first
+                selectedColors[product.id] = product.colors[0];
                 colorOptions.querySelector('.size-btn').classList.add('active');
             } else {
                 colorContainer.style.display = 'none';
@@ -1702,9 +1764,6 @@
             showToast("Thank you! Your recommendation is now visible globally across all devices.");
         };
 
-        // =========================================
-        // LIGHTBOX functions
-        // =========================================
         window.openLightbox = function(src) {
             document.getElementById('lightbox-img').src = src;
             document.getElementById('image-lightbox').classList.add('active');
@@ -1717,9 +1776,6 @@
             }
         };
 
-        // =========================================
-        // ADMIN LOGIC
-        // =========================================
         window.checkAdminPassword = function() {
             const password = prompt("Enter Admin Password:");
             if (password === "admin123") {
@@ -1738,7 +1794,7 @@
         window.closeAdminPage = function() {
             document.getElementById('admin-page').classList.remove('active');
             document.body.classList.remove('no-scroll');
-            cancelEditProduct(); // Ensure form resets on close
+            cancelEditProduct();
         };
 
         window.toggleAdminModal = function() {
@@ -2028,7 +2084,6 @@
             const description = document.getElementById('admin-desc').value.trim();
             const shipping = document.getElementById('admin-shipping').value.trim();
             
-            // Process Colors
             const colorsInput = document.getElementById('admin-colors').value.trim();
             const colorsArray = colorsInput ? colorsInput.split(',').map(c => c.trim()).filter(c => c !== '') : [];
 
@@ -2037,7 +2092,6 @@
                 return;
             }
 
-            // Validate images for new products only (edit can keep existing)
             if (!editingProductId && (adminSelectedImages.length < 3 || adminSelectedImages.length > 5)) {
                 alert('Please select between 3 to 5 pictures for the product.');
                 return;
@@ -2063,7 +2117,6 @@
                         }
                     }
                 } else if (editingProductId) {
-                    // Keep existing images
                     const existingProduct = globalState.products.find(p => p.id === editingProductId);
                     imagesBase64 = existingProduct.images;
                 } else {
@@ -2089,7 +2142,6 @@
                 }
 
                 if (editingProductId) {
-                    // Update existing product
                     const index = globalState.products.findIndex(p => p.id === editingProductId);
                     globalState.products[index] = {
                         ...globalState.products[index],
@@ -2100,9 +2152,8 @@
                         colors: colorsArray
                     };
                     showToast('Product updated successfully!');
-                    cancelEditProduct(); // reset form
+                    cancelEditProduct();
                 } else {
-                    // Create new product
                     const newProduct = { 
                         id: Date.now(), 
                         name, priceUSD, priceNGN, description, 
@@ -2114,7 +2165,6 @@
                     };
                     globalState.products.push(newProduct);
                     
-                    // Clear form
                     document.getElementById('admin-name').value = '';
                     document.getElementById('admin-price-usd').value = '';
                     document.getElementById('admin-price-ngn').value = '';
@@ -2198,10 +2248,8 @@
                 return;
             }
 
-            // If colors exist and no color chosen, warn them
             let finalColor = chosenColor;
             if (product.colors && product.colors.length > 0 && !finalColor) {
-                // Check if already selected from card buttons
                 finalColor = selectedColors[productId];
                 if (!finalColor) {
                     alert("Please select a color first!");
