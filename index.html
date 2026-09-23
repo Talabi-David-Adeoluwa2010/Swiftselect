@@ -130,7 +130,8 @@
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 1rem; box-sizing: border-box; }
         .modal.active { display: flex; }
-        .modal-content { background: white; padding: 2.25rem; border-radius: 20px; width: 100%; max-width: 520px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        /* FIXED: max-height changed to 85vh to prevent Paystack badge overlap */
+        .modal-content { background: white; padding: 2.25rem; border-radius: 20px; width: 100%; max-width: 520px; box-sizing: border-box; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
         .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 0.85rem 1rem; margin-bottom: 1.1rem; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; font-size: 16px; outline: none; background: #fff; transition: all 0.2s; }
@@ -248,8 +249,9 @@
             <span id="user-greeting"></span>
             <button class="btn-nav-link" onclick="openReviewsModal()">⭐ Ratings & Reviews</button>
             <button class="btn-nav-link" onclick="openOrdersPage()">📦 Orders & Tracking</button>
-            <button class="btn-secondary" onclick="toggleShippingPolicyModal()">🚚 Shipping Policy</button>
-            <button class="btn-secondary" onclick="toggleRefundPolicyModal()">📜 Refund Policy</button>
+            <!-- FIXED: Links updated to point to the new standalone pages -->
+            <a href="shipping.html" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">🚚 Shipping Policy</a>
+            <a href="refund.html" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">📜 Refund Policy</a>
             <button class="btn-secondary" onclick="toggleRefundModal()">🔄 Request Refund</button>
             <button class="btn-secondary" onclick="toggleHelpModal()">🤖 Help / Support</button>
             <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login / Signup</button>
@@ -445,7 +447,8 @@
                     <h2 style="margin: 0; font-size: 1.35rem; color: #0f172a;">Shipping Policy</h2>
                 </div>
 
-                <div class="shipping-policy-text" style="font-size: 0.95rem; line-height: 1.7; color: #334155;">
+                <!-- FIXED: Added padding-bottom 80px to prevent Paystack badge overlap -->
+                <div class="shipping-policy-text" style="font-size: 0.95rem; line-height: 1.7; color: #334155; padding-bottom: 80px;">
                     <p><strong>Last Updated:</strong> 11/09/2026</p>
                     <p>Thank you for shopping at SwiftSelect. We are committed to delivering your order safely and on time.</p>
 
