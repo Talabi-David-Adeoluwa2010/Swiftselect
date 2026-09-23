@@ -780,7 +780,7 @@
         // =============================================================
         // GLOBAL STATE — Starts EMPTY so no dummy products ever show
         // =============================================================
-        const CACHE_VERSION = 3; // Bump this to force clients to discard old caches with dummy products
+        const CACHE_VERSION = 4; // Bumped to force clients to discard old caches
 
         let globalState = {
             _cacheVersion: CACHE_VERSION,
@@ -800,7 +800,7 @@
         // Flag: has Firebase finished loading products?
         let isProductsLoaded = false;
 
-        // Load cached state ONLY if it matches current cache version (prevents stale dummy data)
+        // Load cached state ONLY if it matches current cache version
         try {
             const cached = await dbHelper.get('swift_cached_state');
             if (cached && cached._cacheVersion === CACHE_VERSION && cached.products) {
@@ -809,8 +809,19 @@
                 if (!globalState.users || globalState.users.length === 0) {
                     globalState.users = [{ username: "admin", name: "Administrator", email: "admin@swiftselect.com", password: "admin" }];
                 }
+
+                // =========================================================
+                // THE FIX: If cache has products, we are ready IMMEDIATELY.
+                // Don't wait for Firebase — show cached products to user now.
+                // =========================================================
+                if (globalState.products.length > 0) {
+                    isProductsLoaded = true;
+                    console.log("✅ Cache hit:", globalState.products.length, "products loaded instantly.");
+                } else {
+                    console.log("📭 Cache empty. Waiting for Firebase...");
+                }
             } else {
-                console.log("Cache outdated or missing. Awaiting Firebase sync...");
+                console.log("🆕 No valid cache. Waiting for Firebase sync...");
             }
         } catch (e) {
             console.error("IndexedDB cache load error:", e);
@@ -881,7 +892,6 @@
                 if (data.promoCodes) globalState.promoCodes = data.promoCodes;
                 if (data.refunds) globalState.refunds = data.refunds;
                 
-                // Always keep our cache version stamped
                 globalState._cacheVersion = CACHE_VERSION;
 
                 try {
@@ -890,11 +900,10 @@
                     console.warn("IndexedDB save error during sync:", e);
                 }
             } else {
-                // Firebase is empty — write our clean state without dummy products
                 set(stateRef, globalState);
             }
 
-            // Firebase has responded, we can stop showing "Loading..."
+            // Firebase has responded — stop showing "Loading..."
             isProductsLoaded = true;
 
             renderProducts();
@@ -907,7 +916,6 @@
         });
 
         async function saveStateToFirebase() {
-            // Always stamp the current cache version before saving
             globalState._cacheVersion = CACHE_VERSION;
 
             try {
@@ -1165,13 +1173,14 @@
         }
 
         // =============================================================
-        // RENDER PRODUCTS — Shows "Loading products..." until Firebase responds
+        // RENDER PRODUCTS
+        // Shows "Loading..." ONLY if we have no cache AND Firebase hasn't responded
         // =============================================================
         window.renderProducts = function(filter = "") {
             const grid = document.getElementById('product-grid');
             if (!grid) return;
 
-            // Show loading state until Firebase has responded
+            // Show loading state ONLY if we truly have nothing to show
             if (!isProductsLoaded) {
                 grid.innerHTML = `
                     <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;">
@@ -2072,7 +2081,7 @@
         };
 
         // =============================================================
-        // ADD / EDIT PRODUCT — Now with guaranteed Firebase sync
+        // ADD / EDIT PRODUCT — with guaranteed Firebase sync
         // =============================================================
         window.addProduct = async function() {
             const name = document.getElementById('admin-name').value.trim();
@@ -2140,7 +2149,6 @@
                 }
 
                 if (isEditing) {
-                    // Find the product and REPLACE it with updated data
                     const index = globalState.products.findIndex(p => p.id === editingProductId);
                     if (index === -1) {
                         throw new Error("Product not found. It may have been deleted on another device.");
@@ -2158,17 +2166,13 @@
                         colors: colorsArray
                     };
 
-                    // Replace the array item (this is the critical update step)
                     globalState.products[index] = updatedProduct;
 
-                    // Reset edit state FIRST (before sync, so UI feels responsive)
                     cancelEditProduct();
 
-                    // Re-render locally so admin sees the change immediately
                     renderProducts();
                     renderAdminProductList();
 
-                    // Now push the change to Firebase + IndexedDB
                     await saveStateToFirebase();
 
                     showToast('✅ Product updated & synced globally!');
@@ -2184,7 +2188,6 @@
                     };
                     globalState.products.push(newProduct);
                     
-                    // Clear form
                     document.getElementById('admin-name').value = '';
                     document.getElementById('admin-price-usd').value = '';
                     document.getElementById('admin-price-ngn').value = '';
