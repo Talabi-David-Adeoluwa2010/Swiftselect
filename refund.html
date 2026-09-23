@@ -1,53 +1,67 @@
-<!-- Refund Policy Modal -->
-    <div class="modal" id="refund-policy-modal">
-        <div class="modal-content" style="max-width: 600px; padding: 0; overflow: hidden;">
-            <!-- Branded Header -->
-            <div style="background: linear-gradient(135deg, var(--primary), #9333ea); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; color: white;">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <div style="width: 38px; height: 38px; background: white; color: var(--primary); display: flex; justify-content: center; align-items: center; border-radius: 10px; font-weight: 800; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">S</div>
-                    <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px;">SwiftSelect</h3>
-                </div>
-                <button class="close-btn" onclick="toggleRefundPolicyModal()" style="color: white; font-size: 1.75rem; opacity: 0.8; transition: opacity 0.2s;">&times;</button>
-            </div>
-            
-            <!-- Policy Content -->
-            <div style="padding: 2rem;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
-                    <span style="font-size: 1.5rem;">📜</span>
-                    <h2 style="margin: 0; font-size: 1.35rem; color: #0f172a;">Refund Policy</h2>
-                </div>
-
-                <div class="refund-policy-text" style="font-size: 0.95rem; line-height: 1.7; color: #334155;">
-                    <p><strong>Last Updated:</strong> 11/09/2026</p>
-                    <p>At SwiftSelect, we want you to be completely satisfied with your purchase. If you are not satisfied, you may request a refund within <strong>14 days</strong> of receiving your order.</p>
-                    
-                    <div style="background: #f8fafc; border-left: 4px solid var(--primary); padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0;">
-                        <p style="margin: 0 0 0.5rem 0; font-weight: 700; color: #0f172a;">Eligibility for Refunds:</p>
-                        <ul style="margin: 0; padding-left: 1.25rem;">
-                            <li style="margin-bottom: 0.4rem;">Item must be defective, damaged, or significantly different from the description.</li>
-                            <li style="margin-bottom: 0.4rem;">Item must not have been used, washed, or altered.</li>
-                            <li>Proof of purchase (payment receipt) must be provided.</li>
-                        </ul>
-                    </div>
-
-                    <p><strong>How to Request a Refund:</strong></p>
-                    <p>Please use the <strong>"Request Refund"</strong> button in the top dashboard. Fill out the form with your Order ID, full name, full address, account details, and upload a copy of your payment receipt and valid ID. Our team will review your request within 3-5 business days.</p>
-
-                    <p><strong>Refund Processing:</strong></p>
-                    <p>Once approved, refunds will be processed to the bank account provided within 5-7 business days. If you paid via Paystack, the refund may be returned to your original payment method.</p>
-
-                    <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0;">
-                        <p style="margin: 0 0 0.5rem 0; font-weight: 700; color: #92400e;">Non-Refundable Items:</p>
-                        <p style="margin: 0; color: #92400e;">Gift cards, downloadable software, and intimate apparel are non-refundable.</p>
-                    </div>
-
-                    <p style="margin-bottom: 0;">For any questions, please contact our support team at <strong>08024300891</strong>.</p>
-                </div>
-            </div>
-
-            <!-- Footer Button -->
-            <div style="padding: 0 2rem 2rem 2rem;">
-                <button class="btn-secondary" onclick="toggleRefundPolicyModal()" style="width:100%; padding: 0.85rem; font-size: 1rem;">Close</button>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refund Policy - SwiftSelect</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; background-color: #f8fafc; color: #0f172a; line-height: 1.6; }
+        .header { background: linear-gradient(135deg, #4f46e5, #9333ea); padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; color: white; }
+        .logo-container { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-icon { width: 38px; height: 38px; background: white; color: #4f46e5; display: flex; justify-content: center; align-items: center; border-radius: 10px; font-weight: 800; font-size: 1.2rem; }
+        .header h1 { margin: 0; font-size: 1.25rem; font-weight: 800; }
+        .container { max-width: 700px; margin: 2rem auto; padding: 0 1.25rem; }
+        .card { background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        h2 { margin-top: 0; color: #0f172a; font-size: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem; margin-bottom: 1.25rem; }
+        .info-box { background: #f8fafc; border-left: 4px solid #4f46e5; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+        .info-box h3 { margin: 0 0 0.5rem; color: #0f172a; font-size: 1rem; }
+        .info-box ul { margin: 0; padding-left: 1.25rem; }
+        .warning-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+        .warning-box p { margin: 0; font-weight: 700; color: #92400e; }
+        .back-btn { display: inline-block; background: #4f46e5; color: white; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600; margin-top: 1rem; transition: background 0.2s; }
+        .back-btn:hover { background: #4338ca; }
+        .footer { text-align: center; padding: 2rem; color: #64748b; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo-icon">S</div>
+            <h1>SwiftSelect</h1>
         </div>
     </div>
+    <div class="container">
+        <div class="card">
+            <h2>📜 Refund Policy</h2>
+            <p><strong>Last Updated:</strong> 11/09/2026</p>
+            <p>At SwiftSelect, we want you to be completely satisfied with your purchase. If you are not satisfied, you may request a refund within <strong>14 days</strong> of receiving your order.</p>
+
+            <div class="info-box">
+                <h3>Eligibility for Refunds:</h3>
+                <ul>
+                    <li>Item must be defective, damaged, or significantly different from the description.</li>
+                    <li>Item must not have been used, washed, or altered.</li>
+                    <li>Proof of purchase (payment receipt) must be provided.</li>
+                </ul>
+            </div>
+
+            <p><strong>How to Request a Refund:</strong></p>
+            <p>Please use the <strong>"Request Refund"</strong> button in the top dashboard of the main store. Fill out the form with your Order ID, full name, full address, account details, and upload a copy of your payment receipt and valid ID. Our team will review your request within 3-5 business days.</p>
+
+            <p><strong>Refund Processing:</strong></p>
+            <p>Once approved, refunds will be processed to the bank account provided within 5-7 business days. If you paid via Paystack, the refund may be returned to your original payment method.</p>
+
+            <div class="warning-box">
+                <p>Non-Refundable Items: Gift cards, downloadable software, and intimate apparel are non-refundable.</p>
+            </div>
+
+            <p>For any questions, please contact our support team at <strong>08024300891</strong>.</p>
+            
+            <a href="index.html" class="back-btn">← Back to Store</a>
+        </div>
+    </div>
+    <div class="footer">
+        &copy; 2026 SwiftSelect. All rights reserved.
+    </div>
+</body>
+</html>
