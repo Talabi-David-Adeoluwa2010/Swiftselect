@@ -139,9 +139,9 @@
             background: white;
             border: 1px solid var(--border);
             color: #0f172a;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
+            padding: 0.6rem 1.25rem; /* Increased padding */
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
             display: flex;
@@ -174,7 +174,7 @@
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             z-index: 200;
-            width: 220px;
+            width: 240px;
             padding: 0.5rem;
             animation: fadeIn 0.2s ease;
         }
@@ -187,9 +187,9 @@
             background: transparent;
             border: none;
             text-align: left;
-            padding: 0.75rem 1rem;
+            padding: 0.85rem 1rem; /* Increased padding */
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: #334155;
             cursor: pointer;
@@ -241,7 +241,7 @@
         .product-price .price-sub { font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-decoration: line-through; }
         .product-price .current-price { color: #0f172a; font-size: 1.05rem; font-weight: 800; }
         
-        .btn-marketplace { background: #f97316; color: white; border: none; padding: 0.6rem 0.75rem; cursor: pointer; border-radius: 8px; width: 100%; font-weight: 700; font-size: 0.85rem; transition: background 0.2s; text-align: center; box-sizing: border-box; }
+        .btn-marketplace { background: #f97316; color: white; border: none; padding: 0.75rem 1rem; cursor: pointer; border-radius: 10px; width: 100%; font-weight: 700; font-size: 0.95rem; transition: background 0.2s; text-align: center; box-sizing: border-box; }
         .btn-marketplace:hover { background: #ea580c; }
         .btn-marketplace.disabled { background: #cbd5e1; cursor: not-allowed; }
 
@@ -249,7 +249,7 @@
         .loading-spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid #e0e7ff; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.9s linear infinite; }
 
         .size-selector { display: flex; gap: 0.35rem; flex-wrap: wrap; }
-        .size-btn { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.3rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+        .size-btn { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.4rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; }
         .size-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
         .size-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25); }
 
@@ -264,6 +264,7 @@
         .secret-admin { cursor: pointer; opacity: 0.2; user-select: none; transition: opacity 0.2s; padding: 0.2rem 0.5rem; }
         .secret-admin:hover { opacity: 1; color: #fff; }
 
+        /* --- STANDARD SIZED BUTTONS FOR MODALS --- */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 1rem; box-sizing: border-box; }
         .modal.active { display: flex; }
         .modal-content { background: white; padding: 2.25rem; border-radius: 20px; width: 100%; max-width: 520px; box-sizing: border-box; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -318,7 +319,7 @@
         .cart-item img { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; background: #f1f5f9; flex-shrink: 0; }
         .cart-item-details { flex-grow: 1; min-width: 0; }
         .cart-qty-controls { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
-        .cart-qty-btn { background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; width: 24px; height: 24px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .cart-qty-btn { background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
         .cart-qty-btn:hover { background: #e2e8f0; }
         
         .cart-footer { 
@@ -335,12 +336,36 @@
         .total-price { font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; display: flex; justify-content: space-between; color: #0f172a; flex-direction: column; gap: 0.3rem; }
         .total-price .total-sub { font-size: 0.95rem; color: #64748b; font-weight: 600; }
 
+        /* Standardized Buttons */
+        .btn-primary, .btn-secondary, .btn-danger {
+            padding: 0.85rem 1.5rem; /* Increased padding for better size */
+            font-size: 1rem;         /* Increased font size */
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-align: center;
+        }
+        .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4); }
+        .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+        .btn-secondary:hover { background: #e2e8f0; }
+        .btn-danger { background: #fee2e2; color: #dc2626; border: none; }
+        .btn-danger:hover { background: #fecaca; }
+        .btn-small { background: #e0e7ff; color: #4f46e5; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;}
+        .btn-small:hover { background: #c7d2fe; }
+        .btn-danger-small { background: #fee2e2; color: #dc2626; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; }
+
         .auth-tabs { display: flex; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
-        .auth-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: 700; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .auth-tab { flex: 1; text-align: center; padding: 0.85rem; font-weight: 700; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; font-size: 1rem; }
         .auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-        .paystack-badge-footer { margin-top: 0.75rem; background-color: #f97316; color: white; padding: 0.5rem 0.9rem; border-radius: 10px; text-align: center; font-size: 0.85rem; font-weight: 700; box-shadow: 0 2px 6px rgba(249, 115, 22, 0.25); }
-        .paystack-floating-badge { position: fixed; bottom: 20px; right: 20px; background-color: #f97316; color: white; padding: 0.6rem 1rem; border-radius: 30px; font-size: 0.8rem; font-weight: 700; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35); z-index: 1100; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; transition: transform 0.2s ease; }
+        .paystack-badge-footer { margin-top: 0.75rem; background-color: #f97316; color: white; padding: 0.6rem 1rem; border-radius: 10px; text-align: center; font-size: 0.9rem; font-weight: 700; box-shadow: 0 2px 6px rgba(249, 115, 22, 0.25); }
+        .paystack-floating-badge { position: fixed; bottom: 20px; right: 20px; background-color: #f97316; color: white; padding: 0.75rem 1.25rem; border-radius: 30px; font-size: 0.85rem; font-weight: 700; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35); z-index: 1100; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; transition: transform 0.2s ease; }
         .paystack-floating-badge:hover { transform: translateY(-2px); }
         body.cart-open .paystack-floating-badge { display: none; }
 
@@ -356,7 +381,7 @@
         .full-page-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1500; display: none; flex-direction: column; overflow: hidden; }
         .full-page-view.active { display: flex; }
         .full-page-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; background: white; border-bottom: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); flex-shrink: 0; gap: 0.75rem; }
-        .full-page-header h2 { margin: 0; font-size: 1.2rem; font-weight: 800; }
+        .full-page-header h2 { margin: 0; font-size: 1.25rem; font-weight: 800; }
         .full-page-body { flex: 1; overflow-y: auto; padding: 1.25rem; max-width: 1200px; width: 100%; margin: 0 auto; box-sizing: border-box; }
 
         .orders-section { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
@@ -433,7 +458,7 @@
 
         .admin-tabs { display: flex; gap: 0.5rem; padding: 0.75rem 1.25rem; background: white; border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
         .admin-tabs::-webkit-scrollbar { display: none; }
-        .admin-tab { flex-shrink: 0; background: transparent; border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.82rem; color: #64748b; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .admin-tab { flex-shrink: 0; background: transparent; border: 1px solid var(--border); padding: 0.6rem 1.2rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem; color: #64748b; cursor: pointer; transition: all 0.2s; font-family: inherit; }
         .admin-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
         .admin-tab-content { display: none; }
         .admin-tab-content.active { display: block; }
@@ -471,6 +496,130 @@
             font-size: 0.75rem;
             font-weight: 800;
             letter-spacing: 0.3px;
+        }
+
+        /* --- PAYMENT VERIFICATION MODAL STYLING (Orange Theme) --- */
+        .verify-modal-content {
+            padding: 0;
+            border-radius: 20px;
+            overflow: hidden;
+            max-width: 480px;
+            width: 100%;
+            background: white;
+        }
+        .verify-header {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+        .verify-header .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: white;
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+        .verify-header .close-btn:hover { opacity: 1; color: white; }
+        .verify-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 0.5rem 0;
+        }
+        .verify-subtitle {
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+        .verify-body {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+        }
+        .verify-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .verify-status-badge {
+            background: #fef3c7;
+            color: #d97706;
+            padding: 0.6rem 1.25rem;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .verify-message {
+            color: #475569;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+        }
+
+        /* --- TRUCK ANIMATION OVERLAY --- */
+        #truck-animation-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            backdrop-filter: blur(8px);
+        }
+        #truck-animation-overlay.active {
+            display: flex;
+        }
+        .truck-track {
+            position: relative;
+            width: 100%;
+            height: 150px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .truck-icon {
+            position: absolute;
+            left: -150px;
+            font-size: 5rem;
+            bottom: 20px;
+            animation: drive 3s ease-in-out forwards;
+        }
+        @keyframes drive {
+            0% { left: -150px; }
+            100% { left: 100%; }
+        }
+        .truck-text {
+            font-size: 1.75rem;
+            font-weight: 900;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInText 1s ease 1.5s forwards;
+            color: white;
+            padding: 0 1rem;
+            letter-spacing: -0.5px;
+        }
+        @keyframes fadeInText {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -571,7 +720,7 @@
     <!-- ORDERS PAGE -->
     <div class="full-page-view" id="orders-page">
         <div class="full-page-header">
-            <button class="btn-secondary" onclick="closeOrdersPage()" style="padding:0.5rem 1rem;">← Back</button>
+            <button class="btn-secondary" onclick="closeOrdersPage()" style="padding:0.6rem 1.2rem;">← Back</button>
             <h2>📦 Your Orders & Tracking</h2>
             <div style="width: 80px;"></div>
         </div>
@@ -580,8 +729,8 @@
                 <h3>📦 Track Your Order Status</h3>
                 <p>Enter your Order ID below to check live progress.</p>
                 <div class="track-row" style="display: flex; gap: 0.5rem;">
-                    <input type="text" id="track-input" placeholder="e.g., SWIFT-483920" style="flex-grow: 1; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-size: 16px;">
-                    <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
+                    <input type="text" id="track-input" placeholder="e.g., SWIFT-483920" style="flex-grow: 1; padding: 0.85rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-size: 16px;">
+                    <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.5rem;">Search</button>
                 </div>
                 <div id="track-result-container" style="display: none; margin-top: 1rem; padding: 1.25rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border);"></div>
             </div>
@@ -591,8 +740,8 @@
                 <h3>💸 Track Your Refund Status</h3>
                 <p>Enter your Refund ID (e.g., REF-XXXXXXXX) or the original Order ID to check the status of your refund request.</p>
                 <div class="track-row" style="display: flex; gap: 0.5rem;">
-                    <input type="text" id="refund-track-input" placeholder="e.g., REF-1234567890 or SWIFT-483920" style="flex-grow: 1; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-size: 16px;">
-                    <button class="btn-primary" onclick="trackRefund()" style="width: auto; padding: 0 1.25rem; background: #f59e0b;">Search</button>
+                    <input type="text" id="refund-track-input" placeholder="e.g., REF-1234567890 or SWIFT-483920" style="flex-grow: 1; padding: 0.85rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-size: 16px;">
+                    <button class="btn-primary" onclick="trackRefund()" style="width: auto; padding: 0 1.5rem; background: #f59e0b;">Search</button>
                 </div>
                 <div id="refund-track-result" style="display: none; margin-top: 1rem; padding: 1.25rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border);"></div>
             </div>
@@ -610,7 +759,7 @@
             <div class="orders-section">
                 <div class="recent-orders-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                     <h3 id="recent-orders-title">Your Recent Orders</h3>
-                    <button class="btn-danger-small" onclick="clearAllOrders()" style="padding: 0.3rem 0.6rem;">Clear History</button>
+                    <button class="btn-danger-small" onclick="clearAllOrders()" style="padding: 0.4rem 0.8rem;">Clear History</button>
                 </div>
                 <p>Manage and view your account's order activity. Every order you have ever placed is kept here permanently.</p>
                 <div class="recent-orders-list" id="recent-orders-list" style="display: flex; flex-direction: column; gap: 1rem;"></div>
@@ -689,7 +838,7 @@
                     <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">Create active promotional codes that grant customers a 5% discount at checkout.</p>
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
                         <input type="text" id="admin-new-promo" placeholder="Enter promo code (e.g. SWIFT5)" style="margin-bottom:0; text-transform: uppercase;">
-                        <button class="btn-primary" onclick="adminCreatePromoCode()" style="width: auto; padding: 0 1.25rem;">Create Promo</button>
+                        <button class="btn-primary" onclick="adminCreatePromoCode()" style="width: auto; padding: 0 1.5rem;">Create Promo</button>
                     </div>
                     <div id="admin-promo-list" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
                 </div>
@@ -753,7 +902,7 @@
             </div>
 
             <div style="padding: 0 2rem 2rem 2rem;">
-                <button class="btn-secondary" onclick="toggleShippingPolicyModal()" style="width:100%; padding: 0.85rem; font-size: 1rem;">Close</button>
+                <button class="btn-secondary" onclick="toggleShippingPolicyModal()" style="width:100%;">Close</button>
             </div>
         </div>
     </div>
@@ -879,9 +1028,9 @@
             <div style="margin-bottom: 1rem;">
                 <label style="font-size: 0.85rem; font-weight: 700; color: #0f172a; display: block; margin-bottom: 0.5rem;">Select Support Category:</label>
                 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                    <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('shipping')">📦 Shipping & Delivery</button>
-                    <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('payment')">💳 Payments & Paystack</button>
-                    <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="filterFaqCategory('orders')">📋 Order Tracking</button>
+                    <button class="btn-secondary" style="font-size: 0.85rem; padding: 0.6rem 1rem;" onclick="filterFaqCategory('shipping')">📦 Shipping & Delivery</button>
+                    <button class="btn-secondary" style="font-size: 0.85rem; padding: 0.6rem 1rem;" onclick="filterFaqCategory('payment')">💳 Payments & Paystack</button>
+                    <button class="btn-secondary" style="font-size: 0.85rem; padding: 0.6rem 1rem;" onclick="filterFaqCategory('orders')">📋 Order Tracking</button>
                 </div>
             </div>
             <div id="faq-answer-box" style="background: #f8fafc; border: 1px solid var(--border); padding: 1.25rem; border-radius: 12px; font-size: 0.9rem; color: #334155; min-height: 80px; margin-bottom: 1.25rem;">
@@ -913,7 +1062,7 @@
                 <span>📦</span> <span id="detail-shipping">Estimated delivery: 2 - 4 business days</span>
             </div>
             <p id="detail-desc" style="color: #475569; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;"></p>
-            <button class="btn-marketplace" style="padding: 0.85rem;" id="detail-add-btn">Add to Cart</button>
+            <button class="btn-marketplace" style="padding: 0.9rem;" id="detail-add-btn">Add to Cart</button>
         </div>
     </div>
 
@@ -969,7 +1118,7 @@
             <input type="text" id="bill-phone" placeholder="Phone Number (for delivery rider)">
             <div style="display: flex; gap: 0.5rem; margin-bottom: 1.1rem;">
                 <input type="text" id="bill-promo" placeholder="Promo Code (Optional)" style="margin-bottom: 0; text-transform: uppercase;">
-                <button class="btn-secondary" onclick="applyPromoCode()" style="width: auto; padding: 0 1rem; margin-bottom:0;">Apply</button>
+                <button class="btn-secondary" onclick="applyPromoCode()" style="width: auto; padding: 0 1.2rem; margin-bottom:0;">Apply</button>
             </div>
             <div id="promo-feedback" style="font-size: 0.8rem; margin-top: -0.75rem; margin-bottom: 1rem; font-weight: 600;"></div>
             <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Payment Method:</label>
@@ -1019,11 +1168,37 @@
                     <span id="cart-total-ngn">₦0</span>
                 </div>
             </div>
-            <button class="btn-primary" style="width:100%; padding: 0.85rem; font-size: 1rem;" onclick="proceedToCheckout()">Proceed to Secure Checkout</button>
+            <button class="btn-primary" style="width:100%;" onclick="proceedToCheckout()">Proceed to Secure Checkout</button>
             <div class="paystack-badge-footer">
               🔒 Secured and Trusted by Paystack
             </div>
         </div>
+    </div>
+
+    <!-- NEW PAYMENT VERIFICATION MODAL (Orange Theme) -->
+    <div class="modal" id="payment-verification-modal">
+        <div class="modal-content verify-modal-content">
+            <div class="verify-header">
+                <button class="close-btn" onclick="document.getElementById('payment-verification-modal').classList.remove('active')">&times;</button>
+                <h2 class="verify-title">PAYMENT VERIFICATION</h2>
+                <h3 class="verify-subtitle">SwiftSelect</h3>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; opacity: 0.9;">Order Status Update</p>
+            </div>
+            <div class="verify-body">
+                <div class="verify-icon">⌛</div>
+                <div class="verify-status-badge">YOUR ORDER PAYMENT IS PENDING</div>
+                <p class="verify-message">Your order is being reviewed by the administrator. Click continue below to view your order status.</p>
+                <button class="btn-primary" onclick="continueToOrders()" style="width: 100%; padding: 1rem; font-size: 1.1rem;">CONTINUE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRUCK ANIMATION OVERLAY -->
+    <div id="truck-animation-overlay">
+        <div class="truck-track">
+            <div class="truck-icon">🚚</div>
+        </div>
+        <div class="truck-text">Thanks for shopping at SwiftSelect</div>
     </div>
 
     <script type="module">
@@ -1090,7 +1265,7 @@
         const ordersRef  = ref(db, 'swiftOrders');
         const refundsRef = ref(db, 'swiftRefunds');
 
-        const CACHE_VERSION = 8; // Bumped for new UI structure
+        const CACHE_VERSION = 9; // Bumped for new UI structure and modal
 
         let globalState = {
             _cacheVersion: CACHE_VERSION,
@@ -1164,7 +1339,6 @@
             menu.classList.toggle('active');
         };
 
-        // Close kebab menu when clicking outside
         document.addEventListener('click', function(event) {
             const menu = document.getElementById('kebab-menu');
             const btn = event.target.closest('.icon-btn');
@@ -1188,7 +1362,7 @@
             
             const questions = faqData[category] || [];
             questionsList.innerHTML = questions.map((item, idx) => `
-                <button class="btn-secondary" style="text-align: left; font-size: 0.85rem; padding: 0.6rem 1rem; width: 100%; justify-content: flex-start;" onclick="showFaqAnswer('${category}', ${idx})">
+                <button class="btn-secondary" style="text-align: left; font-size: 0.9rem; padding: 0.75rem 1rem; width: 100%; justify-content: flex-start;" onclick="showFaqAnswer('${category}', ${idx})">
                     ❓ ${item.q}
                 </button>
             `).join('');
@@ -2173,25 +2347,10 @@
             await saveOrderToFirebase(newOrderRecord);
 
             renderRecentOrdersList();
+            finalizeOrderCleanUp(); // Clear cart immediately
 
-            const templateParams = {
-                order_id: orderId,
-                customer_name: currentUser.name,
-                customer_email: currentUser.email,
-                customer_phone: phone,
-                customer_address: `${address}, ${city}, ${state} ${postal}, ${country}`,
-                order_items: orderItemsText,
-                payment_method: paymentMethod + ` (Ref: ${reference})`
-            };
-
-            emailjs.send("Swift_alerts", "template_tuq2hhk", templateParams)
-                .then(function(response) {
-                    alert(`Order successful! Your Order ID is: ${orderId}\nCheck your email inbox for confirmation.`);
-                    finalizeOrderCleanUp();
-                }, function(error) {
-                    alert(`Order successful! Your Order ID is: ${orderId}\n(Note: Email alert failed to dispatch, but order is saved globally).`);
-                    finalizeOrderCleanUp();
-                });
+            // Show the new Payment Verification Modal instead of an alert
+            document.getElementById('payment-verification-modal').classList.add('active');
         }
 
         function finalizeOrderCleanUp() {
@@ -2208,6 +2367,38 @@
             document.getElementById('bill-phone').value = '';
             document.getElementById('bill-promo').value = '';
         }
+
+        // NEW FUNCTION: Continue to Orders & Show Truck Animation
+        window.continueToOrders = function() {
+            document.getElementById('payment-verification-modal').classList.remove('active');
+            openOrdersPage();
+            
+            // Slight delay to allow the orders page to render before showing the truck
+            setTimeout(() => {
+                showTruckAnimation();
+            }, 600);
+        };
+
+        window.showTruckAnimation = function() {
+            const overlay = document.getElementById('truck-animation-overlay');
+            overlay.classList.add('active');
+            
+            // Reset animations
+            const truck = overlay.querySelector('.truck-icon');
+            truck.style.animation = 'none';
+            truck.offsetHeight; /* trigger reflow */
+            truck.style.animation = 'drive 3s ease-in-out forwards';
+            
+            const text = overlay.querySelector('.truck-text');
+            text.style.animation = 'none';
+            text.offsetHeight;
+            text.style.animation = 'fadeInText 1s ease 1.5s forwards';
+
+            // Hide overlay after animation completes (3s drive + 1.5s delay + 1s fade = ~5.5s total)
+            setTimeout(() => {
+                overlay.classList.remove('active');
+            }, 5500);
+        };
 
         window.trackOrder = function() {
             const query = document.getElementById('track-input').value.trim();
@@ -2349,7 +2540,7 @@
 
                     <div class="order-card-footer">
                         <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Track Order</button>
-                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.8rem;" onclick="triggerRatingModal('${order.id}')">Rate & Review</button>` : ''}
+                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.6rem 1rem; font-size:0.85rem;" onclick="triggerRatingModal('${order.id}')">Rate & Review</button>` : ''}
                     </div>
                 </div>
                 `;
@@ -2557,13 +2748,13 @@
                     </div>
 
                     <div style="display:flex; gap:0.5rem; align-items:center; margin-top:0.85rem; flex-wrap:wrap;">
-                        <select id="admin-refund-status-${refund.id}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1; max-width:220px;">
+                        <select id="admin-refund-status-${refund.id}" style="margin:0; padding:0.5rem; font-size:16px; flex-grow:1; max-width:220px; border-radius: 8px; border: 1px solid #cbd5e1;">
                             <option value="Pending Review" ${refund.status === 'Pending Review' ? 'selected' : ''}>Pending Review</option>
                             <option value="Processing" ${refund.status === 'Processing' ? 'selected' : ''}>Processing</option>
                             <option value="Processed" ${refund.status === 'Processed' ? 'selected' : ''}>Processed / Refunded</option>
                             <option value="Rejected" ${refund.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
                         </select>
-                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateRefundStatus('${refund.id}')">Update Status</button>
+                        <button class="btn-primary" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateRefundStatus('${refund.id}')">Update Status</button>
                     </div>
                 </div>
                 `;
@@ -2608,7 +2799,7 @@
                     <div style="color:#94a3b8; margin-bottom:0.5rem; font-size:0.75rem;">Customer email: ${ord.customerEmail || 'N/A'}</div>
                     
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top: 0.5rem;">
-                        <select id="admin-status-${ord.id}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1; border-radius: 8px; border: 1px solid #cbd5e1;">
+                        <select id="admin-status-${ord.id}" style="margin:0; padding:0.5rem; font-size:16px; flex-grow:1; border-radius: 8px; border: 1px solid #cbd5e1;">
                             <option value="Order Placed - Processing" ${ord.status === 'Order Placed - Processing' ? 'selected' : ''}>Order Placed - Processing</option>
                             <option value="Payment Received" ${ord.status === 'Payment Received' ? 'selected' : ''}>Payment Received</option>
                             <option value="Order Shipped" ${ord.status === 'Order Shipped' ? 'selected' : ''}>Order Shipped</option>
@@ -2617,7 +2808,7 @@
                             <option value="Delivered Successfully" ${ord.status === 'Delivered Successfully' ? 'selected' : ''}>Delivered Successfully</option>
                             <option value="Cancelled" ${ord.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
                         </select>
-                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto; border-radius: 8px;" onclick="updateOrderStatus('${ord.id}')">Update Status</button>
+                        <button class="btn-primary" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateOrderStatus('${ord.id}')">Update Status</button>
                     </div>
                 </div>
                 `;
@@ -2677,9 +2868,9 @@
             }
 
             listContainer.innerHTML = globalState.promoCodes.map(code => `
-                <div style="background: white; border: 1px solid var(--border); padding: 0.4rem 0.75rem; border-radius: 8px; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; font-family: monospace;">
+                <div style="background: white; border: 1px solid var(--border); padding: 0.5rem 0.85rem; border-radius: 8px; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; font-family: monospace;">
                     <strong>${code}</strong> (5% OFF)
-                    <button class="btn-danger-small" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;" onclick="adminDeletePromoCode('${code}')">&times;</button>
+                    <button class="btn-danger-small" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="adminDeletePromoCode('${code}')">&times;</button>
                 </div>
             `).join('');
         }
@@ -2703,11 +2894,11 @@
                         </div>
                     </div>
                     <div class="admin-actions">
-                        <button class="btn-primary" style="font-size:0.75rem; padding:0.4rem 0.7rem; background: #f59e0b; border-radius: 6px;" onclick="editProduct(${product.id})">Edit</button>
-                        <button class="${product.isSoldOut ? 'btn-primary' : 'btn-secondary'}" style="font-size:0.75rem; padding:0.4rem 0.7rem; border-radius: 6px;" onclick="toggleSoldOut(${product.id})">
+                        <button class="btn-primary" style="font-size:0.8rem; padding:0.5rem 0.9rem; background: #f59e0b; border-radius: 8px;" onclick="editProduct(${product.id})">Edit</button>
+                        <button class="${product.isSoldOut ? 'btn-primary' : 'btn-secondary'}" style="font-size:0.8rem; padding:0.5rem 0.9rem; border-radius: 8px;" onclick="toggleSoldOut(${product.id})">
                             ${product.isSoldOut ? 'In Stock' : 'Sold Out'}
                         </button>
-                        <button class="btn-danger-small" style="border-radius: 6px;" onclick="deleteProduct(${product.id})">Delete</button>
+                        <button class="btn-danger-small" style="border-radius: 8px;" onclick="deleteProduct(${product.id})">Delete</button>
                     </div>
                 </div>
             `).join('');
@@ -3073,7 +3264,7 @@
                             <small style="color:#64748b;">$${(item.priceUSD * item.quantity).toFixed(2)} / ₦${(item.priceNGN * item.quantity).toLocaleString()}</small>
                             <div class="cart-qty-controls">
                                 <button class="cart-qty-btn" onclick="changeQuantity('${item.id}', -1, '${colorArg}')">-</button>
-                                <span style="font-size: 0.85rem; font-weight: 700;">${item.quantity}</span>
+                                <span style="font-size: 0.9rem; font-weight: 700;">${item.quantity}</span>
                                 <button class="cart-qty-btn" onclick="changeQuantity('${item.id}', 1, '${colorArg}')">+</button>
                             </div>
                         </div>
@@ -3167,9 +3358,9 @@
             refreshRefundDependentUI();
         });
 
-        if (!localStorage.getItem('swift_migration_done_v8')) {
+        if (!localStorage.getItem('swift_migration_done_v9')) {
             migrateLegacyDataIfNeeded()
-                .then(() => localStorage.setItem('swift_migration_done_v8', '1'))
+                .then(() => localStorage.setItem('swift_migration_done_v9', '1'))
                 .catch(e => console.warn('Migration skipped:', e));
         }
     </script>
