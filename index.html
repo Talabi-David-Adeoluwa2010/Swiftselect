@@ -63,64 +63,146 @@
             letter-spacing: 0.3px;
         }
 
-        /* --- MODERN HEADER (Images 1 & 2 Style) --- */
+        /* --- STANDARD REDESIGNED HEADER --- */
         header { 
             background: #ffffff; 
-            color: #0f172a; 
-            padding: 0.85rem 1.25rem; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
             position: sticky; 
             top: 0; 
             z-index: 100; 
             border-bottom: 1px solid var(--border); 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
         }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
         .logo-container { display: flex; align-items: center; gap: 0.6rem; }
         .logo-icon { 
-            width: 36px; height: 36px; 
+            width: 40px; height: 40px; 
             background: linear-gradient(135deg, var(--primary), #9333ea); 
             color: white; display: flex; justify-content: center; align-items: center; 
-            border-radius: 10px; font-weight: 800; font-size: 1.1rem; 
+            border-radius: 12px; font-weight: 800; font-size: 1.2rem; 
             box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25); 
         }
-        .logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; color: #0f172a; }
+        .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; color: #0f172a; }
         
-        .header-actions { display: flex; align-items: center; gap: 0.5rem; }
+        .header-actions { display: flex; align-items: center; gap: 0.75rem; }
         
         .icon-btn { 
-            background: #f1f5f9; 
-            border: none; 
-            width: 40px; height: 40px; 
-            border-radius: 50%; 
+            background: #f8fafc; 
+            border: 1px solid var(--border); 
+            width: 44px; height: 44px; 
+            border-radius: 12px; 
             display: flex; align-items: center; justify-content: center; 
-            font-size: 1.15rem; cursor: pointer; 
+            font-size: 1.25rem; cursor: pointer; 
             position: relative; transition: all 0.2s; 
             color: #334155;
         }
-        .icon-btn:hover { background: #e2e8f0; color: var(--primary); }
+        .icon-btn:hover { background: #e2e8f0; color: var(--primary); border-color: #cbd5e1; }
         
-        /* Cart Badge */
         .cart-badge { 
-            position: absolute; top: -4px; right: -4px; 
+            position: absolute; top: -6px; right: -6px; 
             background: #ef4444; color: white; 
-            font-size: 0.7rem; font-weight: 800; 
-            min-width: 20px; height: 20px; padding: 0 4px;
-            border-radius: 10px; 
+            font-size: 0.75rem; font-weight: 800; 
+            min-width: 22px; height: 22px; padding: 0 4px;
+            border-radius: 11px; 
             display: flex; align-items: center; justify-content: center; 
             border: 2px solid white; box-sizing: border-box;
         }
 
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
-        .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
-        .btn-secondary:hover { background: #e2e8f0; }
-        .btn-danger { background: #fee2e2; color: #dc2626; border: none; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
-        .btn-danger:hover { background: #fecaca; }
-        .btn-small { background: #e0e7ff; color: #4f46e5; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;}
-        .btn-small:hover { background: #c7d2fe; }
-        .btn-danger-small { background: #fee2e2; color: #dc2626; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+        /* --- USER BAR BELOW HEADER --- */
+        .user-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            background: #f8fafc;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .user-greeting {
+            font-size: 0.9rem;
+            color: #475569;
+            font-weight: 600;
+        }
+        .user-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .btn-text {
+            background: white;
+            border: 1px solid var(--border);
+            color: #0f172a;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-text:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .btn-text.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .btn-text.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        /* --- KEBAB MENU (3 Dots Dropdown) --- */
+        .kebab-menu {
+            display: none;
+            position: absolute;
+            top: 70px;
+            right: 1rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 200;
+            width: 220px;
+            padding: 0.5rem;
+            animation: fadeIn 0.2s ease;
+        }
+        .kebab-menu.active {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .kebab-menu button, .kebab-menu a {
+            background: transparent;
+            border: none;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: background 0.2s;
+        }
+        .kebab-menu button:hover, .kebab-menu a:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
 
         .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
         
@@ -128,16 +210,8 @@
         .hero-banner h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
         .hero-banner p { margin: 0; color: #c7d2fe; font-size: 0.9rem; max-width: 600px; line-height: 1.4; }
 
-        .utilities-toggle-row { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
-        .utility-toggle-btn { flex: 1; min-width: 200px; background: white; border: 1px solid var(--border); padding: 0.85rem 1.25rem; border-radius: 14px; font-weight: 700; color: #0f172a; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.01); transition: all 0.2s; }
-        .utility-toggle-btn:hover { border-color: var(--primary); background: #f8fafc; }
-        
-        .collapsible-box { display: none; background: white; border: 1px solid var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 1.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.01); animation: fadeIn 0.25s ease; }
-        .collapsible-box.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-
         .search-container-wrapper { margin-bottom: 1.25rem; }
-        .sticky-search-container { position: sticky; top: 70px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
+        .sticky-search-container { position: sticky; top: 110px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
         .sticky-search-container.is-stuck { box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(8px); }
         
         .search-input-wrapper { position: relative; }
@@ -224,10 +298,10 @@
         .rating-stars-input { display: flex; gap: 0.5rem; font-size: 1.75rem; cursor: pointer; color: #cbd5e1; margin-bottom: 1.25rem; }
         .rating-stars-input span.selected { color: var(--accent); }
 
-        /* --- CART MODAL (Fixing footer overlap) --- */
+        /* --- CART MODAL (Fixed footer overlap) --- */
         .cart-modal { 
             display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 440px; 
-            height: 100vh; height: 100dvh; /* dvh fixes mobile browser address bar issues */
+            height: 100vh; height: 100dvh; 
             background: white; box-shadow: -15px 0 35px rgba(0,0,0,0.15); z-index: 1200; 
             padding: 0; box-sizing: border-box; flex-direction: column; 
             animation: slideInRight 0.3s ease; 
@@ -247,11 +321,10 @@
         .cart-qty-btn { background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; width: 24px; height: 24px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
         .cart-qty-btn:hover { background: #e2e8f0; }
         
-        /* The fix for the cart footer being covered */
         .cart-footer { 
             border-top: 1px solid var(--border); 
             padding: 1.25rem 1.5rem; 
-            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); /* Handles iPhone home bar */
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); 
             flex-shrink: 0; 
             background: #ffffff; 
             box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03); 
@@ -261,7 +334,6 @@
         
         .total-price { font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; display: flex; justify-content: space-between; color: #0f172a; flex-direction: column; gap: 0.3rem; }
         .total-price .total-sub { font-size: 0.95rem; color: #64748b; font-weight: 600; }
-        #user-greeting { font-size: 0.9rem; color: #64748b; font-weight: 600; margin-right: 0.5rem; }
 
         .auth-tabs { display: flex; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
         .auth-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: 700; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; }
@@ -291,7 +363,7 @@
         .orders-section h3 { margin: 0 0 0.4rem; font-size: 1.15rem; color: #0f172a; }
         .orders-section > p { font-size: 0.85rem; color: #64748b; margin: 0 0 1rem; }
 
-        /* --- NEW ORDER CARD STYLING (Image 3 Style) --- */
+        /* --- ORDER CARD STYLING --- */
         .order-card {
             background: #ffffff;
             border: 1px solid var(--border);
@@ -408,42 +480,46 @@
         ⚡ Instant Global Firebase Cloud Sync & IndexedDB Storage Active | Paystack ($ & ₦)
     </div>
 
-    <!-- UPDATED HEADER TO MATCH IMAGES 1 & 2 -->
+    <!-- STANDARD REDESIGNED HEADER -->
     <header>
-        <div class="logo-container">
-            <div class="logo-icon">S</div>
-            <div class="logo">SwiftSelect</div>
+        <div class="header-top">
+            <div class="logo-container">
+                <div class="logo-icon">S</div>
+                <div class="logo">SwiftSelect</div>
+            </div>
+            
+            <div class="header-actions">
+                <!-- Cart Button with Badge -->
+                <button class="icon-btn" onclick="toggleCart()" title="Shopping Cart">
+                    🛒
+                    <span id="cart-count" class="cart-badge">0</span>
+                </button>
+                
+                <!-- Kebab Menu (3 Dots) -->
+                <button class="icon-btn" onclick="toggleKebabMenu()" title="More Options">⋮</button>
+            </div>
         </div>
-        
-        <div class="header-actions">
-            <span id="user-greeting" style="font-size: 0.85rem; margin-right: 0.5rem; display: none;"></span>
+
+        <!-- User Bar Below Header -->
+        <div class="user-bar">
+            <div class="user-greeting" id="user-greeting-bar">
+                <span id="user-greeting-name">Welcome, Guest</span>
+            </div>
             
-            <button class="icon-btn" onclick="openReviewsModal()" title="Ratings & Reviews">⭐</button>
-            <button class="icon-btn" onclick="openOrdersPage()" title="Orders & Tracking">📦</button>
-            
-            <!-- Cart Button with Badge -->
-            <button class="icon-btn" onclick="toggleCart()" title="Shopping Cart" style="margin-right: 0.25rem;">
-                🛒
-                <span id="cart-count" class="cart-badge">0</span>
-            </button>
-            
-            <button class="icon-btn" onclick="handleAuthClick()" title="Login / Account" id="auth-btn-icon">
-                <span style="font-size: 0.9rem; font-weight: 700;" id="auth-btn-text">Login</span>
-            </button>
-            
-            <!-- Dropdown for secondary links on desktop / mobile menu -->
-            <button class="icon-btn" onclick="toggleMobileMenu()" title="Menu">☰</button>
+            <div class="user-actions">
+                <button class="btn-text" onclick="openOrdersPage()">📦 Orders</button>
+                <button class="btn-text" id="auth-btn" onclick="handleAuthClick()">Login</button>
+            </div>
+        </div>
+
+        <!-- Kebab Dropdown Menu -->
+        <div class="kebab-menu" id="kebab-menu">
+            <button onclick="toggleHelpModal(); toggleKebabMenu();">🤖 Help / Virtual Assistant</button>
+            <button onclick="toggleRefundModal(); toggleKebabMenu();">🔄 Request Refund</button>
+            <a href="shipping.html">🚚 Shipping Policy</a>
+            <a href="refund.html">📜 Refund Policy</a>
         </div>
     </header>
-
-    <!-- Mobile Menu Overlay -->
-    <div id="mobile-menu" style="display: none; position: fixed; top: 60px; right: 1rem; background: white; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 200; padding: 0.5rem; width: 220px;">
-        <button class="btn-secondary" style="width: 100%; margin-bottom: 0.5rem; text-align: left;" onclick="toggleMobileMenu(); toggleRefundModal();">🔄 Request Refund</button>
-        <button class="btn-secondary" style="width: 100%; margin-bottom: 0.5rem; text-align: left;" onclick="toggleMobileMenu(); toggleHelpModal();">🤖 Help / Support</button>
-        <a href="shipping.html" class="btn-secondary" style="width: 100%; margin-bottom: 0.5rem; text-align: left; text-decoration: none; display: block;">🚚 Shipping Policy</a>
-        <a href="refund.html" class="btn-secondary" style="width: 100%; margin-bottom: 0.5rem; text-align: left; text-decoration: none; display: block;">📜 Refund Policy</a>
-        <button class="btn-primary" style="width: 100%; text-align: left;" onclick="toggleMobileMenu(); handleAuthClick();" id="auth-btn-mobile">Login / Signup</button>
-    </div>
 
     <div class="container">
         <div class="hero-banner">
@@ -492,7 +568,7 @@
         <p>&copy; 2026 SwiftSelect. All rights reserved. <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
     </footer>
 
-    <!-- ORDERS PAGE WITH NEW STRUCTURED CARD UI -->
+    <!-- ORDERS PAGE -->
     <div class="full-page-view" id="orders-page">
         <div class="full-page-header">
             <button class="btn-secondary" onclick="closeOrdersPage()" style="padding:0.5rem 1rem;">← Back</button>
@@ -530,7 +606,7 @@
                 <div class="recent-orders-list" id="my-refunds-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
             </div>
 
-            <!-- Main Orders List (Now structured into Cards) -->
+            <!-- Main Orders List -->
             <div class="orders-section">
                 <div class="recent-orders-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                     <h3 id="recent-orders-title">Your Recent Orders</h3>
@@ -923,7 +999,7 @@
         </div>
     </div>
 
-    <!-- CART MODAL (Fixed footer overlap) -->
+    <!-- CART MODAL -->
     <div class="cart-modal" id="cart-modal">
         <div class="cart-header">
             <h3 style="margin:0;">Your Shopping Cart</h3>
@@ -1014,7 +1090,7 @@
         const ordersRef  = ref(db, 'swiftOrders');
         const refundsRef = ref(db, 'swiftRefunds');
 
-        const CACHE_VERSION = 7; // Bumped for new UI structure
+        const CACHE_VERSION = 8; // Bumped for new UI structure
 
         let globalState = {
             _cacheVersion: CACHE_VERSION,
@@ -1078,15 +1154,24 @@
                 { q: "Is my payment secure?", a: "Yes! All payments are processed securely through Paystack with high-grade encryption." }
             ],
             orders: [
-                { q: "How do I track my order?", a: "Click the '📦 Orders & Tracking' button in the top dashboard. Enter your unique Order ID (e.g., SWIFT-XXXXXX) and click Search to see live progress." },
+                { q: "How do I track my order?", a: "Click the '📦 Orders' button in the top dashboard. Enter your unique Order ID (e.g., SWIFT-XXXXXX) and click Search to see live progress." },
                 { q: "Can I cancel or change my order?", a: "Orders are processed quickly. If you need immediate assistance, please call our customer care hotline at 08024300891." }
             ]
         };
 
-        window.toggleMobileMenu = function() {
-            const menu = document.getElementById('mobile-menu');
-            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        window.toggleKebabMenu = function() {
+            const menu = document.getElementById('kebab-menu');
+            menu.classList.toggle('active');
         };
+
+        // Close kebab menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('kebab-menu');
+            const btn = event.target.closest('.icon-btn');
+            if (!menu.contains(event.target) && !btn) {
+                menu.classList.remove('active');
+            }
+        });
 
         window.toggleHelpModal = function() {
             document.getElementById('help-modal').classList.toggle('active');
@@ -1665,7 +1750,7 @@
         function setupStickySearchScrollObserver() {
             const stickySearchEl = document.getElementById('sticky-search');
             window.addEventListener('scroll', () => {
-                if (window.scrollY >= 70) {
+                if (window.scrollY >= 110) {
                     stickySearchEl.classList.add('is-stuck');
                 } else {
                     stickySearchEl.classList.remove('is-stuck');
@@ -1864,23 +1949,23 @@
             }, 2500);
         };
 
+        // UPDATED AUTH UI FOR NEW HEADER STRUCTURE
         window.updateAuthUI = function() {
-            const authBtnIcon = document.getElementById('auth-btn-icon');
-            const authBtnText = document.getElementById('auth-btn-text');
-            const authBtnMobile = document.getElementById('auth-btn-mobile');
-            const greeting = document.getElementById('user-greeting');
+            const authBtn = document.getElementById('auth-btn');
+            const greetingName = document.getElementById('user-greeting-name');
             
             if (currentUser) {
-                if (greeting) {
-                    greeting.style.display = 'inline';
-                    greeting.innerText = `Hi, @${currentUser.username}`;
+                if (greetingName) greetingName.innerText = `Welcome, @${currentUser.username}`;
+                if (authBtn) {
+                    authBtn.innerText = "Logout";
+                    authBtn.classList.remove('primary');
                 }
-                if (authBtnText) authBtnText.innerText = "Logout";
-                if (authBtnMobile) authBtnMobile.innerText = "Logout";
             } else {
-                if (greeting) greeting.style.display = 'none';
-                if (authBtnText) authBtnText.innerText = "Login";
-                if (authBtnMobile) authBtnMobile.innerText = "Login / Signup";
+                if (greetingName) greetingName.innerText = `Welcome, Guest`;
+                if (authBtn) {
+                    authBtn.innerText = "Login";
+                    authBtn.classList.add('primary');
+                }
             }
             renderRecentOrdersList();
             renderMyRefundsList();
@@ -2080,7 +2165,7 @@
                 address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 items: orderItemsText,
                 totalPaid: `$${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()} (Ref: ${reference})`,
-                status: "Payment Received", // Updated initial status
+                status: "Payment Received",
                 date: new Date().toLocaleDateString(),
                 hasReviewed: false
             };
@@ -2124,7 +2209,6 @@
             document.getElementById('bill-promo').value = '';
         }
 
-        // UPDATED TRACK ORDER FOR NEW STATUSES
         window.trackOrder = function() {
             const query = document.getElementById('track-input').value.trim();
             const resultBox = document.getElementById('track-result-container');
@@ -2143,8 +2227,7 @@
                     return;
                 }
 
-                // Status color mapping
-                let statusColor = "#f59e0b"; // Default orange
+                let statusColor = "#f59e0b";
                 let statusIcon = "⏳";
                 const s = found.status || "";
                 
@@ -2195,7 +2278,6 @@
             }
         };
 
-        // UPDATED CUSTOMER ORDER RENDERING (Image 3 Style)
         window.renderRecentOrdersList = function() {
             const listContainer = document.getElementById('recent-orders-list');
             const titleElement = document.getElementById('recent-orders-title');
@@ -2223,7 +2305,6 @@
                 return;
             }
 
-            // Status colors and icons mapping
             const getStatusDetails = (status) => {
                 const s = status || "";
                 if (s.includes("Delivered")) return { color: "#16a34a", bg: "#dcfce7", icon: "✅" };
@@ -2504,7 +2585,6 @@
             renderMyRefundsList();
         };
 
-        // UPDATED ADMIN ORDER LIST WITH NEW STATUSES
         function renderAdminOrderList() {
             const listContainer = document.getElementById('admin-orders-list');
             if (!listContainer) return;
@@ -2556,7 +2636,7 @@
 
             showToast(`Order ${orderId} status updated globally!`);
             renderAdminOrderList();
-            renderRecentOrdersList(); // Update customer view instantly if open
+            renderRecentOrdersList();
         };
 
         window.adminCreatePromoCode = function() {
@@ -2963,11 +3043,9 @@
             showToast("Item removed from cart");
         };
 
-        // UPDATED CART UI (Badge + totals logic)
         function updateCartUI() {
             const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             
-            // Update badge
             const badge = document.getElementById('cart-count');
             if (badge) badge.innerText = totalCount;
 
@@ -3089,9 +3167,9 @@
             refreshRefundDependentUI();
         });
 
-        if (!localStorage.getItem('swift_migration_done_v7')) {
+        if (!localStorage.getItem('swift_migration_done_v8')) {
             migrateLegacyDataIfNeeded()
-                .then(() => localStorage.setItem('swift_migration_done_v7', '1'))
+                .then(() => localStorage.setItem('swift_migration_done_v8', '1'))
                 .catch(e => console.warn('Migration skipped:', e));
         }
     </script>
