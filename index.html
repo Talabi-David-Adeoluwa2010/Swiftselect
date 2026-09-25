@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Strict viewport to prevent zooming but allow responsive scaling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>SwiftSelect - Premium Online Store</title>
+    
     <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
@@ -15,6 +17,7 @@
     </script>
     <!-- Paystack SDK -->
     <script src="https://js.paystack.co/v2/inline.js"></script>
+    
     <style>
         :root {
             --primary: #4f46e5;
@@ -24,30 +27,100 @@
             --text: #0f172a;
             --card-bg: #ffffff;
             --border: #e2e8f0;
+            --success: #16a34a;
+            --danger: #dc2626;
         }
-        body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 45px; }
+
+        /* Prevent zooming and allow smooth scrolling */
+        html, body {
+            touch-action: pan-y;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            padding-bottom: 45px; 
+        }
         
         body.cart-open { overflow: hidden; }
         body.no-scroll { overflow: hidden; }
 
-        .announcement-bar { background: linear-gradient(90deg, #4f46e5, #9333ea); color: white; text-align: center; padding: 0.5rem; font-size: 0.85rem; font-weight: 500; }
+        .announcement-bar { 
+            background: linear-gradient(90deg, #1e1b4b, #312e81); 
+            color: white; 
+            text-align: center; 
+            padding: 0.5rem; 
+            font-size: 0.8rem; 
+            font-weight: 500; 
+            letter-spacing: 0.3px;
+        }
 
-        header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); color: #0f172a; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
-        .logo-container { display: flex; align-items: center; gap: 0.75rem; }
-        .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--primary), #9333ea); color: white; display: flex; justify-content: center; align-items: center; border-radius: 10px; font-weight: 800; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); }
-        .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, var(--primary), #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .nav-buttons { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+        /* --- MODERN HEADER (Images 1 & 2 Style) --- */
+        header { 
+            background: #ffffff; 
+            color: #0f172a; 
+            padding: 0.85rem 1.25rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            border-bottom: 1px solid var(--border); 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
+        }
+        .logo-container { display: flex; align-items: center; gap: 0.6rem; }
+        .logo-icon { 
+            width: 36px; height: 36px; 
+            background: linear-gradient(135deg, var(--primary), #9333ea); 
+            color: white; display: flex; justify-content: center; align-items: center; 
+            border-radius: 10px; font-weight: 800; font-size: 1.1rem; 
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25); 
+        }
+        .logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; color: #0f172a; }
         
+        .header-actions { display: flex; align-items: center; gap: 0.5rem; }
+        
+        .icon-btn { 
+            background: #f1f5f9; 
+            border: none; 
+            width: 40px; height: 40px; 
+            border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1.15rem; cursor: pointer; 
+            position: relative; transition: all 0.2s; 
+            color: #334155;
+        }
+        .icon-btn:hover { background: #e2e8f0; color: var(--primary); }
+        
+        /* Cart Badge */
+        .cart-badge { 
+            position: absolute; top: -4px; right: -4px; 
+            background: #ef4444; color: white; 
+            font-size: 0.7rem; font-weight: 800; 
+            min-width: 20px; height: 20px; padding: 0 4px;
+            border-radius: 10px; 
+            display: flex; align-items: center; justify-content: center; 
+            border: 2px solid white; box-sizing: border-box;
+        }
+
         .btn-primary { background: var(--primary); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); }
         .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
         .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
         .btn-secondary:hover { background: #e2e8f0; }
         .btn-danger { background: #fee2e2; color: #dc2626; border: none; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
         .btn-danger:hover { background: #fecaca; }
-        .btn-small { background: #e0e7ff; color: #4f46e5; border: none; padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
-        .btn-danger-small { background: #fee2e2; color: #dc2626; border: none; padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
-        .btn-nav-link { background: transparent; color: #4f46e5; border: 1px solid #e0e7ff; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
-        .btn-nav-link:hover { background: #e0e7ff; }
+        .btn-small { background: #e0e7ff; color: #4f46e5; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;}
+        .btn-small:hover { background: #c7d2fe; }
+        .btn-danger-small { background: #fee2e2; color: #dc2626; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
 
         .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
         
@@ -63,22 +136,8 @@
         .collapsible-box.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
-        .track-section h3 { margin-top: 0; margin-bottom: 0.5rem; color: #0f172a; font-size: 1.15rem; }
-        .track-row { display: flex; gap: 0.5rem; }
-        .track-row input { flex-grow: 1; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-size: 16px; transition: border-color 0.2s; }
-        .track-row input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
-        .track-result-box { margin-top: 1rem; padding: 1.25rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border); font-size: 0.95rem; }
-
-        .recent-orders-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-        .recent-orders-header h3 { margin: 0; color: #0f172a; font-size: 1.15rem; }
-        .recent-orders-list { display: flex; flex-direction: column; gap: 0.75rem; max-height: 260px; overflow-y: auto; margin-top: 0.75rem; }
-        .recent-order-item { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; gap: 1rem; transition: background 0.2s; }
-        .recent-order-item:hover { background: #f1f5f9; }
-        .order-pill { font-family: monospace; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
-        .refund-pill { font-family: monospace; background: #fef3c7; color: #92400e; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: bold; }
-
         .search-container-wrapper { margin-bottom: 1.25rem; }
-        .sticky-search-container { position: sticky; top: 110px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
+        .sticky-search-container { position: sticky; top: 70px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
         .sticky-search-container.is-stuck { box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(8px); }
         
         .search-input-wrapper { position: relative; }
@@ -112,11 +171,9 @@
         .btn-marketplace:hover { background: #ea580c; }
         .btn-marketplace.disabled { background: #cbd5e1; cursor: not-allowed; }
 
-        /* Loading spinner */
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid #e0e7ff; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.9s linear infinite; }
 
-        /* Product color selector styles */
         .size-selector { display: flex; gap: 0.35rem; flex-wrap: wrap; }
         .size-btn { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.3rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; }
         .size-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
@@ -167,7 +224,14 @@
         .rating-stars-input { display: flex; gap: 0.5rem; font-size: 1.75rem; cursor: pointer; color: #cbd5e1; margin-bottom: 1.25rem; }
         .rating-stars-input span.selected { color: var(--accent); }
 
-        .cart-modal { display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 440px; height: 100vh; background: white; box-shadow: -15px 0 35px rgba(0,0,0,0.15); z-index: 1200; padding: 0; box-sizing: border-box; flex-direction: column; animation: slideInRight 0.3s ease; }
+        /* --- CART MODAL (Fixing footer overlap) --- */
+        .cart-modal { 
+            display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 440px; 
+            height: 100vh; height: 100dvh; /* dvh fixes mobile browser address bar issues */
+            background: white; box-shadow: -15px 0 35px rgba(0,0,0,0.15); z-index: 1200; 
+            padding: 0; box-sizing: border-box; flex-direction: column; 
+            animation: slideInRight 0.3s ease; 
+        }
         @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
         .cart-modal.active { display: flex; }
         .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 1.5rem; flex-shrink: 0; }
@@ -182,7 +246,19 @@
         .cart-qty-controls { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
         .cart-qty-btn { background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; width: 24px; height: 24px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
         .cart-qty-btn:hover { background: #e2e8f0; }
-        .cart-footer { border-top: 1px solid var(--border); padding: 1.25rem 1.5rem; flex-shrink: 0; background: #ffffff; box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03); }
+        
+        /* The fix for the cart footer being covered */
+        .cart-footer { 
+            border-top: 1px solid var(--border); 
+            padding: 1.25rem 1.5rem; 
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); /* Handles iPhone home bar */
+            flex-shrink: 0; 
+            background: #ffffff; 
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03); 
+            position: relative; 
+            z-index: 10;
+        }
+        
         .total-price { font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; display: flex; justify-content: space-between; color: #0f172a; flex-direction: column; gap: 0.3rem; }
         .total-price .total-sub { font-size: 0.95rem; color: #64748b; font-weight: 600; }
         #user-greeting { font-size: 0.9rem; color: #64748b; font-weight: 600; margin-right: 0.5rem; }
@@ -215,6 +291,74 @@
         .orders-section h3 { margin: 0 0 0.4rem; font-size: 1.15rem; color: #0f172a; }
         .orders-section > p { font-size: 0.85rem; color: #64748b; margin: 0 0 1rem; }
 
+        /* --- NEW ORDER CARD STYLING (Image 3 Style) --- */
+        .order-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+        }
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+        }
+        .order-id {
+            font-family: monospace;
+            font-weight: 800;
+            color: var(--primary);
+            background: #e0e7ff;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        .order-status-badge {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .order-card-body {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        .order-info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #334155;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 0.4rem;
+        }
+        .order-info-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .order-info-label { font-weight: 600; color: #64748b; }
+        .order-info-value { font-weight: 600; color: #0f172a; text-align: right; max-width: 65%; word-break: break-word; }
+        .order-card-footer {
+            padding: 0.85rem 1.25rem;
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
         .admin-tabs { display: flex; gap: 0.5rem; padding: 0.75rem 1.25rem; background: white; border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
         .admin-tabs::-webkit-scrollbar { display: none; }
         .admin-tab { flex-shrink: 0; background: transparent; border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.82rem; color: #64748b; cursor: pointer; transition: all 0.2s; font-family: inherit; }
@@ -228,7 +372,6 @@
         .lightbox-close { position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.15); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 1.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
         .lightbox-close:hover { background: rgba(255,255,255,0.3); }
 
-        /* Refund success popup animation */
         @keyframes checkPop {
             0% { transform: scale(0); opacity: 0; }
             60% { transform: scale(1.15); opacity: 1; }
@@ -265,23 +408,42 @@
         ⚡ Instant Global Firebase Cloud Sync & IndexedDB Storage Active | Paystack ($ & ₦)
     </div>
 
+    <!-- UPDATED HEADER TO MATCH IMAGES 1 & 2 -->
     <header>
         <div class="logo-container">
             <div class="logo-icon">S</div>
             <div class="logo">SwiftSelect</div>
         </div>
-        <div class="nav-buttons">
-            <span id="user-greeting"></span>
-            <button class="btn-nav-link" onclick="openReviewsModal()">⭐ Ratings & Reviews</button>
-            <button class="btn-nav-link" onclick="openOrdersPage()">📦 Orders & Tracking</button>
-            <a href="shipping.html" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">🚚 Shipping Policy</a>
-            <a href="refund.html" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">📜 Refund Policy</a>
-            <button class="btn-secondary" onclick="toggleRefundModal()">🔄 Request Refund</button>
-            <button class="btn-secondary" onclick="toggleHelpModal()">🤖 Help / Support</button>
-            <button class="btn-secondary" id="auth-btn" onclick="handleAuthClick()">Login / Signup</button>
-            <button class="btn-primary" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
+        
+        <div class="header-actions">
+            <span id="user-greeting" style="font-size: 0.85rem; margin-right: 0.5rem; display: none;"></span>
+            
+            <button class="icon-btn" onclick="openReviewsModal()" title="Ratings & Reviews">⭐</button>
+            <button class="icon-btn" onclick="openOrdersPage()" title="Orders & Tracking">📦</button>
+            
+            <!-- Cart Button with Badge -->
+            <button class="icon-btn" onclick="toggleCart()" title="Shopping Cart" style="margin-right: 0.25rem;">
+                🛒
+                <span id="cart-count" class="cart-badge">0</span>
+            </button>
+            
+            <button class="icon-btn" onclick="handleAuthClick()" title="Login / Account" id="auth-btn-icon">
+                <span style="font-size: 0.9rem; font-weight: 700;" id="auth-btn-text">Login</span>
+            </button>
+            
+            <!-- Dropdown for secondary links on desktop / mobile menu -->
+            <button class="icon-btn" onclick="toggleMobileMenu()" title="Menu">☰</button>
         </div>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" style="display: none; position: fixed; top: 60px; right: 1rem; background: white; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 200; padding: 0.5rem; width: 220px;">
+        <button class="btn-secondary" style="width: 100%; margin-bottom: 0.5rem; text-align: left;" onclick="toggleMobileMenu(); toggleRefundModal();">🔄 Request Refund</button>
+        <button class="btn-secondary" style="width: 100%; margin-bottom: 0.5rem; text-align: left;" onclick="toggleMobileMenu(); toggleHelpModal();">🤖 Help / Support</button>
+        <a href="shipping.html" class="btn-secondary" style="width: 100%; margin-bottom: 0.5rem; text-align: left; text-decoration: none; display: block;">🚚 Shipping Policy</a>
+        <a href="refund.html" class="btn-secondary" style="width: 100%; margin-bottom: 0.5rem; text-align: left; text-decoration: none; display: block;">📜 Refund Policy</a>
+        <button class="btn-primary" style="width: 100%; text-align: left;" onclick="toggleMobileMenu(); handleAuthClick();" id="auth-btn-mobile">Login / Signup</button>
+    </div>
 
     <div class="container">
         <div class="hero-banner">
@@ -330,6 +492,7 @@
         <p>&copy; 2026 SwiftSelect. All rights reserved. <span class="secret-admin" onclick="checkAdminPassword()" title="Admin Access">*</span></p>
     </footer>
 
+    <!-- ORDERS PAGE WITH NEW STRUCTURED CARD UI -->
     <div class="full-page-view" id="orders-page">
         <div class="full-page-header">
             <button class="btn-secondary" onclick="closeOrdersPage()" style="padding:0.5rem 1rem;">← Back</button>
@@ -340,44 +503,46 @@
             <div class="orders-section">
                 <h3>📦 Track Your Order Status</h3>
                 <p>Enter your Order ID below to check live progress.</p>
-                <div class="track-row">
-                    <input type="text" id="track-input" placeholder="e.g., SWIFT-483920">
+                <div class="track-row" style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="track-input" placeholder="e.g., SWIFT-483920" style="flex-grow: 1; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-size: 16px;">
                     <button class="btn-primary" onclick="trackOrder()" style="width: auto; padding: 0 1.25rem;">Search</button>
                 </div>
-                <div id="track-result-container" style="display: none;" class="track-result-box"></div>
+                <div id="track-result-container" style="display: none; margin-top: 1rem; padding: 1.25rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border);"></div>
             </div>
 
             <!-- Refund Status Tracker -->
             <div class="orders-section" id="refund-tracking-section" style="background: linear-gradient(135deg, #fffbeb, #fff7ed); border-color: #fde68a;">
                 <h3>💸 Track Your Refund Status</h3>
                 <p>Enter your Refund ID (e.g., REF-XXXXXXXX) or the original Order ID to check the status of your refund request.</p>
-                <div class="track-row">
-                    <input type="text" id="refund-track-input" placeholder="e.g., REF-1234567890 or SWIFT-483920">
+                <div class="track-row" style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="refund-track-input" placeholder="e.g., REF-1234567890 or SWIFT-483920" style="flex-grow: 1; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-size: 16px;">
                     <button class="btn-primary" onclick="trackRefund()" style="width: auto; padding: 0 1.25rem; background: #f59e0b;">Search</button>
                 </div>
-                <div id="refund-track-result" style="display: none;" class="track-result-box"></div>
+                <div id="refund-track-result" style="display: none; margin-top: 1rem; padding: 1.25rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border);"></div>
             </div>
 
             <!-- My Refund Requests list -->
             <div class="orders-section">
-                <div class="recent-orders-header">
+                <div class="recent-orders-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                     <h3>📋 Your Refund Requests</h3>
                 </div>
                 <p>All refund requests submitted from your account. Statuses update live as our team reviews them.</p>
-                <div class="recent-orders-list" id="my-refunds-list"></div>
+                <div class="recent-orders-list" id="my-refunds-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
             </div>
 
+            <!-- Main Orders List (Now structured into Cards) -->
             <div class="orders-section">
-                <div class="recent-orders-header">
+                <div class="recent-orders-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                     <h3 id="recent-orders-title">Your Recent Orders</h3>
-                    <button class="btn-danger-small" onclick="clearAllOrders()">Clear History</button>
+                    <button class="btn-danger-small" onclick="clearAllOrders()" style="padding: 0.3rem 0.6rem;">Clear History</button>
                 </div>
                 <p>Manage and view your account's order activity. Every order you have ever placed is kept here permanently.</p>
-                <div class="recent-orders-list" id="recent-orders-list"></div>
+                <div class="recent-orders-list" id="recent-orders-list" style="display: flex; flex-direction: column; gap: 1rem;"></div>
             </div>
         </div>
     </div>
 
+    <!-- ADMIN PAGE -->
     <div class="full-page-view" id="admin-page">
         <div class="full-page-header">
             <h2>🔧 Admin Management Dashboard</h2>
@@ -456,6 +621,7 @@
         </div>
     </div>
 
+    <!-- MODALS -->
     <div class="lightbox" id="image-lightbox" onclick="closeLightbox(event)">
         <button class="lightbox-close" onclick="closeLightbox(event, true)">&times;</button>
         <img id="lightbox-img" src="" alt="Full view">
@@ -609,7 +775,6 @@
         </div>
     </div>
 
-    <!-- Refund Success Modal -->
     <div class="modal" id="refund-success-modal">
         <div class="modal-content" style="max-width: 460px; text-align: center;">
             <div class="refund-check-icon">✓</div>
@@ -758,6 +923,7 @@
         </div>
     </div>
 
+    <!-- CART MODAL (Fixed footer overlap) -->
     <div class="cart-modal" id="cart-modal">
         <div class="cart-header">
             <h3 style="margin:0;">Your Shopping Cart</h3>
@@ -777,7 +943,7 @@
                     <span id="cart-total-ngn">₦0</span>
                 </div>
             </div>
-            <button class="btn-primary" style="width:100%;" onclick="proceedToCheckout()">Proceed to Secure Checkout</button>
+            <button class="btn-primary" style="width:100%; padding: 0.85rem; font-size: 1rem;" onclick="proceedToCheckout()">Proceed to Secure Checkout</button>
             <div class="paystack-badge-footer">
               🔒 Secured and Trusted by Paystack
             </div>
@@ -844,22 +1010,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // =============================================================
-        // FIREBASE NODE REFERENCES
-        // -------------------------------------------------------------
-        // Orders and refunds live in their OWN top-level nodes so
-        // that every write is merged atomically via transactions.
-        // This means one customer's new order can NEVER overwrite
-        // another customer's existing orders, anywhere in the world.
-        // =============================================================
-        const stateRef   = ref(db, 'swiftStoreState');   // products / users / reviews / promos
-        const ordersRef  = ref(db, 'swiftOrders');       // ALL customer orders (global)
-        const refundsRef = ref(db, 'swiftRefunds');      // ALL refund requests (global)
+        const stateRef   = ref(db, 'swiftStoreState');
+        const ordersRef  = ref(db, 'swiftOrders');
+        const refundsRef = ref(db, 'swiftRefunds');
 
-        // =============================================================
-        // GLOBAL STATE
-        // =============================================================
-        const CACHE_VERSION = 6; // bumped: orders/refunds moved to dedicated nodes
+        const CACHE_VERSION = 7; // Bumped for new UI structure
 
         let globalState = {
             _cacheVersion: CACHE_VERSION,
@@ -877,8 +1032,6 @@
         };
 
         let isProductsLoaded = false;
-
-        // Track the ID of the last refund the customer just submitted
         let lastSubmittedRefundId = null;
 
         try {
@@ -930,6 +1083,11 @@
             ]
         };
 
+        window.toggleMobileMenu = function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        };
+
         window.toggleHelpModal = function() {
             document.getElementById('help-modal').classList.toggle('active');
             if (document.getElementById('help-modal').classList.contains('active')) {
@@ -957,9 +1115,6 @@
             answerBox.innerHTML = `<strong>Q: ${item.q}</strong><br><br><span style="color: #0f172a; line-height: 1.5;">A: ${item.a}</span>`;
         };
 
-        // =============================================================
-        // HELPERS
-        // =============================================================
         function normalizeToArray(val) {
             if (!val) return [];
             if (Array.isArray(val)) return val.filter(Boolean);
@@ -986,9 +1141,6 @@
             }
         }
 
-        // =============================================================
-        // SAVE STATE (catalog / users / reviews / promo codes only)
-        // =============================================================
         async function saveStateToFirebase() {
             await persistCache();
             try {
@@ -999,11 +1151,6 @@
             }
         }
 
-        // =============================================================
-        // ATOMIC ORDER WRITE
-        // Uses a Firebase transaction so concurrent orders from
-        // different customers around the world NEVER overwrite each other.
-        // =============================================================
         async function saveOrderToFirebase(orderRecord) {
             const localIdx = globalState.orders.findIndex(o => String(o.id) === String(orderRecord.id));
             if (localIdx === -1) globalState.orders.push(orderRecord);
@@ -1024,9 +1171,6 @@
             }
         }
 
-        // =============================================================
-        // ATOMIC REFUND WRITE
-        // =============================================================
         async function saveRefundToFirebase(refundRecord) {
             const localIdx = globalState.refunds.findIndex(r => String(r.id) === String(refundRecord.id));
             if (localIdx === -1) globalState.refunds.push(refundRecord);
@@ -1047,9 +1191,6 @@
             }
         }
 
-        // =============================================================
-        // ATOMIC ORDER STATUS UPDATE (Admin -> Customer worldwide)
-        // =============================================================
         async function updateOrderStatusInFirebase(orderId, newStatus) {
             const idx = globalState.orders.findIndex(o => String(o.id) === String(orderId));
             if (idx !== -1) globalState.orders[idx].status = newStatus;
@@ -1068,9 +1209,6 @@
             }
         }
 
-        // =============================================================
-        // ATOMIC REFUND STATUS UPDATE (Admin -> Customer worldwide)
-        // =============================================================
         async function updateRefundStatusInFirebase(refundId, newStatus) {
             const idx = globalState.refunds.findIndex(r => String(r.id) === String(refundId));
             if (idx !== -1) globalState.refunds[idx].status = newStatus;
@@ -1089,9 +1227,6 @@
             }
         }
 
-        // =============================================================
-        // CLEAR A CUSTOMER'S ORDERS (globally)
-        // =============================================================
         async function clearUserOrdersFromFirebase(username) {
             const uname = String(username).toLowerCase();
             globalState.orders = globalState.orders.filter(o => String(o.customerUsername || '').toLowerCase() !== uname);
@@ -1107,9 +1242,6 @@
             }
         }
 
-        // =============================================================
-        // UI REFRESH HELPERS
-        // =============================================================
         function refreshOrderDependentUI() {
             try { renderRecentOrdersList(); } catch (e) { console.warn(e); }
 
@@ -1219,9 +1351,6 @@
             }, 400);
         };
 
-        // =============================================================
-        // SUBMIT REFUND — synced globally via transaction
-        // =============================================================
         window.submitRefundRequest = async function() {
             const name = document.getElementById('refund-name').value.trim();
             const orderId = document.getElementById('refund-order-id').value.trim();
@@ -1309,9 +1438,6 @@
             }
         };
 
-        // =============================================================
-        // TRACK A REFUND BY REFUND ID OR ORDER ID
-        // =============================================================
         window.trackRefund = function() {
             const query = document.getElementById('refund-track-input').value.trim();
             const resultBox = document.getElementById('refund-track-result');
@@ -1403,9 +1529,6 @@
             `;
         };
 
-        // =============================================================
-        // SHOW CUSTOMER'S OWN REFUND REQUESTS
-        // =============================================================
         window.renderMyRefundsList = function() {
             const container = document.getElementById('my-refunds-list');
             if (!container) return;
@@ -1542,7 +1665,7 @@
         function setupStickySearchScrollObserver() {
             const stickySearchEl = document.getElementById('sticky-search');
             window.addEventListener('scroll', () => {
-                if (window.scrollY >= 110) {
+                if (window.scrollY >= 70) {
                     stickySearchEl.classList.add('is-stuck');
                 } else {
                     stickySearchEl.classList.remove('is-stuck');
@@ -1742,16 +1865,22 @@
         };
 
         window.updateAuthUI = function() {
-            const authBtn = document.getElementById('auth-btn');
+            const authBtnIcon = document.getElementById('auth-btn-icon');
+            const authBtnText = document.getElementById('auth-btn-text');
+            const authBtnMobile = document.getElementById('auth-btn-mobile');
             const greeting = document.getElementById('user-greeting');
+            
             if (currentUser) {
-                greeting.innerText = `Hi, @${currentUser.username}`;
-                authBtn.innerText = "Logout";
-                authBtn.className = "btn-danger";
+                if (greeting) {
+                    greeting.style.display = 'inline';
+                    greeting.innerText = `Hi, @${currentUser.username}`;
+                }
+                if (authBtnText) authBtnText.innerText = "Logout";
+                if (authBtnMobile) authBtnMobile.innerText = "Logout";
             } else {
-                greeting.innerText = "";
-                authBtn.innerText = "Login / Signup";
-                authBtn.className = "btn-secondary";
+                if (greeting) greeting.style.display = 'none';
+                if (authBtnText) authBtnText.innerText = "Login";
+                if (authBtnMobile) authBtnMobile.innerText = "Login / Signup";
             }
             renderRecentOrdersList();
             renderMyRefundsList();
@@ -1951,7 +2080,7 @@
                 address: `${address}, ${city}, ${state} ${postal}, ${country}`,
                 items: orderItemsText,
                 totalPaid: `$${subtotalUSD.toFixed(2)} / ₦${Math.round(subtotalNGN).toLocaleString()} (Ref: ${reference})`,
-                status: "Order Placed - Processing",
+                status: "Payment Received", // Updated initial status
                 date: new Date().toLocaleDateString(),
                 hasReviewed: false
             };
@@ -1995,6 +2124,7 @@
             document.getElementById('bill-promo').value = '';
         }
 
+        // UPDATED TRACK ORDER FOR NEW STATUSES
         window.trackOrder = function() {
             const query = document.getElementById('track-input').value.trim();
             const resultBox = document.getElementById('track-result-container');
@@ -2013,24 +2143,59 @@
                     return;
                 }
 
+                // Status color mapping
+                let statusColor = "#f59e0b"; // Default orange
+                let statusIcon = "⏳";
+                const s = found.status || "";
+                
+                if (s.includes("Delivered")) { statusColor = "#16a34a"; statusIcon = "✅"; }
+                else if (s.includes("Transit") || s.includes("Shipped")) { statusColor = "#3b82f6"; statusIcon = "🚚"; }
+                else if (s.includes("Out for Delivery")) { statusColor = "#8b5cf6"; statusIcon = "📦"; }
+                else if (s.includes("Payment Received")) { statusColor = "#10b981"; statusIcon = "💰"; }
+                else if (s.includes("Processing")) { statusColor = "#f59e0b"; statusIcon = "⏳"; }
+                else if (s.includes("Cancelled")) { statusColor = "#dc2626"; statusIcon = "❌"; }
+
                 resultBox.innerHTML = `
-                    <p style="margin: 0 0 0.5rem;"><strong>Order ID:</strong> ${found.id}</p>
-                    <p style="margin: 0 0 0.5rem;"><strong>Items:</strong> ${found.items}</p>
-                    <p style="margin: 0 0 0.5rem;"><strong>Delivery Address:</strong> ${found.address || 'N/A'}</p>
-                    <p style="margin: 0 0 0.5rem;"><strong>Total Paid:</strong> ${found.totalPaid}</p>
-                    <p style="margin: 0 0 0.5rem;"><strong>Delivery Status:</strong> <span style="color: var(--primary); font-weight: 700;">${found.status}</span></p>
-                    <p style="margin: 0; font-size: 0.8rem; color: #64748b;">Placed on: ${found.date}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                        <div>
+                            <p style="margin: 0 0 0.15rem; font-size: 0.72rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Order ID</p>
+                            <p style="margin: 0; font-family: monospace; font-weight: 800; color: #4f46e5; font-size: 1rem;">${found.id}</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="margin: 0 0 0.15rem; font-size: 0.72rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Status</p>
+                            <span class="refund-status-badge" style="background: ${statusColor}22; color: ${statusColor}; border: 1px solid ${statusColor}55;">
+                                ${statusIcon} ${found.status}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 0.75rem;">
+                        <p style="margin: 0 0 0.15rem; font-size: 0.72rem; color: #64748b; font-weight: 700;">Items Ordered</p>
+                        <p style="margin: 0; font-size: 0.9rem; color: #0f172a; font-weight: 600;">${found.items}</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                        <div>
+                            <p style="margin: 0 0 0.15rem; font-size: 0.72rem; color: #64748b; font-weight: 700;">Total Paid</p>
+                            <p style="margin: 0; font-size: 0.9rem; color: #0f172a; font-weight: 600;">${found.totalPaid}</p>
+                        </div>
+                        <div>
+                            <p style="margin: 0 0 0.15rem; font-size: 0.72rem; color: #64748b; font-weight: 700;">Placed On</p>
+                            <p style="margin: 0; font-size: 0.9rem; color: #0f172a; font-weight: 600;">${found.date}</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p style="margin: 0 0 0.15rem; font-size: 0.72rem; color: #64748b; font-weight: 700;">Delivery Address</p>
+                        <p style="margin: 0; font-size: 0.88rem; color: #334155;">${found.address || 'N/A'}</p>
+                    </div>
                 `;
             } else {
                 resultBox.innerHTML = `<p style="color: #dc2626; margin: 0;">No order found matching "${query}". Check your ID.</p>`;
             }
         };
 
-        // =============================================================
-        // CUSTOMER'S FULL ORDER HISTORY
-        // Shows EVERY order this customer has ever placed — nothing
-        // is ever removed when a new order comes in.
-        // =============================================================
+        // UPDATED CUSTOMER ORDER RENDERING (Image 3 Style)
         window.renderRecentOrdersList = function() {
             const listContainer = document.getElementById('recent-orders-list');
             const titleElement = document.getElementById('recent-orders-title');
@@ -2058,22 +2223,56 @@
                 return;
             }
 
-            listContainer.innerHTML = [...userOrders].reverse().map(order => `
-                <div class="recent-order-item">
-                    <div style="min-width: 0; flex: 1;">
-                        <span class="order-pill">${order.id}</span>
-                        <span style="font-weight: 600; margin-left: 0.25rem;">${order.customerName}</span>
-                        <div style="color: #64748b; font-size: 0.75rem; margin-top: 0.15rem;">${order.items} (${order.totalPaid})</div>
-                        <div style="color: #64748b; font-size: 0.72rem; margin-top: 0.15rem;">📍 ${order.address || 'N/A'}</div>
-                        <div style="color: #94a3b8; font-size: 0.7rem; margin-top: 0.15rem;">Placed: ${order.date}</div>
+            // Status colors and icons mapping
+            const getStatusDetails = (status) => {
+                const s = status || "";
+                if (s.includes("Delivered")) return { color: "#16a34a", bg: "#dcfce7", icon: "✅" };
+                if (s.includes("Transit") || s.includes("Shipped")) return { color: "#3b82f6", bg: "#dbeafe", icon: "🚚" };
+                if (s.includes("Out for Delivery")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "📦" };
+                if (s.includes("Payment Received")) return { color: "#10b981", bg: "#d1fae5", icon: "💰" };
+                if (s.includes("Processing")) return { color: "#f59e0b", bg: "#fef3c7", icon: "⏳" };
+                if (s.includes("Cancelled")) return { color: "#dc2626", bg: "#fee2e2", icon: "❌" };
+                return { color: "#64748b", bg: "#f1f5f9", icon: "•" };
+            };
+
+            listContainer.innerHTML = [...userOrders].reverse().map(order => {
+                const statusDetails = getStatusDetails(order.status);
+                
+                return `
+                <div class="order-card">
+                    <div class="order-card-header">
+                        <span class="order-id">${order.id}</span>
+                        <span class="order-status-badge" style="background: ${statusDetails.bg}; color: ${statusDetails.color};">
+                            ${statusDetails.icon} ${order.status}
+                        </span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                        <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">${order.status}</span>
-                        <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Track</button>
-                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size:0.75rem;" onclick="triggerRatingModal('${order.id}')">Rate & Review</button>` : ''}
+                    
+                    <div class="order-card-body">
+                        <div class="order-info-row">
+                            <span class="order-info-label">Items</span>
+                            <span class="order-info-value">${order.items}</span>
+                        </div>
+                        <div class="order-info-row">
+                            <span class="order-info-label">Total Paid</span>
+                            <span class="order-info-value">${order.totalPaid}</span>
+                        </div>
+                        <div class="order-info-row">
+                            <span class="order-info-label">Delivery Address</span>
+                            <span class="order-info-value">${order.address || 'N/A'}</span>
+                        </div>
+                        <div class="order-info-row">
+                            <span class="order-info-label">Order Date</span>
+                            <span class="order-info-value">${order.date}</span>
+                        </div>
+                    </div>
+
+                    <div class="order-card-footer">
+                        <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Track Order</button>
+                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.8rem;" onclick="triggerRatingModal('${order.id}')">Rate & Review</button>` : ''}
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         };
 
         window.fillTrackingInput = function(orderId) {
@@ -2237,9 +2436,6 @@
             renderAdminPromoList();
         }
 
-        // =============================================================
-        // ADMIN: Show ALL global refunds from ALL customers
-        // =============================================================
         function renderAdminRefundList() {
             const container = document.getElementById('admin-refunds-list');
             if (!container) return;
@@ -2308,9 +2504,7 @@
             renderMyRefundsList();
         };
 
-        // =============================================================
-        // ADMIN: Show ALL global orders from ALL customers instantly.
-        // =============================================================
+        // UPDATED ADMIN ORDER LIST WITH NEW STATUSES
         function renderAdminOrderList() {
             const listContainer = document.getElementById('admin-orders-list');
             if (!listContainer) return;
@@ -2332,15 +2526,18 @@
                     <div style="color:#475569; margin-bottom:0.4rem;">Items: ${ord.items} | Total Paid: ${ord.totalPaid || 'N/A'} | Phone: ${ord.phone}</div>
                     <div style="color:#475569; margin-bottom:0.5rem; font-size:0.82rem;">📍 ${ord.address || 'N/A'}</div>
                     <div style="color:#94a3b8; margin-bottom:0.5rem; font-size:0.75rem;">Customer email: ${ord.customerEmail || 'N/A'}</div>
-                    <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
-                        <select id="admin-status-${ord.id}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1;">
-                            <option value="Order Placed - Processing" ${String(ord.status).includes('Order Placed') ? 'selected' : ''}>Order Placed - Processing</option>
-                            <option value="Ordered from Supplier / Hub" ${String(ord.status).includes('Supplier') ? 'selected' : ''}>Ordered from Supplier / Hub</option>
-                            <option value="Shipped / In Transit" ${String(ord.status).includes('Shipped') || String(ord.status).includes('Transit') ? 'selected' : ''}>Shipped / In Transit</option>
-                            <option value="Out for Delivery" ${String(ord.status).includes('Out for Delivery') ? 'selected' : ''}>Out for Delivery</option>
-                            <option value="Delivered Successfully" ${String(ord.status).includes('Delivered') ? 'selected' : ''}>Delivered Successfully</option>
+                    
+                    <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top: 0.5rem;">
+                        <select id="admin-status-${ord.id}" style="margin:0; padding:0.4rem; font-size:16px; flex-grow:1; border-radius: 8px; border: 1px solid #cbd5e1;">
+                            <option value="Order Placed - Processing" ${ord.status === 'Order Placed - Processing' ? 'selected' : ''}>Order Placed - Processing</option>
+                            <option value="Payment Received" ${ord.status === 'Payment Received' ? 'selected' : ''}>Payment Received</option>
+                            <option value="Order Shipped" ${ord.status === 'Order Shipped' ? 'selected' : ''}>Order Shipped</option>
+                            <option value="In Transit" ${ord.status === 'In Transit' ? 'selected' : ''}>In Transit</option>
+                            <option value="Out for Delivery" ${ord.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+                            <option value="Delivered Successfully" ${ord.status === 'Delivered Successfully' ? 'selected' : ''}>Delivered Successfully</option>
+                            <option value="Cancelled" ${ord.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
                         </select>
-                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto;" onclick="updateOrderStatus('${ord.id}')">Update Status</button>
+                        <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size:0.85rem; width:auto; border-radius: 8px;" onclick="updateOrderStatus('${ord.id}')">Update Status</button>
                     </div>
                 </div>
                 `;
@@ -2359,7 +2556,7 @@
 
             showToast(`Order ${orderId} status updated globally!`);
             renderAdminOrderList();
-            renderRecentOrdersList();
+            renderRecentOrdersList(); // Update customer view instantly if open
         };
 
         window.adminCreatePromoCode = function() {
@@ -2426,11 +2623,11 @@
                         </div>
                     </div>
                     <div class="admin-actions">
-                        <button class="btn-primary" style="font-size:0.75rem; padding:0.4rem 0.7rem; background: #f59e0b;" onclick="editProduct(${product.id})">Edit</button>
-                        <button class="${product.isSoldOut ? 'btn-primary' : 'btn-secondary'}" style="font-size:0.75rem; padding:0.4rem 0.7rem;" onclick="toggleSoldOut(${product.id})">
-                            ${product.isSoldOut ? 'Mark In Stock' : 'Mark Sold Out'}
+                        <button class="btn-primary" style="font-size:0.75rem; padding:0.4rem 0.7rem; background: #f59e0b; border-radius: 6px;" onclick="editProduct(${product.id})">Edit</button>
+                        <button class="${product.isSoldOut ? 'btn-primary' : 'btn-secondary'}" style="font-size:0.75rem; padding:0.4rem 0.7rem; border-radius: 6px;" onclick="toggleSoldOut(${product.id})">
+                            ${product.isSoldOut ? 'In Stock' : 'Sold Out'}
                         </button>
-                        <button class="btn-danger-small" onclick="deleteProduct(${product.id})">Delete</button>
+                        <button class="btn-danger-small" style="border-radius: 6px;" onclick="deleteProduct(${product.id})">Delete</button>
                     </div>
                 </div>
             `).join('');
@@ -2766,9 +2963,13 @@
             showToast("Item removed from cart");
         };
 
+        // UPDATED CART UI (Badge + totals logic)
         function updateCartUI() {
             const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById('cart-count').innerText = totalCount;
+            
+            // Update badge
+            const badge = document.getElementById('cart-count');
+            if (badge) badge.innerText = totalCount;
 
             const cartItemsContainer = document.getElementById('cart-items');
             if (cart.length === 0) {
@@ -2823,11 +3024,6 @@
             }
         };
 
-        // =============================================================
-        // ONE-TIME LEGACY MIGRATION
-        // If orders/refunds existed inside swiftStoreState from the
-        // previous version, copy them into the new dedicated nodes.
-        // =============================================================
         async function migrateLegacyDataIfNeeded() {
             try {
                 const [ordersSnap, refundsSnap, stateSnap] = await Promise.all([
@@ -2858,23 +3054,8 @@
             }
         }
 
-        // =============================================================
-        // BOOT SEQUENCE — OPTIMIZED FOR INSTANT RENDER
-        // -------------------------------------------------------------
-        // 1. Render cached products IMMEDIATELY (no waiting on Firebase)
-        // 2. Attach realtime listeners (they will refresh UI on data)
-        // 3. Run one-time legacy migration in the BACKGROUND (never
-        //    blocks the initial paint).
-        // =============================================================
-
-        // Step 1: Render cache right away.
-        // `isProductsLoaded` was already set to true above if the cache
-        // had products, so this will paint them instantly.
         initApp();
 
-        // Step 2: Attach realtime listeners (live updates from Firebase).
-
-        // --- Catalog / Users / Reviews / Promo Codes ---
         onValue(stateRef, async (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -2896,25 +3077,21 @@
             renderAdminPromoList();
         });
 
-        // --- ORDERS (global, live, atomic) ---
         onValue(ordersRef, async (snapshot) => {
             globalState.orders = normalizeToArray(snapshot.val());
             await persistCache();
             refreshOrderDependentUI();
         });
 
-        // --- REFUNDS (global, live, atomic) ---
         onValue(refundsRef, async (snapshot) => {
             globalState.refunds = normalizeToArray(snapshot.val());
             await persistCache();
             refreshRefundDependentUI();
         });
 
-        // Step 3: Run one-time legacy migration in the background.
-        // Skipped on every subsequent reload thanks to the localStorage flag.
-        if (!localStorage.getItem('swift_migration_done_v6')) {
+        if (!localStorage.getItem('swift_migration_done_v7')) {
             migrateLegacyDataIfNeeded()
-                .then(() => localStorage.setItem('swift_migration_done_v6', '1'))
+                .then(() => localStorage.setItem('swift_migration_done_v7', '1'))
                 .catch(e => console.warn('Migration skipped:', e));
         }
     </script>
