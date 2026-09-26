@@ -638,9 +638,84 @@
             0% { opacity: 0; transform: translateY(20px); }
             100% { opacity: 1; transform: translateY(0); }
         }
+
+        /* --- NEW: Global sync progress bar --- */
+        #sync-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), #9333ea);
+            width: 0%;
+            z-index: 9999;
+            transition: width 0.3s ease, opacity 0.5s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+        #sync-progress-bar.active {
+            opacity: 1;
+        }
+
+        /* --- NEW: Reviews Global Modal --- */
+        .global-reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+        .global-review-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+        .global-review-card .stars {
+            color: var(--accent);
+            margin-bottom: 0.3rem;
+        }
+        .global-review-card p {
+            margin: 0.3rem 0;
+            color: #334155;
+        }
+        .global-review-card .author {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            display: block;
+        }
+        .global-review-card .product-name {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        /* --- NEW: Rating Badge on Order Card --- */
+        .rating-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            background: #fef3c7;
+            color: #92400e;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        .rating-badge.rated {
+            background: #dcfce7;
+            color: #166534;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Global Sync Progress Bar -->
+    <div id="sync-progress-bar"></div>
 
     <div class="announcement-bar">
         ⚡ Instant Global Firebase Cloud Sync & IndexedDB Storage Active | Paystack ($ & ₦)
@@ -676,7 +751,7 @@
 
         <!-- Kebab Dropdown Menu -->
         <div class="kebab-menu" id="kebab-menu">
-            <button onclick="openReviewsModal(); toggleKebabMenu();">🌟 See All Customer Reviews</button>
+            <button onclick="openGlobalReviewsModal(); toggleKebabMenu();">🌟 See All Customer Reviews</button>
             <button onclick="openMyReviewsModal(); toggleKebabMenu();">⭐ Rate & Review Orders</button>
             <button onclick="toggleHelpModal(); toggleKebabMenu();">🤖 Help / Virtual Assistant</button>
             <button onclick="toggleRefundModal(); toggleKebabMenu();">🔄 Request Refund</button>
@@ -790,6 +865,7 @@
             <button class="admin-tab" data-tab="orders" onclick="switchAdminTab('orders')">📦 Orders Tracker</button>
             <button class="admin-tab" data-tab="products" onclick="switchAdminTab('products')">🛍️ Products</button>
             <button class="admin-tab" data-tab="promos" onclick="switchAdminTab('promos')">🎟️ Promo Codes</button>
+            <button class="admin-tab" data-tab="reviews" onclick="switchAdminTab('reviews')">⭐ Global Reviews</button>
         </div>
         <div class="full-page-body">
 
@@ -853,6 +929,14 @@
                         <button class="btn-primary" onclick="adminCreatePromoCode()" style="width: auto; padding: 0 1.5rem;">Create Promo</button>
                     </div>
                     <div id="admin-promo-list" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+                </div>
+            </div>
+
+            <div class="admin-tab-content" id="admin-tab-reviews">
+                <div class="admin-section-box">
+                    <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">⭐ Global Customer Reviews</h4>
+                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All reviews submitted by verified customers worldwide. These are synced globally via Firebase and IndexedDB.</p>
+                    <div id="admin-reviews-list" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 500px; overflow-y: auto;"></div>
                 </div>
             </div>
         </div>
@@ -1105,14 +1189,15 @@
         </div>
     </div>
 
+    <!-- GLOBAL REVIEWS MODAL -->
     <div class="modal" id="reviews-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <h3 style="margin: 0;">⭐ Global Customer Ratings & Recommendations</h3>
-                <button class="close-btn" onclick="openReviewsModal()">&times;</button>
+                <button class="close-btn" onclick="openGlobalReviewsModal()">&times;</button>
             </div>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback shared globally by verified international and local customers whose orders were fulfilled. Visible across all devices instantly.</p>
-            <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;"></div>
+            <div class="global-reviews-list" id="modal-reviews-grid"></div>
         </div>
     </div>
 
@@ -1341,8 +1426,9 @@
         const stateRef   = ref(db, 'swiftStoreState');
         const ordersRef  = ref(db, 'swiftOrders');
         const refundsRef = ref(db, 'swiftRefunds');
+        const reviewsRef = ref(db, 'swiftReviews'); // ✅ NEW: Global reviews reference
 
-        const CACHE_VERSION = 10; // ✅ bumped so old cache is flushed once
+        const CACHE_VERSION = 11; // ✅ bumped so old cache is flushed once
 
         let globalState = {
             _cacheVersion: CACHE_VERSION,
@@ -1352,8 +1438,8 @@
             ],
             orders: [],
             reviews: [
-                { name: "@david_t", rating: 5, comment: "Super fast shipping to the US and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
-                { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery.", date: "11/08/2026" }
+                { name: "@david_t", rating: 5, comment: "Super fast shipping to the US and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026", productName: "Wireless Earbuds Pro" },
+                { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery.", date: "11/08/2026", productName: "Smart Fitness Watch" }
             ],
             promoCodes: ["SWIFT5"],
             refunds: []
@@ -1369,6 +1455,7 @@
                 globalState = cached;
                 if (!globalState.refunds) globalState.refunds = [];
                 if (!globalState.orders) globalState.orders = [];
+                if (!globalState.reviews) globalState.reviews = [];
                 if (!globalState.users || globalState.users.length === 0) {
                     globalState.users = [{ username: "admin", name: "Administrator", email: "admin@swiftselect.com", password: "admin" }];
                 }
@@ -1406,6 +1493,26 @@
                 { q: "Can I cancel or change my order?", a: "Orders are processed quickly. If you need immediate assistance, please call our customer care hotline at 08024300891." }
             ]
         };
+
+        // ==================== ✅ GLOBAL SYNC PROGRESS BAR HELPERS ====================
+        function showSyncProgress() {
+            const bar = document.getElementById('sync-progress-bar');
+            if (!bar) return;
+            bar.classList.add('active');
+            bar.style.width = '10%';
+            setTimeout(() => { bar.style.width = '40%'; }, 150);
+            setTimeout(() => { bar.style.width = '70%'; }, 400);
+        }
+
+        function finishSyncProgress() {
+            const bar = document.getElementById('sync-progress-bar');
+            if (!bar) return;
+            bar.style.width = '100%';
+            setTimeout(() => {
+                bar.classList.remove('active');
+                bar.style.width = '0%';
+            }, 600);
+        }
 
         window.toggleKebabMenu = function() {
             const menu = document.getElementById('kebab-menu');
@@ -1474,12 +1581,15 @@
         }
 
         async function saveStateToFirebase() {
+            showSyncProgress();
             await persistCache();
             try {
                 await set(stateRef, buildStatePayload());
             } catch (error) {
                 console.error("Firebase sync error:", error);
                 showToast("⚠️ Sync failed. Check your internet and try again.");
+            } finally {
+                finishSyncProgress();
             }
         }
 
@@ -1489,6 +1599,7 @@
             else globalState.orders[localIdx] = orderRecord;
             await persistCache();
 
+            showSyncProgress();
             try {
                 await runTransaction(ordersRef, (current) => {
                     const arr = normalizeToArray(current);
@@ -1500,6 +1611,8 @@
             } catch (e) {
                 console.error("Order sync error:", e);
                 showToast("⚠️ Order saved locally — syncing again shortly.");
+            } finally {
+                finishSyncProgress();
             }
         }
 
@@ -1509,6 +1622,7 @@
             else globalState.refunds[localIdx] = refundRecord;
             await persistCache();
 
+            showSyncProgress();
             try {
                 await runTransaction(refundsRef, (current) => {
                     const arr = normalizeToArray(current);
@@ -1520,6 +1634,28 @@
             } catch (e) {
                 console.error("Refund sync error:", e);
                 showToast("⚠️ Refund saved locally — syncing again shortly.");
+            } finally {
+                finishSyncProgress();
+            }
+        }
+
+        // ✅ NEW: Save review to Firebase globally
+        async function saveReviewToFirebase(reviewRecord) {
+            globalState.reviews.unshift(reviewRecord);
+            await persistCache();
+
+            showSyncProgress();
+            try {
+                await runTransaction(reviewsRef, (current) => {
+                    const arr = normalizeToArray(current);
+                    arr.unshift(reviewRecord);
+                    return arr;
+                });
+            } catch (e) {
+                console.error("Review sync error:", e);
+                showToast("⚠️ Review saved locally — syncing again shortly.");
+            } finally {
+                finishSyncProgress();
             }
         }
 
@@ -1530,6 +1666,7 @@
             }
             await persistCache();
 
+            showSyncProgress();
             try {
                 await runTransaction(ordersRef, (current) => {
                     const arr = normalizeToArray(current);
@@ -1540,6 +1677,8 @@
             } catch (e) {
                 console.error("Order update sync error:", e);
                 showToast("⚠️ Update may not have synced. Check connection.");
+            } finally {
+                finishSyncProgress();
             }
         }
 
@@ -1552,6 +1691,7 @@
             if (idx !== -1) globalState.refunds[idx].status = newStatus;
             await persistCache();
 
+            showSyncProgress();
             try {
                 await runTransaction(refundsRef, (current) => {
                     const arr = normalizeToArray(current);
@@ -1562,6 +1702,8 @@
             } catch (e) {
                 console.error("Refund status sync error:", e);
                 showToast("⚠️ Refund status may not have synced. Check connection.");
+            } finally {
+                finishSyncProgress();
             }
         }
 
@@ -1570,6 +1712,7 @@
             globalState.orders = globalState.orders.filter(o => String(o.customerUsername || '').toLowerCase() !== uname);
             await persistCache();
 
+            showSyncProgress();
             try {
                 await runTransaction(ordersRef, (current) => {
                     const arr = normalizeToArray(current);
@@ -1577,6 +1720,8 @@
                 });
             } catch (e) {
                 console.error("Clear orders sync error:", e);
+            } finally {
+                finishSyncProgress();
             }
         }
 
@@ -2683,10 +2828,14 @@
             listContainer.innerHTML = [...userOrders].reverse().map(order => {
                 const statusDetails = getStatusDetails(order.status);
                 const rated = !!order.hasReviewed;
+                const canRate = String(order.status || '').includes("Delivered");
                 const rateBtnStyle = rated
                     ? "background:#dcfce7;color:#16a34a;cursor:default;"
-                    : "background:#f59e0b;color:white;";
+                    : canRate 
+                        ? "background:#f59e0b;color:white;"
+                        : "background:#e2e8f0;color:#94a3b8;cursor:not-allowed;";
                 const rateBtnLabel = rated ? '✓ Rated' : '⭐ Rate Us';
+                const rateDisabled = rated || !canRate;
 
                 return `
                 <div class="order-card">
@@ -2718,7 +2867,8 @@
 
                     <div class="order-card-footer">
                         <button class="btn-small" onclick="fillTrackingInput('${order.id}')">📦 Track Order</button>
-                        <button class="btn-small" style="${rateBtnStyle}" onclick="rateOrderFromCard('${order.id}')">${rateBtnLabel}</button>
+                        ${rated ? `<span class="rating-badge rated">✓ Reviewed</span>` : ''}
+                        <button class="btn-small" style="${rateBtnStyle}" onclick="${rateDisabled ? '' : `rateOrderFromCard('${order.id}')`}" ${rateDisabled ? 'disabled' : ''}>${rateBtnLabel}</button>
                     </div>
                 </div>
                 `;
@@ -2736,7 +2886,7 @@
                 return;
             }
             const status = String(order.status || '');
-            if (status !== "Delivered Successfully") {
+            if (!status.includes("Delivered")) {
                 showToast("You can rate this order after it's delivered successfully.");
                 return;
             }
@@ -2762,25 +2912,28 @@
             }
         };
 
+        // ✅ UPDATED: renderReviews for global modal
         window.renderReviews = function() {
             const modalGrid = document.getElementById('modal-reviews-grid');
             if (!modalGrid) return;
 
-            if (globalState.reviews.length === 0) {
+            if (!globalState.reviews || globalState.reviews.length === 0) {
                 modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Delivered orders can submit recommendations globally!</p>';
                 return;
             }
 
             modalGrid.innerHTML = globalState.reviews.map(r => `
-                <div class="review-card" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; font-size: 0.9rem;">
-                    <div class="stars" style="color: var(--accent); margin-bottom: 0.3rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
-                    <p style="margin: 0.3rem 0; color: #334155;">"${r.comment}"</p>
-                    <span class="author" style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block;">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
+                <div class="global-review-card">
+                    <div class="stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                    ${r.productName ? `<div class="product-name">📦 ${r.productName}</div>` : ''}
+                    <p>"${r.comment}"</p>
+                    <span class="author">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
                 </div>
             `).join('');
         };
 
-        window.openReviewsModal = function() {
+        // ✅ NEW: Global reviews modal opener
+        window.openGlobalReviewsModal = function() {
             document.getElementById('reviews-modal').classList.toggle('active');
             renderReviews();
         };
@@ -2914,6 +3067,7 @@
             }
         }
 
+        // ✅ UPDATED: submitReview now saves globally via saveReviewToFirebase
         window.submitReview = function() {
             const comment = document.getElementById('review-comment').value.trim();
             if (!comment) {
@@ -2922,19 +3076,28 @@
             }
 
             const order = globalState.orders.find(o => String(o.id) === String(currentRatingOrderId));
+            let productName = "Multiple Items";
             if (order) {
+                // Try to extract product name from items string
+                const itemsStr = order.items || "";
+                if (itemsStr.length > 0) {
+                    productName = itemsStr.split('(')[0].trim();
+                }
                 updateOrderFieldsInFirebase(order.id, { hasReviewed: true });
             }
 
             const newReview = {
+                id: "REV-" + Date.now(),
                 name: currentUser ? `@${currentUser.username}` : "Verified Customer",
                 rating: selectedStarCount,
                 comment: comment,
-                date: new Date().toLocaleDateString()
+                date: new Date().toLocaleDateString(),
+                productName: productName
             };
 
-            globalState.reviews.unshift(newReview);
-            saveStateToFirebase();
+            // Save to Firebase globally
+            saveReviewToFirebase(newReview);
+            
             renderReviews();
             toggleRatingModal();
             renderRecentOrdersList();
@@ -2991,6 +3154,7 @@
             const tabContent = document.getElementById(`admin-tab-${tab}`);
             if (tabBtn) tabBtn.classList.add('active');
             if (tabContent) tabContent.classList.add('active');
+            if (tab === 'reviews') renderAdminReviewsList();
         };
 
         function renderAdminDashboard() {
@@ -2998,6 +3162,33 @@
             renderAdminOrderList();
             renderAdminProductList();
             renderAdminPromoList();
+            renderAdminReviewsList();
+        }
+
+        // ✅ NEW: Admin reviews list renderer
+        function renderAdminReviewsList() {
+            const container = document.getElementById('admin-reviews-list');
+            if (!container) return;
+
+            if (!globalState.reviews || globalState.reviews.length === 0) {
+                container.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; padding: 1rem;">No reviews submitted yet.</p>';
+                return;
+            }
+
+            container.innerHTML = [...globalState.reviews].map(r => `
+                <div style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem;">
+                        <div>
+                            <span style="color: #f59e0b; font-size: 1.1rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+                            <span style="font-size: 0.8rem; color: #64748b; margin-left: 0.5rem;">${r.rating}/5</span>
+                        </div>
+                        <span style="font-size: 0.75rem; color: #94a3b8;">${r.date}</span>
+                    </div>
+                    ${r.productName ? `<div style="font-size: 0.75rem; color: #4f46e5; font-weight: 700; margin-top: 0.4rem;">📦 ${r.productName}</div>` : ''}
+                    <p style="margin: 0.5rem 0 0.3rem; color: #334155; font-size: 0.9rem;">"${r.comment}"</p>
+                    <div style="font-size: 0.78rem; color: #64748b; font-weight: 600;">— ${r.name}</div>
+                </div>
+            `).join('');
         }
 
         function renderAdminRefundList() {
@@ -3584,9 +3775,10 @@
 
         async function migrateLegacyDataIfNeeded() {
             try {
-                const [ordersSnap, refundsSnap, stateSnap] = await Promise.all([
+                const [ordersSnap, refundsSnap, reviewsSnap, stateSnap] = await Promise.all([
                     get(ordersRef),
                     get(refundsRef),
+                    get(reviewsRef),
                     get(stateRef)
                 ]);
 
@@ -3605,6 +3797,14 @@
                     if (arr.length) {
                         await set(refundsRef, arr);
                         console.log("✅ Migrated", arr.length, "legacy refunds into swiftRefunds");
+                    }
+                }
+
+                if (!reviewsSnap.exists() && legacy.reviews) {
+                    const arr = normalizeToArray(legacy.reviews);
+                    if (arr.length) {
+                        await set(reviewsRef, arr);
+                        console.log("✅ Migrated", arr.length, "legacy reviews into swiftReviews");
                     }
                 }
             } catch (e) {
@@ -3626,15 +3826,12 @@
             const data = snapshot.val();
             if (data) {
                 // ✅ SAFETY: only overwrite cached products if Firebase actually has products (non-empty array)
-                // This prevents the cache from being wiped out by an empty Firebase state.
                 if (data.products && Array.isArray(data.products) && data.products.length > 0) {
                     globalState.products = data.products;
                 } else if (!globalState.products || globalState.products.length === 0) {
-                    // Only accept empty if we truly have nothing cached
                     globalState.products = data.products || [];
                 }
                 if (data.users) globalState.users = data.users;
-                if (data.reviews) globalState.reviews = data.reviews;
                 if (data.promoCodes) globalState.promoCodes = data.promoCodes;
                 globalState._cacheVersion = CACHE_VERSION;
                 await persistCache();
@@ -3646,7 +3843,6 @@
             isProductsLoaded = true;
 
             renderProducts();
-            renderReviews();
             renderAdminProductList();
             renderAdminPromoList();
 
@@ -3668,9 +3864,22 @@
             refreshRefundDependentUI();
         });
 
-        if (!localStorage.getItem('swift_migration_done_v9')) {
+        // ✅ NEW: Global reviews listener
+        onValue(reviewsRef, async (snapshot) => {
+            const reviews = normalizeToArray(snapshot.val());
+            if (reviews.length > 0) {
+                globalState.reviews = reviews;
+            }
+            await persistCache();
+            renderReviews();
+            if (document.getElementById('admin-page').classList.contains('active')) {
+                renderAdminReviewsList();
+            }
+        });
+
+        if (!localStorage.getItem('swift_migration_done_v10')) {
             migrateLegacyDataIfNeeded()
-                .then(() => localStorage.setItem('swift_migration_done_v9', '1'))
+                .then(() => localStorage.setItem('swift_migration_done_v10', '1'))
                 .catch(e => console.warn('Migration skipped:', e));
         }
     </script>
