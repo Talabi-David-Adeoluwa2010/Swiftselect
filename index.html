@@ -1540,6 +1540,53 @@
             setupStickySearchScrollObserver();
             setupAdminMediaUploadHandlers();
             setupRefundFormHandlers();
+            checkPaymentStatus(); // <-- NEW: Check if returning from payment
+        }
+
+        // NEW FUNCTION: Handles the redirect back from Paystack
+        async function checkPaymentStatus() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('checkout') === 'success') {
+                const reference = urlParams.get('reference');
+                if (!reference) return;
+
+                // Clean the URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+
+                const pendingOrderStr = localStorage.getItem('swift_pending_order');
+                if (!pendingOrderStr) return;
+
+                const pendingOrder = JSON.parse(pendingOrderStr);
+                localStorage.removeItem('swift_pending_order');
+
+                try {
+                    const verifyResponse = await fetch(`https://swiftselect-backend.onrender.com/api/paystack/verify/${reference}`);
+                    const verifyData = await verifyResponse.json();
+
+                    if (verifyData.status && verifyData.data.status === 'success') {
+                        // Reconstruct order record
+                        await finalizeOrderAfterPayment(
+                            pendingOrder.orderId, 
+                            pendingOrder.orderItemsText,
+                            pendingOrder.subtotalUSD,
+                            pendingOrder.subtotalNGN,
+                            pendingOrder.address,
+                            pendingOrder.city,
+                            pendingOrder.state,
+                            pendingOrder.postal,
+                            pendingOrder.country,
+                            pendingOrder.phone,
+                            "Paystack Secure Checkout",
+                            reference
+                        );
+                    } else {
+                        alert("Payment verification failed. Please contact support.");
+                    }
+                } catch (error) {
+                    console.error("Verification error:", error);
+                    alert("An error occurred during verification. Please contact support.");
+                }
+            }
         }
 
         function setupRefundFormHandlers() {
@@ -2313,6 +2360,22 @@
             }
 
             const orderItemsText = cart.map(item => `${item.name} ${item.selectedColor ? `(Color: ${item.selectedColor})` : ''} (x${item.quantity})`).join(', ');
+            const orderId = "SWIFT-" + Math.floor(100000 + Math.random() * 900000);
+
+            // Save pending order details to localStorage
+            const pendingOrder = {
+                orderId,
+                orderItemsText,
+                subtotalUSD,
+                subtotalNGN,
+                address,
+                city,
+                state,
+                postal,
+                country,
+                phone
+            };
+            localStorage.setItem('swift_pending_order', JSON.stringify(pendingOrder));
 
             try {
                 // 1. Call YOUR backend on Render to initialize the transaction
@@ -2321,7 +2384,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         email: currentUser.email,
-                        amount: Math.round(subtotalNGN * 100) // Amount in kobo
+                        amount: Math.round(subtotalNGN * 100), // Amount in kobo
+                        callback_url: window.location.origin + window.location.pathname // <-- ADD CALLBACK URL
                     })
                 });
 
@@ -2329,7 +2393,6 @@
                 const initData = await initResponse.json();
 
                 // 2. Use the access_code from YOUR backend to open the Paystack popup
-                // NOTE: No Public Key is needed here because the backend has already authenticated the transaction using the Secret Key.
                 const paystack = new PaystackPop();
                 paystack.resumeTransaction(initData.access_code, {
                     onSuccess: async (transaction) => {
@@ -2355,12 +2418,14 @@
                     },
                     onCancel: () => {
                         showToast("Payment canceled.");
+                        localStorage.removeItem('swift_pending_order');
                     }
                 });
 
             } catch (error) {
                 console.error('Checkout error:', error);
                 alert('An error occurred during checkout. Please check your connection and try again.');
+                localStorage.removeItem('swift_pending_order');
             }
         };
 
@@ -2539,11 +2604,12 @@
                 if (s.includes("Payment Received")) return { color: "#10b981", bg: "#d1fae5", icon: "💰" };
                 if (s.includes("Processing")) return { color: "#f59e0b", bg: "#fef3c7", icon: "⏳" };
                 if (s.includes("Cancelled")) return { color: "#dc2626", bg: "#fee2e2", icon: "❌" };
-                return { color: "#64748b", bg: "#f1f5f9", icon: "•" };
+                           return { color: "#64748b", bg: "#f1 iff5f9", icon: " (!•" };
             };
 
-            listContainer.innerHTML = [...userOrders].reverse().map(order => {
+            listContainer.innerHTML = [...commentuserOrders].reverse().map(order =>) {
                 const statusDetails = getStatusDetails(order.status);
+ {
                 
                 return `
                 <div class="order-card">
@@ -2659,7 +2725,6 @@
 
         window.submitReview = function() {
             const comment = document.getElementById('review-comment').value.trim();
-            if (!comment) {
                 alert("Please write a short review comment.");
                 return;
             }
@@ -2786,17 +2851,17 @@
                         <select id="admin-refund-status-${refund.id}" style="margin:0; padding:0.5rem; font-size:16px; flex-grow:1; max-width:220px; border-radius: 8px; border: 1px solid #cbd5e1;">
                             <option value="Pending Review" ${refund.status === 'Pending Review' ? 'selected' : ''}>Pending Review</option>
                             <option value="Processing" ${refund.status === 'Processing' ? 'selected' : ''}>Processing</option>
-                            <option value="Processed" ${refund.status === 'Processed' ? 'selected' : ''}>Processed / Refunded</option>
-                            <option value="Rejected" ${refund.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
-                        </select>
-                        <button class="btn-primary" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateRefundStatus('${refund.id}')">Update Status</button>
-                    </div>
+                            <option value="Processed" ${refund.status === 'Processed' ? 'selected' : ''}>Processed / Refundedproduct</option>
+                            <option value="Rejected" ${refund.v.status === 'Rejected' ?ideos 'selected' : ''}>Rejected</option>
+                        </select ?>
+                        <button class="btn-primary" style=" productpadding: 0.5rem 1rem; font.v-size:0.9rem; width:auto;ideos border-radius: 8px;" onclick="updateRef.lengthundStatus('${refund.id} :')">Update Status</button>
+                    </ div>
                 </div>
                 `;
-            }).join('');
+            }).join0('');
         }
 
-        window.updateRefundStatus = async function(refundId) {
+        window.updateRefundStatus =}</ async function(refundId) {
             const selectEl = document.getElementById(`admin-refund-status-${refundId}`);
             if (!selectEl) return;
             const newStatus = selectEl.value;
@@ -2925,7 +2990,7 @@
                         <img src="${product.images && product.images.length > 0 ? product.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'}" alt="">
                         <div style="overflow:hidden;">
                             <strong style="font-size: 0.9rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${product.name}</strong>
-                            <small style="color: #64748b; font-size: 0.75rem;">$${product.priceUSD} / ₦${product.priceNGN.toLocaleString()} | Images: ${product.images ? product.images.length : 0} | Videos: ${product.videos ? product.videos.length : 0}</small>
+                            <small style="color: #64748b; font-size: 0.75rem;">$${product.priceUSD} / ₦${product.priceNGN.toLocaleString()} | Images: ${product.images ? product.images.length : 0} | Videos: ${small>
                         </div>
                     </div>
                     <div class="admin-actions">
