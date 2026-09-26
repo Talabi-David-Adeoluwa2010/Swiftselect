@@ -2329,6 +2329,7 @@
                 const initData = await initResponse.json();
 
                 // 2. Use the access_code from YOUR backend to open the Paystack popup
+                // NOTE: No Public Key is needed here because the backend has already authenticated the transaction using the Secret Key.
                 const paystack = new PaystackPop();
                 paystack.resumeTransaction(initData.access_code, {
                     onSuccess: async (transaction) => {
