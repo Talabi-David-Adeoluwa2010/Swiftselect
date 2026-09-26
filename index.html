@@ -139,7 +139,7 @@
             background: white;
             border: 1px solid var(--border);
             color: #0f172a;
-            padding: 0.6rem 1.25rem; /* Increased padding */
+            padding: 0.6rem 1.25rem;
             border-radius: 10px;
             font-size: 0.9rem;
             font-weight: 700;
@@ -187,7 +187,7 @@
             background: transparent;
             border: none;
             text-align: left;
-            padding: 0.85rem 1rem; /* Increased padding */
+            padding: 0.85rem 1rem;
             border-radius: 8px;
             font-size: 0.95rem;
             font-weight: 600;
@@ -338,8 +338,8 @@
 
         /* Standardized Buttons */
         .btn-primary, .btn-secondary, .btn-danger {
-            padding: 0.85rem 1.5rem; /* Increased padding for better size */
-            font-size: 1rem;         /* Increased font size */
+            padding: 0.85rem 1.5rem;
+            font-size: 1rem;
             font-weight: 700;
             border-radius: 12px;
             cursor: pointer;
@@ -1265,7 +1265,7 @@
         const ordersRef  = ref(db, 'swiftOrders');
         const refundsRef = ref(db, 'swiftRefunds');
 
-        const CACHE_VERSION = 9; // Bumped for new UI structure and modal
+        const CACHE_VERSION = 9; 
 
         let globalState = {
             _cacheVersion: CACHE_VERSION,
@@ -2291,7 +2291,8 @@
             }
         };
 
-        window.completeOrder = function() {
+        // THIS IS THE UPDATED FUNCTION CONNECTING TO YOUR RENDER BACKEND
+        window.completeOrder = async function() {
             const address = document.getElementById('bill-address').value;
             const city = document.getElementById('bill-city').value;
             const state = document.getElementById('bill-state').value;
@@ -2311,22 +2312,55 @@
                 subtotalNGN *= 0.95;
             }
 
-            const orderId = "SWIFT-" + Math.floor(100000 + Math.random() * 900000);
             const orderItemsText = cart.map(item => `${item.name} ${item.selectedColor ? `(Color: ${item.selectedColor})` : ''} (x${item.quantity})`).join(', ');
 
-            const paystack = new PaystackPop();
-            paystack.newTransaction({
-                key: 'pk_test_39438c3bc888f009126807aef5f4f55def72ef05',
-                email: currentUser.email,
-                amount: Math.round(subtotalNGN * 100), 
-                currency: 'NGN',
-                onSuccess: function(transaction) {
-                    finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, "Paystack Secure Checkout", transaction.reference);
-                },
-                onCancel: function() {
-                    showToast("Payment canceled.");
-                }
-            });
+            try {
+                // 1. Call YOUR backend on Render to initialize the transaction
+                const initResponse = await fetch('https://swiftselect-backend.onrender.com/api/paystack/initialize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentUser.email,
+                        amount: Math.round(subtotalNGN * 100) // Amount in kobo
+                    })
+                });
+
+                if (!initResponse.ok) throw new Error('Failed to initialize payment');
+                const initData = await initResponse.json();
+
+                // 2. Use the access_code from YOUR backend to open the Paystack popup
+                const paystack = new PaystackPop();
+                paystack.resumeTransaction(initData.access_code, {
+                    onSuccess: async (transaction) => {
+                        // 3. On success, send the reference to YOUR backend for verification
+                        try {
+                            const verifyResponse = await fetch(`https://swiftselect-backend.onrender.com/api/paystack/verify/${transaction.reference}`);
+                            const verifyData = await verifyResponse.json();
+
+                            if (verifyData.status && verifyData.data.status === 'success') {
+                                // Payment is verified! Now finalize the order.
+                                await finalizeOrderAfterPayment(
+                                    transaction.reference, 
+                                    orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone,
+                                    "Paystack Secure Checkout", transaction.reference
+                                );
+                            } else {
+                                alert("Payment verification failed. Please contact support.");
+                            }
+                        } catch (error) {
+                            console.error("Verification error:", error);
+                            alert("An error occurred during verification. Please contact support.");
+                        }
+                    },
+                    onCancel: () => {
+                        showToast("Payment canceled.");
+                    }
+                });
+
+            } catch (error) {
+                console.error('Checkout error:', error);
+                alert('An error occurred during checkout. Please check your connection and try again.');
+            }
         };
 
         async function finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, paymentMethod, reference) {
