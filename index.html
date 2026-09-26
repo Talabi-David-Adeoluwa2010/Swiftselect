@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Strict viewport to prevent zooming but allow responsive scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>SwiftSelect - Premium Online Store</title>
     
@@ -170,7 +169,7 @@
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             z-index: 200;
-            width: 240px;
+            width: 260px;
             padding: 0.5rem;
             animation: fadeIn 0.2s ease;
         }
@@ -648,8 +647,9 @@
         </div>
 
         <!-- Kebab Dropdown Menu -->
-        <!-- ✅ UPDATED: Added "Rate & Review Orders" button at the top -->
+        <!-- ✅ UPDATED: Added "See All Customer Reviews" + kept Rate & Review Orders -->
         <div class="kebab-menu" id="kebab-menu">
+            <button onclick="openReviewsModal(); toggleKebabMenu();">🌟 See All Customer Reviews</button>
             <button onclick="openMyReviewsModal(); toggleKebabMenu();">⭐ Rate & Review Orders</button>
             <button onclick="toggleHelpModal(); toggleKebabMenu();">🤖 Help / Virtual Assistant</button>
             <button onclick="toggleRefundModal(); toggleKebabMenu();">🔄 Request Refund</button>
@@ -1133,7 +1133,7 @@
         </div>
     </div>
 
-    <!-- ✅ NEW: MY REVIEWS MODAL (accessed from kebab menu) -->
+    <!-- MY REVIEWS MODAL (accessed from kebab menu) -->
     <div class="modal" id="my-reviews-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -1209,15 +1209,16 @@
         };
 
         // ==================== ✅ EMAILJS ORDER NOTIFICATION ====================
-        // 🔴 REPLACE THESE 3 VALUES with your real ones from https://dashboard.emailjs.com/
-        const EMAILJS_SERVICE_ID        = "YOUR_SERVICE_ID";        // e.g. "service_abc1234"
-        const EMAILJS_TEMPLATE_ID       = "YOUR_TEMPLATE_ID";       // e.g. "template_xyz9876"
-        const ORDER_NOTIFICATION_EMAIL  = "your-email@example.com"; // 👈 YOUR inbox (where you receive orders)
+        // ✅ Real values wired in from your EmailJS dashboard
+        const EMAILJS_SERVICE_ID           = "Swift_alerts";              // ✅ your Service ID
+        const EMAILJS_ADMIN_TEMPLATE_ID    = "template_tuq2hhk";          // ✅ sends order to YOU (admin)
+        const EMAILJS_CUSTOMER_TEMPLATE_ID = "template_hv2kyh6";          // ✅ sends confirmation to BUYER
+        const ORDER_NOTIFICATION_EMAIL     = "talabidavid275@gmail.com";  // ✅ your inbox
 
         async function sendOrderNotificationEmail(orderRecord) {
             try {
                 if (!window.emailjs) {
-                    console.warn("⚠️ EmailJS SDK not loaded yet. Skipping email.");
+                    console.warn("⚠️ EmailJS SDK not loaded yet. Skipping admin email.");
                     return;
                 }
                 const templateParams = {
@@ -1233,11 +1234,40 @@
                     status:            orderRecord.status,
                     order_date:        orderRecord.date
                 };
-                const res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-                console.log("✅ Order notification email sent:", res.status, res.text);
+                const res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ADMIN_TEMPLATE_ID, templateParams);
+                console.log("✅ ADMIN order email sent:", res.status, res.text);
             } catch (e) {
-                console.error("❌ EmailJS send error:", e);
-                // Do NOT throw — we don't want email failure to break order finalization
+                console.error("❌ EmailJS admin send error:", e);
+            }
+        }
+
+        async function sendCustomerConfirmationEmail(orderRecord) {
+            try {
+                if (!window.emailjs) {
+                    console.warn("⚠️ EmailJS SDK not loaded yet. Skipping customer email.");
+                    return;
+                }
+                if (!orderRecord.customerEmail) {
+                    console.warn("⚠️ No customer email on order — skipping customer confirmation.");
+                    return;
+                }
+                const templateParams = {
+                    to_email:          orderRecord.customerEmail,
+                    order_id:          orderRecord.id,
+                    customer_name:     orderRecord.customerName,
+                    customer_username: orderRecord.customerUsername,
+                    customer_email:    orderRecord.customerEmail,
+                    phone:             orderRecord.phone,
+                    address:           orderRecord.address,
+                    items:             orderRecord.items,
+                    total_paid:        orderRecord.totalPaid,
+                    status:            orderRecord.status,
+                    order_date:        orderRecord.date
+                };
+                const res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE_ID, templateParams);
+                console.log("✅ CUSTOMER confirmation email sent:", res.status, res.text);
+            } catch (e) {
+                console.error("❌ EmailJS customer send error:", e);
             }
         }
 
@@ -1545,7 +1575,6 @@
                 try { trackOrder(); } catch (e) { console.warn(e); }
             }
 
-            // ✅ NEW: also refresh the My Reviews modal if open
             const myReviewsModal = document.getElementById('my-reviews-modal');
             if (myReviewsModal && myReviewsModal.classList.contains('active')) {
                 try { renderMyReviewsModal(); } catch (e) { console.warn(e); }
@@ -2472,8 +2501,11 @@
 
             await saveOrderToFirebase(newOrderRecord);
 
-            // ✅ NEW: Send order notification email to the store owner via EmailJS
+            // ✅ Send order notification email to YOU (admin)
             await sendOrderNotificationEmail(newOrderRecord);
+
+            // ✅ Send order confirmation email to the BUYER (customer)
+            await sendCustomerConfirmationEmail(newOrderRecord);
 
             renderRecentOrdersList();
             finalizeOrderCleanUp();
@@ -2713,7 +2745,6 @@
             renderReviews();
         };
 
-        // ==================== ✅ NEW: MY REVIEWS MODAL FUNCTIONS ====================
         window.openMyReviewsModal = function() {
             const modal = document.getElementById('my-reviews-modal');
             modal.classList.add('active');
@@ -2868,7 +2899,6 @@
             renderReviews();
             toggleRatingModal();
             renderRecentOrdersList();
-            // ✅ NEW: refresh the My Reviews modal list so the order moves to "Already Reviewed"
             renderMyReviewsModal();
             showToast("Thank you! Your recommendation is now visible globally across all devices.");
         };
@@ -3567,6 +3597,12 @@
             renderReviews();
             renderAdminProductList();
             renderAdminPromoList();
+
+            // ✅ Live-refresh the "See All Reviews" modal if it's currently open
+            const reviewsModal = document.getElementById('reviews-modal');
+            if (reviewsModal && reviewsModal.classList.contains('active')) {
+                try { renderReviews(); } catch (e) { console.warn(e); }
+            }
         });
 
         onValue(ordersRef, async (snapshot) => {
