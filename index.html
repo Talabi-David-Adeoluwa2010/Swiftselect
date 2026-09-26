@@ -1540,31 +1540,30 @@
             setupStickySearchScrollObserver();
             setupAdminMediaUploadHandlers();
             setupRefundFormHandlers();
-            checkPaymentStatus(); // <-- NEW: Check if returning from payment
+            checkPaymentStatus(); // <-- Check if returning from payment
         }
 
         // NEW FUNCTION: Handles the redirect back from Paystack
         async function checkPaymentStatus() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('checkout') === 'success') {
-                const reference = urlParams.get('reference');
-                if (!reference) return;
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('checkout') === 'success') {
+                    const reference = urlParams.get('reference');
+                    if (!reference) return;
 
-                // Clean the URL
-                window.history.replaceState({}, document.title, window.location.pathname);
+                    // Clean the URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
 
-                const pendingOrderStr = localStorage.getItem('swift_pending_order');
-                if (!pendingOrderStr) return;
+                    const pendingOrderStr = localStorage.getItem('swift_pending_order');
+                    if (!pendingOrderStr) return;
 
-                const pendingOrder = JSON.parse(pendingOrderStr);
-                localStorage.removeItem('swift_pending_order');
+                    const pendingOrder = JSON.parse(pendingOrderStr);
+                    localStorage.removeItem('swift_pending_order');
 
-                try {
                     const verifyResponse = await fetch(`https://swiftselect-backend.onrender.com/api/paystack/verify/${reference}`);
                     const verifyData = await verifyResponse.json();
 
                     if (verifyData.status && verifyData.data.status === 'success') {
-                        // Reconstruct order record
                         await finalizeOrderAfterPayment(
                             pendingOrder.orderId, 
                             pendingOrder.orderItemsText,
@@ -1580,12 +1579,12 @@
                             reference
                         );
                     } else {
-                        alert("Payment verification failed. Please contact support.");
+                        showToast("Payment verification failed. Please contact support.");
                     }
-                } catch (error) {
-                    console.error("Verification error:", error);
-                    alert("An error occurred during verification. Please contact support.");
                 }
+            } catch (error) {
+                console.error("Payment check error:", error);
+                showToast("⚠️ Verification error. Please check your orders or contact support.");
             }
         }
 
@@ -2604,12 +2603,11 @@
                 if (s.includes("Payment Received")) return { color: "#10b981", bg: "#d1fae5", icon: "💰" };
                 if (s.includes("Processing")) return { color: "#f59e0b", bg: "#fef3c7", icon: "⏳" };
                 if (s.includes("Cancelled")) return { color: "#dc2626", bg: "#fee2e2", icon: "❌" };
-                           return { color: "#64748b", bg: "#f1 iff5f9", icon: " (!•" };
+                return { color: "#64748b", bg: "#f1f5f9", icon: "•" };
             };
 
-            listContainer.innerHTML = [...commentuserOrders].reverse().map(order =>) {
+            listContainer.innerHTML = [...userOrders].reverse().map(order => {
                 const statusDetails = getStatusDetails(order.status);
- {
                 
                 return `
                 <div class="order-card">
@@ -2725,6 +2723,7 @@
 
         window.submitReview = function() {
             const comment = document.getElementById('review-comment').value.trim();
+            if (!comment) {
                 alert("Please write a short review comment.");
                 return;
             }
@@ -2851,17 +2850,17 @@
                         <select id="admin-refund-status-${refund.id}" style="margin:0; padding:0.5rem; font-size:16px; flex-grow:1; max-width:220px; border-radius: 8px; border: 1px solid #cbd5e1;">
                             <option value="Pending Review" ${refund.status === 'Pending Review' ? 'selected' : ''}>Pending Review</option>
                             <option value="Processing" ${refund.status === 'Processing' ? 'selected' : ''}>Processing</option>
-                            <option value="Processed" ${refund.status === 'Processed' ? 'selected' : ''}>Processed / Refundedproduct</option>
-                            <option value="Rejected" ${refund.v.status === 'Rejected' ?ideos 'selected' : ''}>Rejected</option>
-                        </select ?>
-                        <button class="btn-primary" style=" productpadding: 0.5rem 1rem; font.v-size:0.9rem; width:auto;ideos border-radius: 8px;" onclick="updateRef.lengthundStatus('${refund.id} :')">Update Status</button>
-                    </ div>
+                            <option value="Processed" ${refund.status === 'Processed' ? 'selected' : ''}>Processed / Refunded</option>
+                            <option value="Rejected" ${refund.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                        </select>
+                        <button class="btn-primary" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateRefundStatus('${refund.id}')">Update Status</button>
+                    </div>
                 </div>
                 `;
-            }).join0('');
+            }).join('');
         }
 
-        window.updateRefundStatus =}</ async function(refundId) {
+        window.updateRefundStatus = async function(refundId) {
             const selectEl = document.getElementById(`admin-refund-status-${refundId}`);
             if (!selectEl) return;
             const newStatus = selectEl.value;
@@ -2990,7 +2989,7 @@
                         <img src="${product.images && product.images.length > 0 ? product.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'}" alt="">
                         <div style="overflow:hidden;">
                             <strong style="font-size: 0.9rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${product.name}</strong>
-                            <small style="color: #64748b; font-size: 0.75rem;">$${product.priceUSD} / ₦${product.priceNGN.toLocaleString()} | Images: ${product.images ? product.images.length : 0} | Videos: ${small>
+                            <small style="color: #64748b; font-size: 0.75rem;">$${product.priceUSD} / ₦${product.priceNGN.toLocaleString()} | Images: ${product.images ? product.images.length : 0} | Videos: ${product.videos ? product.videos.length : 0}</small>
                         </div>
                     </div>
                     <div class="admin-actions">
