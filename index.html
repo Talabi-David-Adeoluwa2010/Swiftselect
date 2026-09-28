@@ -244,6 +244,23 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid #e0e7ff; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.9s linear infinite; }
 
+        /* ✅ Inline spinner for buttons */
+        .btn-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+        }
+        .btn-spinner.dark {
+            border: 2px solid rgba(79, 70, 229, 0.3);
+            border-top-color: var(--primary);
+        }
+
         .size-selector { display: flex; gap: 0.35rem; flex-wrap: wrap; }
         .size-btn { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.4rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; }
         .size-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
@@ -638,84 +655,9 @@
             0% { opacity: 0; transform: translateY(20px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-
-        /* --- NEW: Global sync progress bar --- */
-        #sync-progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), #9333ea);
-            width: 0%;
-            z-index: 9999;
-            transition: width 0.3s ease, opacity 0.5s ease;
-            opacity: 0;
-            pointer-events: none;
-        }
-        #sync-progress-bar.active {
-            opacity: 1;
-        }
-
-        /* --- NEW: Reviews Global Modal --- */
-        .global-reviews-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 0.25rem;
-        }
-        .global-review-card {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            padding: 1rem;
-            border-radius: 12px;
-            font-size: 0.9rem;
-        }
-        .global-review-card .stars {
-            color: var(--accent);
-            margin-bottom: 0.3rem;
-        }
-        .global-review-card p {
-            margin: 0.3rem 0;
-            color: #334155;
-        }
-        .global-review-card .author {
-            font-size: 0.75rem;
-            color: #64748b;
-            font-weight: 600;
-            margin-top: 0.5rem;
-            display: block;
-        }
-        .global-review-card .product-name {
-            font-size: 0.75rem;
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 0.3rem;
-        }
-
-        /* --- NEW: Rating Badge on Order Card --- */
-        .rating-badge {
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 0.15rem 0.5rem;
-            border-radius: 12px;
-            background: #fef3c7;
-            color: #92400e;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.2rem;
-        }
-        .rating-badge.rated {
-            background: #dcfce7;
-            color: #166534;
-        }
     </style>
 </head>
 <body>
-
-    <!-- Global Sync Progress Bar -->
-    <div id="sync-progress-bar"></div>
 
     <div class="announcement-bar">
         ⚡ Instant Global Firebase Cloud Sync & IndexedDB Storage Active | Paystack ($ & ₦)
@@ -751,7 +693,7 @@
 
         <!-- Kebab Dropdown Menu -->
         <div class="kebab-menu" id="kebab-menu">
-            <button onclick="openGlobalReviewsModal(); toggleKebabMenu();">🌟 See All Customer Reviews</button>
+            <button onclick="openReviewsModal(); toggleKebabMenu();">🌟 See All Customer Reviews</button>
             <button onclick="openMyReviewsModal(); toggleKebabMenu();">⭐ Rate & Review Orders</button>
             <button onclick="toggleHelpModal(); toggleKebabMenu();">🤖 Help / Virtual Assistant</button>
             <button onclick="toggleRefundModal(); toggleKebabMenu();">🔄 Request Refund</button>
@@ -865,7 +807,6 @@
             <button class="admin-tab" data-tab="orders" onclick="switchAdminTab('orders')">📦 Orders Tracker</button>
             <button class="admin-tab" data-tab="products" onclick="switchAdminTab('products')">🛍️ Products</button>
             <button class="admin-tab" data-tab="promos" onclick="switchAdminTab('promos')">🎟️ Promo Codes</button>
-            <button class="admin-tab" data-tab="reviews" onclick="switchAdminTab('reviews')">⭐ Global Reviews</button>
         </div>
         <div class="full-page-body">
 
@@ -929,14 +870,6 @@
                         <button class="btn-primary" onclick="adminCreatePromoCode()" style="width: auto; padding: 0 1.5rem;">Create Promo</button>
                     </div>
                     <div id="admin-promo-list" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
-                </div>
-            </div>
-
-            <div class="admin-tab-content" id="admin-tab-reviews">
-                <div class="admin-section-box">
-                    <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">⭐ Global Customer Reviews</h4>
-                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 1rem;">All reviews submitted by verified customers worldwide. These are synced globally via Firebase and IndexedDB.</p>
-                    <div id="admin-reviews-list" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 500px; overflow-y: auto;"></div>
                 </div>
             </div>
         </div>
@@ -1091,7 +1024,7 @@
                 </div>
             </div>
 
-            <button class="btn-primary" onclick="submitRefundRequest()" style="width:100%; margin-bottom:0.75rem;">Submit Refund Request</button>
+            <button class="btn-primary" id="refund-submit-btn" onclick="submitRefundRequest()" style="width:100%; margin-bottom:0.75rem;">Submit Refund Request</button>
             <button class="btn-secondary" onclick="toggleRefundModal()" style="width:100%;">Cancel</button>
         </div>
     </div>
@@ -1173,7 +1106,7 @@
                 <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Enter your Username or Email and password to access your account globally.</p>
                 <input type="text" id="login-username-or-email" placeholder="Username or Email Address">
                 <input type="password" id="login-password" placeholder="Password">
-                <button class="btn-primary" onclick="loginUser()" style="width:100%; margin-bottom:0.75rem;">Login</button>
+                <button class="btn-primary" id="login-btn" onclick="loginUser()" style="width:100%; margin-bottom:0.75rem;">Login</button>
                 <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
             </div>
             <div id="signup-form-container" style="display: none;">
@@ -1183,21 +1116,20 @@
                 <input type="text" id="signup-name" placeholder="Full Name">
                 <input type="email" id="signup-email" placeholder="Email Address">
                 <input type="password" id="signup-password" placeholder="Create Password">
-                <button class="btn-primary" onclick="signupUser()" style="width:100%; margin-bottom:0.75rem;">Create Global Account & Login</button>
+                <button class="btn-primary" id="signup-btn" onclick="signupUser()" style="width:100%; margin-bottom:0.75rem;">Create Global Account & Login</button>
                 <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- GLOBAL REVIEWS MODAL -->
     <div class="modal" id="reviews-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <h3 style="margin: 0;">⭐ Global Customer Ratings & Recommendations</h3>
-                <button class="close-btn" onclick="openGlobalReviewsModal()">&times;</button>
+                <button class="close-btn" onclick="openReviewsModal()">&times;</button>
             </div>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Browse feedback shared globally by verified international and local customers whose orders were fulfilled. Visible across all devices instantly.</p>
-            <div class="global-reviews-list" id="modal-reviews-grid"></div>
+            <div class="reviews-grid" id="modal-reviews-grid" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;"></div>
         </div>
     </div>
 
@@ -1222,7 +1154,7 @@
             <select id="bill-payment">
                 <option value="Card Payment">Secure Online Payment via Paystack (Card, USSD, etc.)</option>
             </select>
-            <button class="btn-primary" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">Proceed to Payment</button>
+            <button class="btn-primary" id="pay-btn" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">Proceed to Payment</button>
             <button class="btn-secondary" onclick="toggleBillingModal()" style="width:100%;">Cancel</button>
         </div>
     </div>
@@ -1240,7 +1172,7 @@
                 <span onclick="setRating(5)">★</span>
             </div>
             <textarea id="review-comment" placeholder="Write a short review about your experience and the product quality..." rows="3"></textarea>
-            <button class="btn-primary" onclick="submitReview()" style="width:100%; margin-bottom:0.75rem;">Submit Global Recommendation</button>
+            <button class="btn-primary" id="review-submit-btn" onclick="submitReview()" style="width:100%; margin-bottom:0.75rem;">Submit Global Recommendation</button>
             <button class="btn-secondary" onclick="toggleRatingModal()" style="width:100%;">Skip for now</button>
         </div>
     </div>
@@ -1426,9 +1358,8 @@
         const stateRef   = ref(db, 'swiftStoreState');
         const ordersRef  = ref(db, 'swiftOrders');
         const refundsRef = ref(db, 'swiftRefunds');
-        const reviewsRef = ref(db, 'swiftReviews'); // ✅ NEW: Global reviews reference
 
-        const CACHE_VERSION = 11; // ✅ bumped so old cache is flushed once
+        const CACHE_VERSION = 11;
 
         let globalState = {
             _cacheVersion: CACHE_VERSION,
@@ -1438,8 +1369,8 @@
             ],
             orders: [],
             reviews: [
-                { name: "@david_t", rating: 5, comment: "Super fast shipping to the US and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026", productName: "Wireless Earbuds Pro" },
-                { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery.", date: "11/08/2026", productName: "Smart Fitness Watch" }
+                { name: "@david_t", rating: 5, comment: "Super fast shipping to the US and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
+                { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery.", date: "11/08/2026" }
             ],
             promoCodes: ["SWIFT5"],
             refunds: []
@@ -1448,24 +1379,45 @@
         let isProductsLoaded = false;
         let lastSubmittedRefundId = null;
 
-        // ✅ Load cache first — this blocks module execution so products render instantly
-        try {
-            const cached = await dbHelper.get('swift_cached_state');
-            if (cached && cached._cacheVersion === CACHE_VERSION && cached.products) {
-                globalState = cached;
-                if (!globalState.refunds) globalState.refunds = [];
-                if (!globalState.orders) globalState.orders = [];
-                if (!globalState.reviews) globalState.reviews = [];
-                if (!globalState.users || globalState.users.length === 0) {
-                    globalState.users = [{ username: "admin", name: "Administrator", email: "admin@swiftselect.com", password: "admin" }];
+        // ==================== ✅ SMART CACHE LOAD ====================
+        const FORCE_FRESH = localStorage.getItem('swift_force_fresh_sync') === '1';
+        if (FORCE_FRESH) {
+            localStorage.removeItem('swift_force_fresh_sync');
+            console.log("🔄 Force fresh sync requested — will show loading spinner.");
+        }
+
+        let cacheLoadedProducts = 0;
+
+        if (!FORCE_FRESH) {
+            try {
+                const cached = await dbHelper.get('swift_cached_state');
+                if (cached) {
+                    globalState = { ...globalState, ...cached };
+                    globalState._cacheVersion = CACHE_VERSION;
+
+                    if (!Array.isArray(globalState.products))   globalState.products = [];
+                    if (!Array.isArray(globalState.orders))     globalState.orders = [];
+                    if (!Array.isArray(globalState.reviews))    globalState.reviews = [];
+                    if (!Array.isArray(globalState.refunds))    globalState.refunds = [];
+                    if (!Array.isArray(globalState.promoCodes)) globalState.promoCodes = ["SWIFT5"];
+                    if (!Array.isArray(globalState.users) || globalState.users.length === 0) {
+                        globalState.users = [{ username: "admin", name: "Administrator", email: "admin@swiftselect.com", password: "admin" }];
+                    }
+
+                    cacheLoadedProducts = globalState.products.length;
+
+                    if (cacheLoadedProducts > 0) {
+                        isProductsLoaded = true;
+                        console.log("✅ Cache hit:", cacheLoadedProducts, "products loaded instantly — no spinner.");
+                    } else {
+                        console.log("📭 Cache exists but has 0 products — will show spinner while Firebase loads.");
+                    }
+                } else {
+                    console.log("🆕 No cache on this device — will show spinner while Firebase loads.");
                 }
-                if (globalState.products.length > 0) {
-                    isProductsLoaded = true;
-                    console.log("✅ Cache hit:", globalState.products.length, "products loaded instantly.");
-                }
+            } catch (e) {
+                console.error("IndexedDB cache load error:", e);
             }
-        } catch (e) {
-            console.error("IndexedDB cache load error:", e);
         }
 
         let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
@@ -1478,6 +1430,28 @@
         let adminSelectedImages = [];
         let adminSelectedVideos = [];
         let editingProductId = null;
+
+        // ==================== ✅ LOADING BUTTON HELPERS ====================
+        // Locks a button and shows an inline spinner + custom label.
+        // Returns a function to restore the button to its original state.
+        function lockButton(btnOrSelector, loadingText = "Please wait…") {
+            let btn = typeof btnOrSelector === 'string'
+                ? document.querySelector(btnOrSelector)
+                : btnOrSelector;
+            if (!btn) return () => {};
+            const originalHTML = btn.innerHTML;
+            const originalDisabled = btn.disabled;
+            btn.disabled = true;
+            btn.style.opacity = "0.75";
+            btn.style.cursor = "wait";
+            btn.innerHTML = `<span class="btn-spinner"></span>${loadingText}`;
+            return function restore() {
+                btn.innerHTML = originalHTML;
+                btn.disabled = originalDisabled;
+                btn.style.opacity = "";
+                btn.style.cursor = "";
+            };
+        }
 
         const faqData = {
             shipping: [
@@ -1493,26 +1467,6 @@
                 { q: "Can I cancel or change my order?", a: "Orders are processed quickly. If you need immediate assistance, please call our customer care hotline at 08024300891." }
             ]
         };
-
-        // ==================== ✅ GLOBAL SYNC PROGRESS BAR HELPERS ====================
-        function showSyncProgress() {
-            const bar = document.getElementById('sync-progress-bar');
-            if (!bar) return;
-            bar.classList.add('active');
-            bar.style.width = '10%';
-            setTimeout(() => { bar.style.width = '40%'; }, 150);
-            setTimeout(() => { bar.style.width = '70%'; }, 400);
-        }
-
-        function finishSyncProgress() {
-            const bar = document.getElementById('sync-progress-bar');
-            if (!bar) return;
-            bar.style.width = '100%';
-            setTimeout(() => {
-                bar.classList.remove('active');
-                bar.style.width = '0%';
-            }, 600);
-        }
 
         window.toggleKebabMenu = function() {
             const menu = document.getElementById('kebab-menu');
@@ -1581,15 +1535,12 @@
         }
 
         async function saveStateToFirebase() {
-            showSyncProgress();
             await persistCache();
             try {
                 await set(stateRef, buildStatePayload());
             } catch (error) {
                 console.error("Firebase sync error:", error);
                 showToast("⚠️ Sync failed. Check your internet and try again.");
-            } finally {
-                finishSyncProgress();
             }
         }
 
@@ -1599,7 +1550,6 @@
             else globalState.orders[localIdx] = orderRecord;
             await persistCache();
 
-            showSyncProgress();
             try {
                 await runTransaction(ordersRef, (current) => {
                     const arr = normalizeToArray(current);
@@ -1611,8 +1561,6 @@
             } catch (e) {
                 console.error("Order sync error:", e);
                 showToast("⚠️ Order saved locally — syncing again shortly.");
-            } finally {
-                finishSyncProgress();
             }
         }
 
@@ -1622,7 +1570,6 @@
             else globalState.refunds[localIdx] = refundRecord;
             await persistCache();
 
-            showSyncProgress();
             try {
                 await runTransaction(refundsRef, (current) => {
                     const arr = normalizeToArray(current);
@@ -1634,28 +1581,6 @@
             } catch (e) {
                 console.error("Refund sync error:", e);
                 showToast("⚠️ Refund saved locally — syncing again shortly.");
-            } finally {
-                finishSyncProgress();
-            }
-        }
-
-        // ✅ NEW: Save review to Firebase globally
-        async function saveReviewToFirebase(reviewRecord) {
-            globalState.reviews.unshift(reviewRecord);
-            await persistCache();
-
-            showSyncProgress();
-            try {
-                await runTransaction(reviewsRef, (current) => {
-                    const arr = normalizeToArray(current);
-                    arr.unshift(reviewRecord);
-                    return arr;
-                });
-            } catch (e) {
-                console.error("Review sync error:", e);
-                showToast("⚠️ Review saved locally — syncing again shortly.");
-            } finally {
-                finishSyncProgress();
             }
         }
 
@@ -1666,7 +1591,6 @@
             }
             await persistCache();
 
-            showSyncProgress();
             try {
                 await runTransaction(ordersRef, (current) => {
                     const arr = normalizeToArray(current);
@@ -1677,8 +1601,6 @@
             } catch (e) {
                 console.error("Order update sync error:", e);
                 showToast("⚠️ Update may not have synced. Check connection.");
-            } finally {
-                finishSyncProgress();
             }
         }
 
@@ -1691,7 +1613,6 @@
             if (idx !== -1) globalState.refunds[idx].status = newStatus;
             await persistCache();
 
-            showSyncProgress();
             try {
                 await runTransaction(refundsRef, (current) => {
                     const arr = normalizeToArray(current);
@@ -1702,8 +1623,6 @@
             } catch (e) {
                 console.error("Refund status sync error:", e);
                 showToast("⚠️ Refund status may not have synced. Check connection.");
-            } finally {
-                finishSyncProgress();
             }
         }
 
@@ -1712,7 +1631,6 @@
             globalState.orders = globalState.orders.filter(o => String(o.customerUsername || '').toLowerCase() !== uname);
             await persistCache();
 
-            showSyncProgress();
             try {
                 await runTransaction(ordersRef, (current) => {
                     const arr = normalizeToArray(current);
@@ -1720,8 +1638,6 @@
                 });
             } catch (e) {
                 console.error("Clear orders sync error:", e);
-            } finally {
-                finishSyncProgress();
             }
         }
 
@@ -1772,48 +1688,71 @@
             checkPaymentStatus();
         }
 
+        // ==================== ✅ PAYMENT RETURN HANDLING ====================
         async function checkPaymentStatus() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.get('checkout') === 'success') {
-                    const reference = urlParams.get('reference');
-                    if (!reference) return;
+                const reference = urlParams.get('reference') || urlParams.get('trxref');
+                if (!reference) return;
 
-                    window.history.replaceState({}, document.title, window.location.pathname);
+                window.history.replaceState({}, document.title, window.location.pathname);
 
-                    const pendingOrderStr = localStorage.getItem('swift_pending_order');
-                    if (!pendingOrderStr) return;
+                const pendingOrderStr = localStorage.getItem('swift_pending_order');
+                if (!pendingOrderStr) return;
 
-                    const pendingOrder = JSON.parse(pendingOrderStr);
-                    localStorage.removeItem('swift_pending_order');
+                const pendingOrder = JSON.parse(pendingOrderStr);
+                localStorage.removeItem('swift_pending_order');
 
-                    const verifyResponse = await fetch(`https://swiftselect-backend.onrender.com/api/paystack/verify/${reference}`);
-                    const verifyData = await verifyResponse.json();
+                try {
+                    localStorage.setItem('swift_payment_verified_signal', JSON.stringify({
+                        reference,
+                        orderId: pendingOrder.orderId,
+                        ts: Date.now()
+                    }));
+                } catch (e) { /* ignore quota errors */ }
 
-                    if (verifyData.status && verifyData.data.status === 'success') {
-                        await finalizeOrderAfterPayment(
-                            pendingOrder.orderId, 
-                            pendingOrder.orderItemsText,
-                            pendingOrder.subtotalUSD,
-                            pendingOrder.subtotalNGN,
-                            pendingOrder.address,
-                            pendingOrder.city,
-                            pendingOrder.state,
-                            pendingOrder.postal,
-                            pendingOrder.country,
-                            pendingOrder.phone,
-                            "Paystack Secure Checkout",
-                            reference
-                        );
-                    } else {
-                        showToast("Payment verification failed. Please contact support.");
-                    }
+                const verifyResponse = await fetch(`https://swiftselect-backend.onrender.com/api/paystack/verify/${reference}`);
+                const verifyData = await verifyResponse.json();
+
+                if (verifyData.status && verifyData.data.status === 'success') {
+                    await finalizeOrderAfterPayment(
+                        pendingOrder.orderId,
+                        pendingOrder.orderItemsText,
+                        pendingOrder.subtotalUSD,
+                        pendingOrder.subtotalNGN,
+                        pendingOrder.address,
+                        pendingOrder.city,
+                        pendingOrder.state,
+                        pendingOrder.postal,
+                        pendingOrder.country,
+                        pendingOrder.phone,
+                        "Paystack Secure Checkout",
+                        reference
+                    );
+
+                    document.getElementById('payment-verification-modal').classList.add('active');
+                } else {
+                    showToast("Payment verification failed. Please contact support.");
                 }
             } catch (error) {
                 console.error("Payment check error:", error);
                 showToast("⚠️ Verification error. Please check your orders or contact support.");
             }
         }
+
+        // ==================== ✅ CROSS-TAB PAYMENT SYNC ====================
+        window.addEventListener('storage', (e) => {
+            if (e.key !== 'swift_payment_verified_signal' || !e.newValue) return;
+            try {
+                const signal = JSON.parse(e.newValue);
+                if (Date.now() - (signal.ts || 0) > 2 * 60 * 1000) return;
+                document.getElementById('payment-verification-modal').classList.add('active');
+                localStorage.removeItem('swift_payment_verified_signal');
+                console.log("📡 Cross-tab payment verified — showing confirmation modal.");
+            } catch (err) {
+                console.warn("Cross-tab signal parse error:", err);
+            }
+        });
 
         function setupRefundFormHandlers() {
             const receiptInput = document.getElementById('refund-receipt');
@@ -1883,6 +1822,7 @@
             }, 400);
         };
 
+        // ==================== ✅ REFUND SUBMIT WITH LOADING STATE ====================
         window.submitRefundRequest = async function() {
             const name = document.getElementById('refund-name').value.trim();
             const orderId = document.getElementById('refund-order-id').value.trim();
@@ -1903,6 +1843,9 @@
                 alert("Please upload both your payment receipt and a valid ID.");
                 return;
             }
+
+            // ✅ Lock the submit button
+            const restoreBtn = lockButton('#refund-submit-btn', 'Submitting…');
 
             const readFileAsBase64 = (file) => {
                 return new Promise((resolve, reject) => {
@@ -1967,6 +1910,8 @@
             } catch (error) {
                 console.error("Refund submission error:", error);
                 alert("Error processing your files. Please try again with smaller images.");
+            } finally {
+                restoreBtn();
             }
         };
 
@@ -2453,7 +2398,8 @@
             }
         };
 
-        window.signupUser = function() {
+        // ==================== ✅ SIGNUP WITH LOADING STATE ====================
+        window.signupUser = async function() {
             const username = document.getElementById('signup-username').value.trim().toLowerCase();
             const name = document.getElementById('signup-name').value.trim();
             const email = document.getElementById('signup-email').value.trim().toLowerCase();
@@ -2471,25 +2417,35 @@
                 return;
             }
 
-            const newUser = { username, name, email, password };
-            globalState.users.push(newUser);
-            saveStateToFirebase();
+            const restoreBtn = lockButton('#signup-btn', 'Creating account…');
 
-            currentUser = { username: newUser.username, name: newUser.name, email: newUser.email };
-            localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
+            try {
+                const newUser = { username, name, email, password };
+                globalState.users.push(newUser);
+                await saveStateToFirebase();
 
-            updateAuthUI();
-            toggleAuthModal();
+                currentUser = { username: newUser.username, name: newUser.name, email: newUser.email };
+                localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
 
-            document.getElementById('signup-username').value = '';
-            document.getElementById('signup-name').value = '';
-            document.getElementById('signup-email').value = '';
-            document.getElementById('signup-password').value = '';
+                updateAuthUI();
+                toggleAuthModal();
 
-            showToast(`Global account created! Welcome, @${username}!`);
+                document.getElementById('signup-username').value = '';
+                document.getElementById('signup-name').value = '';
+                document.getElementById('signup-email').value = '';
+                document.getElementById('signup-password').value = '';
+
+                showToast(`Global account created! Welcome, @${username}!`);
+            } catch (err) {
+                console.error("Signup error:", err);
+                alert("Could not create account. Please check your connection and try again.");
+            } finally {
+                restoreBtn();
+            }
         };
 
-        window.loginUser = function() {
+        // ==================== ✅ LOGIN WITH LOADING STATE ====================
+        window.loginUser = async function() {
             const identifier = document.getElementById('login-username-or-email').value.trim().toLowerCase();
             const password = document.getElementById('login-password').value;
 
@@ -2498,22 +2454,31 @@
                 return;
             }
 
-            const foundUser = globalState.users.find(u => (u.username === identifier || u.email === identifier) && u.password === password);
-            if (!foundUser) {
-                alert("Invalid username/email or password. Please check your credentials or sign up first.");
-                return;
+            const restoreBtn = lockButton('#login-btn', 'Logging in…');
+
+            try {
+                const foundUser = globalState.users.find(u => (u.username === identifier || u.email === identifier) && u.password === password);
+                if (!foundUser) {
+                    alert("Invalid username/email or password. Please check your credentials or sign up first.");
+                    return;
+                }
+
+                currentUser = { username: foundUser.username, name: foundUser.name, email: foundUser.email };
+                localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
+
+                updateAuthUI();
+                toggleAuthModal();
+
+                document.getElementById('login-username-or-email').value = '';
+                document.getElementById('login-password').value = '';
+
+                showToast(`Welcome back, @${currentUser.username}!`);
+            } catch (err) {
+                console.error("Login error:", err);
+                alert("Could not log in. Please try again.");
+            } finally {
+                restoreBtn();
             }
-
-            currentUser = { username: foundUser.username, name: foundUser.name, email: foundUser.email };
-            localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
-
-            updateAuthUI();
-            toggleAuthModal();
-
-            document.getElementById('login-username-or-email').value = '';
-            document.getElementById('login-password').value = '';
-
-            showToast(`Welcome back, @${currentUser.username}!`);
         };
 
         window.proceedToCheckout = function() {
@@ -2563,6 +2528,7 @@
             }
         };
 
+        // ==================== ✅ COMPLETE ORDER WITH LOADING STATE ====================
         window.completeOrder = async function() {
             const address = document.getElementById('bill-address').value;
             const city = document.getElementById('bill-city').value;
@@ -2575,6 +2541,9 @@
                 alert("Please fill in all required delivery information fields.");
                 return;
             }
+
+            // ✅ Lock the pay button with a spinner
+            const restorePayBtn = lockButton('#pay-btn', 'Please wait…');
 
             let subtotalUSD = cart.reduce((sum, item) => sum + (item.priceUSD * item.quantity), 0);
             let subtotalNGN = cart.reduce((sum, item) => sum + (item.priceNGN * item.quantity), 0);
@@ -2617,6 +2586,7 @@
                 const paystack = new PaystackPop();
                 paystack.resumeTransaction(initData.access_code, {
                     onSuccess: async (transaction) => {
+                        // Keep button locked while we verify
                         try {
                             const verifyResponse = await fetch(`https://swiftselect-backend.onrender.com/api/paystack/verify/${transaction.reference}`);
                             const verifyData = await verifyResponse.json();
@@ -2627,17 +2597,21 @@
                                     orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone,
                                     "Paystack Secure Checkout", transaction.reference
                                 );
+                                // Modal closes on finalize — no need to restore
                             } else {
                                 alert("Payment verification failed. Please contact support.");
+                                restorePayBtn();
                             }
                         } catch (error) {
                             console.error("Verification error:", error);
                             alert("An error occurred during verification. Please contact support.");
+                            restorePayBtn();
                         }
                     },
                     onCancel: () => {
                         showToast("Payment canceled.");
                         localStorage.removeItem('swift_pending_order');
+                        restorePayBtn();
                     }
                 });
 
@@ -2645,6 +2619,7 @@
                 console.error('Checkout error:', error);
                 alert('An error occurred during checkout. Please check your connection and try again.');
                 localStorage.removeItem('swift_pending_order');
+                restorePayBtn();
             }
         };
 
@@ -2828,14 +2803,10 @@
             listContainer.innerHTML = [...userOrders].reverse().map(order => {
                 const statusDetails = getStatusDetails(order.status);
                 const rated = !!order.hasReviewed;
-                const canRate = String(order.status || '').includes("Delivered");
                 const rateBtnStyle = rated
                     ? "background:#dcfce7;color:#16a34a;cursor:default;"
-                    : canRate 
-                        ? "background:#f59e0b;color:white;"
-                        : "background:#e2e8f0;color:#94a3b8;cursor:not-allowed;";
+                    : "background:#f59e0b;color:white;";
                 const rateBtnLabel = rated ? '✓ Rated' : '⭐ Rate Us';
-                const rateDisabled = rated || !canRate;
 
                 return `
                 <div class="order-card">
@@ -2867,8 +2838,7 @@
 
                     <div class="order-card-footer">
                         <button class="btn-small" onclick="fillTrackingInput('${order.id}')">📦 Track Order</button>
-                        ${rated ? `<span class="rating-badge rated">✓ Reviewed</span>` : ''}
-                        <button class="btn-small" style="${rateBtnStyle}" onclick="${rateDisabled ? '' : `rateOrderFromCard('${order.id}')`}" ${rateDisabled ? 'disabled' : ''}>${rateBtnLabel}</button>
+                        <button class="btn-small" style="${rateBtnStyle}" onclick="rateOrderFromCard('${order.id}')">${rateBtnLabel}</button>
                     </div>
                 </div>
                 `;
@@ -2886,7 +2856,7 @@
                 return;
             }
             const status = String(order.status || '');
-            if (!status.includes("Delivered")) {
+            if (status !== "Delivered Successfully") {
                 showToast("You can rate this order after it's delivered successfully.");
                 return;
             }
@@ -2912,28 +2882,25 @@
             }
         };
 
-        // ✅ UPDATED: renderReviews for global modal
         window.renderReviews = function() {
             const modalGrid = document.getElementById('modal-reviews-grid');
             if (!modalGrid) return;
 
-            if (!globalState.reviews || globalState.reviews.length === 0) {
+            if (globalState.reviews.length === 0) {
                 modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Delivered orders can submit recommendations globally!</p>';
                 return;
             }
 
             modalGrid.innerHTML = globalState.reviews.map(r => `
-                <div class="global-review-card">
-                    <div class="stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
-                    ${r.productName ? `<div class="product-name">📦 ${r.productName}</div>` : ''}
-                    <p>"${r.comment}"</p>
-                    <span class="author">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
+                <div class="review-card" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; font-size: 0.9rem;">
+                    <div class="stars" style="color: var(--accent); margin-bottom: 0.3rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                    <p style="margin: 0.3rem 0; color: #334155;">"${r.comment}"</p>
+                    <span class="author" style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block;">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
                 </div>
             `).join('');
         };
 
-        // ✅ NEW: Global reviews modal opener
-        window.openGlobalReviewsModal = function() {
+        window.openReviewsModal = function() {
             document.getElementById('reviews-modal').classList.toggle('active');
             renderReviews();
         };
@@ -3067,42 +3034,43 @@
             }
         }
 
-        // ✅ UPDATED: submitReview now saves globally via saveReviewToFirebase
-        window.submitReview = function() {
+        // ==================== ✅ SUBMIT REVIEW WITH LOADING STATE ====================
+        window.submitReview = async function() {
             const comment = document.getElementById('review-comment').value.trim();
             if (!comment) {
                 alert("Please write a short review comment.");
                 return;
             }
 
-            const order = globalState.orders.find(o => String(o.id) === String(currentRatingOrderId));
-            let productName = "Multiple Items";
-            if (order) {
-                // Try to extract product name from items string
-                const itemsStr = order.items || "";
-                if (itemsStr.length > 0) {
-                    productName = itemsStr.split('(')[0].trim();
+            const restoreBtn = lockButton('#review-submit-btn', 'Submitting…');
+
+            try {
+                const order = globalState.orders.find(o => String(o.id) === String(currentRatingOrderId));
+                if (order) {
+                    await updateOrderFieldsInFirebase(order.id, { hasReviewed: true });
                 }
-                updateOrderFieldsInFirebase(order.id, { hasReviewed: true });
+
+                const newReview = {
+                    name: currentUser ? `@${currentUser.username}` : "Verified Customer",
+                    rating: selectedStarCount,
+                    comment: comment,
+                    date: new Date().toLocaleDateString()
+                };
+
+                globalState.reviews.unshift(newReview);
+                await saveStateToFirebase();
+
+                renderReviews();
+                toggleRatingModal();
+                renderRecentOrdersList();
+                renderMyReviewsModal();
+                showToast("Thank you! Your recommendation is now visible globally across all devices.");
+            } catch (err) {
+                console.error("Submit review error:", err);
+                alert("Could not submit your review. Please try again.");
+            } finally {
+                restoreBtn();
             }
-
-            const newReview = {
-                id: "REV-" + Date.now(),
-                name: currentUser ? `@${currentUser.username}` : "Verified Customer",
-                rating: selectedStarCount,
-                comment: comment,
-                date: new Date().toLocaleDateString(),
-                productName: productName
-            };
-
-            // Save to Firebase globally
-            saveReviewToFirebase(newReview);
-            
-            renderReviews();
-            toggleRatingModal();
-            renderRecentOrdersList();
-            renderMyReviewsModal();
-            showToast("Thank you! Your recommendation is now visible globally across all devices.");
         };
 
         window.openLightbox = function(src) {
@@ -3154,7 +3122,6 @@
             const tabContent = document.getElementById(`admin-tab-${tab}`);
             if (tabBtn) tabBtn.classList.add('active');
             if (tabContent) tabContent.classList.add('active');
-            if (tab === 'reviews') renderAdminReviewsList();
         };
 
         function renderAdminDashboard() {
@@ -3162,33 +3129,6 @@
             renderAdminOrderList();
             renderAdminProductList();
             renderAdminPromoList();
-            renderAdminReviewsList();
-        }
-
-        // ✅ NEW: Admin reviews list renderer
-        function renderAdminReviewsList() {
-            const container = document.getElementById('admin-reviews-list');
-            if (!container) return;
-
-            if (!globalState.reviews || globalState.reviews.length === 0) {
-                container.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.85rem; padding: 1rem;">No reviews submitted yet.</p>';
-                return;
-            }
-
-            container.innerHTML = [...globalState.reviews].map(r => `
-                <div style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem;">
-                        <div>
-                            <span style="color: #f59e0b; font-size: 1.1rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
-                            <span style="font-size: 0.8rem; color: #64748b; margin-left: 0.5rem;">${r.rating}/5</span>
-                        </div>
-                        <span style="font-size: 0.75rem; color: #94a3b8;">${r.date}</span>
-                    </div>
-                    ${r.productName ? `<div style="font-size: 0.75rem; color: #4f46e5; font-weight: 700; margin-top: 0.4rem;">📦 ${r.productName}</div>` : ''}
-                    <p style="margin: 0.5rem 0 0.3rem; color: #334155; font-size: 0.9rem;">"${r.comment}"</p>
-                    <div style="font-size: 0.78rem; color: #64748b; font-weight: 600;">— ${r.name}</div>
-                </div>
-            `).join('');
         }
 
         function renderAdminRefundList() {
@@ -3237,26 +3177,36 @@
                             <option value="Processed" ${refund.status === 'Processed' ? 'selected' : ''}>Processed / Refunded</option>
                             <option value="Rejected" ${refund.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
                         </select>
-                        <button class="btn-primary" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateRefundStatus('${refund.id}')">Update Status</button>
+                        <button class="btn-primary" id="admin-refund-update-btn-${refund.id}" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateRefundStatus('${refund.id}')">Update Status</button>
                     </div>
                 </div>
                 `;
             }).join('');
         }
 
+        // ==================== ✅ UPDATE REFUND STATUS WITH LOADING ====================
         window.updateRefundStatus = async function(refundId) {
             const selectEl = document.getElementById(`admin-refund-status-${refundId}`);
             if (!selectEl) return;
             const newStatus = selectEl.value;
 
-            const idx = globalState.refunds.findIndex(r => String(r.id) === String(refundId));
-            if (idx !== -1) globalState.refunds[idx].status = newStatus;
+            const restoreBtn = lockButton(`#admin-refund-update-btn-${refundId}`, 'Saving…');
 
-            await updateRefundStatusInFirebase(refundId, newStatus);
+            try {
+                const idx = globalState.refunds.findIndex(r => String(r.id) === String(refundId));
+                if (idx !== -1) globalState.refunds[idx].status = newStatus;
 
-            showToast(`Refund ${refundId} marked as: ${newStatus}`);
-            renderAdminRefundList();
-            renderMyRefundsList();
+                await updateRefundStatusInFirebase(refundId, newStatus);
+
+                showToast(`Refund ${refundId} marked as: ${newStatus}`);
+                renderAdminRefundList();
+                renderMyRefundsList();
+            } catch (err) {
+                console.error("Update refund status error:", err);
+                alert("Could not update refund status. Please try again.");
+            } finally {
+                restoreBtn();
+            }
         };
 
         function renderAdminOrderList() {
@@ -3291,23 +3241,33 @@
                             <option value="Delivered Successfully" ${ord.status === 'Delivered Successfully' ? 'selected' : ''}>Delivered Successfully</option>
                             <option value="Cancelled" ${ord.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
                         </select>
-                        <button class="btn-primary" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateOrderStatus('${ord.id}')">Update Status</button>
+                        <button class="btn-primary" id="admin-order-update-btn-${ord.id}" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateOrderStatus('${ord.id}')">Update Status</button>
                     </div>
                 </div>
                 `;
             }).join('');
         }
 
+        // ==================== ✅ UPDATE ORDER STATUS WITH LOADING ====================
         window.updateOrderStatus = async function(orderId) {
             const selectEl = document.getElementById(`admin-status-${orderId}`);
             if (!selectEl) return;
             const newStatus = selectEl.value;
 
-            await updateOrderFieldsInFirebase(orderId, { status: newStatus });
+            const restoreBtn = lockButton(`#admin-order-update-btn-${orderId}`, 'Saving…');
 
-            showToast(`Order ${orderId} status updated globally!`);
-            renderAdminOrderList();
-            renderRecentOrdersList();
+            try {
+                await updateOrderFieldsInFirebase(orderId, { status: newStatus });
+
+                showToast(`Order ${orderId} status updated globally!`);
+                renderAdminOrderList();
+                renderRecentOrdersList();
+            } catch (err) {
+                console.error("Update order status error:", err);
+                alert("Could not update order status. Please try again.");
+            } finally {
+                restoreBtn();
+            }
         };
 
         window.adminCreatePromoCode = function() {
@@ -3454,6 +3414,7 @@
             if (product) {
                 product.isSoldOut = !product.isSoldOut;
                 saveStateToFirebase();
+                localStorage.setItem('swift_force_fresh_sync', '1');
                 renderProducts();
                 renderAdminProductList();
                 showToast(`Updated stock status for ${product.name}`);
@@ -3464,12 +3425,14 @@
             if (confirm("Are you sure you want to delete this product globally?")) {
                 globalState.products = globalState.products.filter(p => p.id !== productId);
                 saveStateToFirebase();
+                localStorage.setItem('swift_force_fresh_sync', '1');
                 renderProducts();
                 renderAdminProductList();
                 showToast("Product deleted successfully");
             }
         };
 
+        // ==================== ✅ ADD PRODUCT WITH LOADING STATE (already had text swap) ====================
         window.addProduct = async function() {
             const name = document.getElementById('admin-name').value.trim();
             const priceUSD = parseFloat(document.getElementById('admin-price-usd').value);
@@ -3492,8 +3455,11 @@
 
             const isEditing = !!editingProductId;
             const addBtn = document.getElementById('admin-add-btn');
-            addBtn.innerText = isEditing ? "Updating product globally..." : "Processing files...";
+            const originalBtnText = addBtn.innerText;
             addBtn.disabled = true;
+            addBtn.style.opacity = "0.75";
+            addBtn.style.cursor = "wait";
+            addBtn.innerHTML = `<span class="btn-spinner"></span>${isEditing ? "Updating…" : "Processing…"}`;
 
             try {
                 let imagesBase64 = [];
@@ -3562,6 +3528,8 @@
 
                     await saveStateToFirebase();
 
+                    localStorage.setItem('swift_force_fresh_sync', '1');
+
                     showToast('✅ Product updated & synced globally!');
                 } else {
                     const newProduct = { 
@@ -3591,17 +3559,23 @@
 
                     await saveStateToFirebase();
 
+                    localStorage.setItem('swift_force_fresh_sync', '1');
+
                     showToast('✅ Product added & synced globally!');
                 }
 
-                addBtn.innerText = isEditing ? "💾 Update Product Globally" : "Save New Product Globally";
+                addBtn.innerText = originalBtnText;
                 addBtn.disabled = false;
+                addBtn.style.opacity = "";
+                addBtn.style.cursor = "";
 
             } catch (err) {
                 console.error("Add/Edit product error:", err);
                 alert(err.message || "Error processing files. Make sure the video/image files are valid or smaller in size.");
-                addBtn.innerText = isEditing ? "💾 Update Product Globally" : "Save New Product Globally";
+                addBtn.innerText = originalBtnText;
                 addBtn.disabled = false;
+                addBtn.style.opacity = "";
+                addBtn.style.cursor = "";
             }
         };
 
@@ -3775,10 +3749,9 @@
 
         async function migrateLegacyDataIfNeeded() {
             try {
-                const [ordersSnap, refundsSnap, reviewsSnap, stateSnap] = await Promise.all([
+                const [ordersSnap, refundsSnap, stateSnap] = await Promise.all([
                     get(ordersRef),
                     get(refundsRef),
-                    get(reviewsRef),
                     get(stateRef)
                 ]);
 
@@ -3799,14 +3772,6 @@
                         console.log("✅ Migrated", arr.length, "legacy refunds into swiftRefunds");
                     }
                 }
-
-                if (!reviewsSnap.exists() && legacy.reviews) {
-                    const arr = normalizeToArray(legacy.reviews);
-                    if (arr.length) {
-                        await set(reviewsRef, arr);
-                        console.log("✅ Migrated", arr.length, "legacy reviews into swiftReviews");
-                    }
-                }
             } catch (e) {
                 console.warn("Legacy migration check failed (non-fatal):", e);
             }
@@ -3814,7 +3779,6 @@
 
         initApp();
 
-        // ✅ Flush cache when user leaves/reloads so latest state is preserved in IndexedDB
         window.addEventListener('beforeunload', () => {
             try {
                 globalState._cacheVersion = CACHE_VERSION;
@@ -3825,13 +3789,13 @@
         onValue(stateRef, async (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                // ✅ SAFETY: only overwrite cached products if Firebase actually has products (non-empty array)
                 if (data.products && Array.isArray(data.products) && data.products.length > 0) {
                     globalState.products = data.products;
                 } else if (!globalState.products || globalState.products.length === 0) {
                     globalState.products = data.products || [];
                 }
                 if (data.users) globalState.users = data.users;
+                if (data.reviews) globalState.reviews = data.reviews;
                 if (data.promoCodes) globalState.promoCodes = data.promoCodes;
                 globalState._cacheVersion = CACHE_VERSION;
                 await persistCache();
@@ -3839,10 +3803,12 @@
                 await set(stateRef, buildStatePayload());
             }
 
-            // Once Firebase responds, we're definitely loaded
-            isProductsLoaded = true;
+            if (!isProductsLoaded) {
+                isProductsLoaded = true;
+            }
 
             renderProducts();
+            renderReviews();
             renderAdminProductList();
             renderAdminPromoList();
 
@@ -3864,22 +3830,9 @@
             refreshRefundDependentUI();
         });
 
-        // ✅ NEW: Global reviews listener
-        onValue(reviewsRef, async (snapshot) => {
-            const reviews = normalizeToArray(snapshot.val());
-            if (reviews.length > 0) {
-                globalState.reviews = reviews;
-            }
-            await persistCache();
-            renderReviews();
-            if (document.getElementById('admin-page').classList.contains('active')) {
-                renderAdminReviewsList();
-            }
-        });
-
-        if (!localStorage.getItem('swift_migration_done_v10')) {
+        if (!localStorage.getItem('swift_migration_done_v9')) {
             migrateLegacyDataIfNeeded()
-                .then(() => localStorage.setItem('swift_migration_done_v10', '1'))
+                .then(() => localStorage.setItem('swift_migration_done_v9', '1'))
                 .catch(e => console.warn('Migration skipped:', e));
         }
     </script>
