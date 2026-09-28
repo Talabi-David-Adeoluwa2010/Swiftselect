@@ -4,25 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>SwiftSelect - Premium Online Store</title>
-    
-    <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <!-- ============================================================
+         EMAILJS SDK — bulletproof loader with automatic backup CDN
+         ============================================================ -->
     <script type="text/javascript">
         (function() {
-            emailjs.init({
-                publicKey: "5viHIEbeZ90KuRrb3",
-            });
+            function initEmailJS() {
+                try {
+                    emailjs.init({ publicKey: "5viHIEbeZ90KuRrb3" });
+                    window.__emailjs_ready = true;
+                    console.log("✅ EmailJS SDK ready & initialized.");
+                } catch (e) {
+                    console.error("❌ EmailJS init() failed:", e);
+                }
+            }
+
+            function loadFrom(url, onSuccess, onError) {
+                var s = document.createElement('script');
+                s.src = url;
+                s.async = false;
+                s.onload = onSuccess;
+                s.onerror = onError;
+                document.head.appendChild(s);
+            }
+
+            // Try primary CDN, fall back to unpkg
+            loadFrom(
+                "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js",
+                initEmailJS,
+                function() {
+                    console.warn("⚠️ Primary EmailJS CDN failed. Switching to backup...");
+                    loadFrom(
+                        "https://unpkg.com/@emailjs/browser@4/dist/email.min.js",
+                        initEmailJS,
+                        function() {
+                            console.error("❌ BOTH EmailJS CDNs failed. Emails will NOT work.");
+                        }
+                    );
+                }
+            );
         })();
     </script>
+
     <!-- Paystack SDK -->
     <script src="https://js.paystack.co/v2/inline.js"></script>
-    
+
     <style>
         :root {
             --primary: #4f46e5;
             --primary-dark: #4338ca;
             --accent: #f59e0b;
-            --bg: #f8fafc; 
+            --bg: #f8fafc;
             --text: #0f172a;
             --card-bg: #ffffff;
             --border: #e2e8f0;
@@ -36,40 +69,40 @@
             text-size-adjust: 100%;
         }
 
-        body { 
-            font-family: system-ui, -apple-system, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            background-color: var(--bg); 
-            color: var(--text); 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 100vh; 
-            padding-bottom: 45px; 
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 45px;
         }
-        
+
         body.cart-open { overflow: hidden; }
         body.no-scroll { overflow: hidden; }
 
-        .announcement-bar { 
-            background: linear-gradient(90deg, #1e1b4b, #312e81); 
-            color: white; 
-            text-align: center; 
-            padding: 0.5rem; 
-            font-size: 0.8rem; 
-            font-weight: 500; 
+        .announcement-bar {
+            background: linear-gradient(90deg, #1e1b4b, #312e81);
+            color: white;
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 500;
             letter-spacing: 0.3px;
         }
 
-        header { 
-            background: #ffffff; 
-            position: sticky; 
-            top: 0; 
-            z-index: 100; 
-            border-bottom: 1px solid var(--border); 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+        header {
+            background: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
-        
+
         .header-top {
             display: flex;
             justify-content: space-between;
@@ -79,36 +112,36 @@
         }
 
         .logo-container { display: flex; align-items: center; gap: 0.6rem; }
-        .logo-icon { 
-            width: 40px; height: 40px; 
-            background: linear-gradient(135deg, var(--primary), #9333ea); 
-            color: white; display: flex; justify-content: center; align-items: center; 
-            border-radius: 12px; font-weight: 800; font-size: 1.2rem; 
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25); 
+        .logo-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--primary), #9333ea);
+            color: white; display: flex; justify-content: center; align-items: center;
+            border-radius: 12px; font-weight: 800; font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
         }
         .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; color: #0f172a; }
-        
+
         .header-actions { display: flex; align-items: center; gap: 0.75rem; }
-        
-        .icon-btn { 
-            background: #f8fafc; 
-            border: 1px solid var(--border); 
-            width: 44px; height: 44px; 
-            border-radius: 12px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 1.25rem; cursor: pointer; 
-            position: relative; transition: all 0.2s; 
+
+        .icon-btn {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; cursor: pointer;
+            position: relative; transition: all 0.2s;
             color: #334155;
         }
         .icon-btn:hover { background: #e2e8f0; color: var(--primary); border-color: #cbd5e1; }
-        
-        .cart-badge { 
-            position: absolute; top: -6px; right: -6px; 
-            background: #ef4444; color: white; 
-            font-size: 0.75rem; font-weight: 800; 
+
+        .cart-badge {
+            position: absolute; top: -6px; right: -6px;
+            background: #ef4444; color: white;
+            font-size: 0.75rem; font-weight: 800;
             min-width: 22px; height: 22px; padding: 0 4px;
-            border-radius: 11px; 
-            display: flex; align-items: center; justify-content: center; 
+            border-radius: 11px;
+            display: flex; align-items: center; justify-content: center;
             border: 2px solid white; box-sizing: border-box;
         }
 
@@ -201,7 +234,7 @@
         }
 
         .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
-        
+
         .hero-banner { background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; padding: 1.5rem 2rem; border-radius: 20px; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.2); position: relative; overflow: hidden; }
         .hero-banner h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
         .hero-banner p { margin: 0; color: #c7d2fe; font-size: 0.9rem; max-width: 600px; line-height: 1.4; }
@@ -209,14 +242,14 @@
         .search-container-wrapper { margin-bottom: 1.25rem; }
         .sticky-search-container { position: sticky; top: 110px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
         .sticky-search-container.is-stuck { box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(8px); }
-        
+
         .search-input-wrapper { position: relative; }
         .search-input-wrapper span { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem; }
         .search-input { width: 100%; padding: 0.9rem 1rem 0.9rem 3rem; font-size: 16px; border: 1px solid var(--border); border-radius: 14px; box-sizing: border-box; outline: none; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.2s; }
         .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12); }
 
         .section-title { font-size: 1.35rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; color: #0f172a; }
-        
+
         .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem; }
         @media(min-width: 768px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; } }
 
@@ -224,19 +257,19 @@
         .product-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -8px rgba(0,0,0,0.08); border-color: #cbd5e1; }
         .product-card img { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; background: #f1f5f9; }
         @media(min-width: 768px) { .product-card img { height: 190px; } }
-        
+
         .product-badge { position: absolute; top: 0.85rem; right: 0.85rem; background: #fee2e2; color: #dc2626; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.3px; z-index: 2; }
         .product-badge.sold-out { background: rgba(220, 38, 38, 0.9); color: white; }
-        
+
         .free-shipping-tag { background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.2rem; margin-bottom: 0.4rem; width: fit-content; }
-        
+
         .product-meta { margin-top: 0.75rem; flex-grow: 1; display: flex; flex-direction: column; }
         .product-stars { color: var(--accent); font-size: 0.75rem; margin-bottom: 0.2rem; }
         .product-title { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.3rem; color: #0f172a; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
         .product-price { color: #0f172a; font-weight: 800; font-size: 1.05rem; margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.05rem; }
         .product-price .price-sub { font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-decoration: line-through; }
         .product-price .current-price { color: #0f172a; font-size: 1.05rem; font-weight: 800; }
-        
+
         .btn-marketplace { background: #f97316; color: white; border: none; padding: 0.75rem 1rem; cursor: pointer; border-radius: 10px; width: 100%; font-weight: 700; font-size: 0.95rem; transition: background 0.2s; text-align: center; box-sizing: border-box; }
         .btn-marketplace:hover { background: #ea580c; }
         .btn-marketplace.disabled { background: #cbd5e1; cursor: not-allowed; }
@@ -244,7 +277,6 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid #e0e7ff; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.9s linear infinite; }
 
-        /* ✅ Inline spinner for buttons */
         .btn-spinner {
             display: inline-block;
             width: 14px;
@@ -281,7 +313,7 @@
         .modal.active { display: flex; }
         .modal-content { background: white; padding: 2.25rem; border-radius: 20px; width: 100%; max-width: 520px; box-sizing: border-box; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
+
         .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 0.85rem 1rem; margin-bottom: 1.1rem; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; font-size: 16px; outline: none; background: #fff; transition: all 0.2s; }
         .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
 
@@ -300,7 +332,7 @@
         .admin-product-info { display: flex; align-items: center; gap: 1rem; flex-grow: 1; overflow: hidden; }
         .admin-product-info img { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; }
         .admin-actions { display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0; }
-        
+
         .admin-refund-card { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; font-size: 0.85rem; }
         .admin-refund-header { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.3rem; }
         .admin-refund-detail { color: #475569; margin-bottom: 0.2rem; }
@@ -311,12 +343,12 @@
         .rating-stars-input { display: flex; gap: 0.5rem; font-size: 1.75rem; cursor: pointer; color: #cbd5e1; margin-bottom: 1.25rem; }
         .rating-stars-input span.selected { color: var(--accent); }
 
-        .cart-modal { 
-            display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 440px; 
-            height: 100vh; height: 100dvh; 
-            background: white; box-shadow: -15px 0 35px rgba(0,0,0,0.15); z-index: 1200; 
-            padding: 0; box-sizing: border-box; flex-direction: column; 
-            animation: slideInRight 0.3s ease; 
+        .cart-modal {
+            display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 440px;
+            height: 100vh; height: 100dvh;
+            background: white; box-shadow: -15px 0 35px rgba(0,0,0,0.15); z-index: 1200;
+            padding: 0; box-sizing: border-box; flex-direction: column;
+            animation: slideInRight 0.3s ease;
         }
         @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
         .cart-modal.active { display: flex; }
@@ -332,18 +364,18 @@
         .cart-qty-controls { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
         .cart-qty-btn { background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
         .cart-qty-btn:hover { background: #e2e8f0; }
-        
-        .cart-footer { 
-            border-top: 1px solid var(--border); 
-            padding: 1.25rem 1.5rem; 
-            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); 
-            flex-shrink: 0; 
-            background: #ffffff; 
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03); 
-            position: relative; 
+
+        .cart-footer {
+            border-top: 1px solid var(--border);
+            padding: 1.25rem 1.5rem;
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+            flex-shrink: 0;
+            background: #ffffff;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03);
+            position: relative;
             z-index: 10;
         }
-        
+
         .total-price { font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; display: flex; justify-content: space-between; color: #0f172a; flex-direction: column; gap: 0.3rem; }
         .total-price .total-sub { font-size: 0.95rem; color: #64748b; font-weight: 600; }
 
@@ -669,13 +701,13 @@
                 <div class="logo-icon">S</div>
                 <div class="logo">SwiftSelect</div>
             </div>
-            
+
             <div class="header-actions">
                 <button class="icon-btn" onclick="toggleCart()" title="Shopping Cart">
                     🛒
                     <span id="cart-count" class="cart-badge">0</span>
                 </button>
-                
+
                 <button class="icon-btn" id="kebab-toggle-btn" onclick="toggleKebabMenu()" title="More Options">⋮</button>
             </div>
         </div>
@@ -684,14 +716,13 @@
             <div class="user-greeting" id="user-greeting-bar">
                 <span id="user-greeting-name">Welcome, Guest</span>
             </div>
-            
+
             <div class="user-actions">
                 <button class="btn-text" onclick="openOrdersPage()">📦 Orders</button>
                 <button class="btn-text" id="auth-btn" onclick="handleAuthClick()">Login</button>
             </div>
         </div>
 
-        <!-- Kebab Dropdown Menu -->
         <div class="kebab-menu" id="kebab-menu">
             <button onclick="openReviewsModal(); toggleKebabMenu();">🌟 See All Customer Reviews</button>
             <button onclick="openMyReviewsModal(); toggleKebabMenu();">⭐ Rate & Review Orders</button>
@@ -836,9 +867,9 @@
                             <input type="number" id="admin-price-ngn" placeholder="Price (₦NGN)">
                         </div>
                         <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
-                        
+
                         <input type="text" id="admin-colors" placeholder="Available Colors (e.g. Red, Blue, Black) - Optional">
-                        
+
                         <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Pictures (Add 3 to 5 pictures):</label>
                         <input type="file" id="admin-image-input" multiple accept="image/*" style="margin-bottom: 0.5rem;">
                         <div id="admin-image-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;"></div>
@@ -890,7 +921,7 @@
                 </div>
                 <button class="close-btn" onclick="toggleShippingPolicyModal()" style="color: white; font-size: 1.75rem; opacity: 0.8; transition: opacity 0.2s;">&times;</button>
             </div>
-            
+
             <div style="padding: 2rem;">
                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
                     <span style="font-size: 1.5rem;">🚚</span>
@@ -970,7 +1001,7 @@
                 <button class="close-btn" onclick="toggleRefundModal()">&times;</button>
             </div>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Please fill out this form accurately. We will review your request and process it according to our Refund Policy.</p>
-            
+
             <div class="refund-form-group">
                 <label>Full Name</label>
                 <input type="text" id="refund-name" placeholder="e.g., John Doe">
@@ -1081,7 +1112,7 @@
             <div id="detail-video-container" class="detail-video-container"></div>
             <div class="product-stars" style="margin-bottom: 0.5rem;">⭐⭐⭐⭐⭐ (Verified Global Reviews)</div>
             <div id="detail-price" style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.15rem;"></div>
-            
+
             <div id="detail-colors-container" style="margin-bottom: 1rem; display: none;">
                 <label style="font-size: 0.85rem; font-weight: 700; color: #0f172a; display: block; margin-bottom: 0.4rem;">Select Color:</label>
                 <div id="detail-color-options" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
@@ -1177,7 +1208,6 @@
         </div>
     </div>
 
-    <!-- MY REVIEWS MODAL -->
     <div class="modal" id="my-reviews-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -1191,7 +1221,6 @@
         </div>
     </div>
 
-    <!-- CART MODAL -->
     <div class="cart-modal" id="cart-modal">
         <div class="cart-header">
             <h3 style="margin:0;">Your Shopping Cart</h3>
@@ -1258,9 +1287,28 @@
         const EMAILJS_CUSTOMER_TEMPLATE_ID = "template_hv2kyh6";
         const ORDER_NOTIFICATION_EMAIL     = "talabidavid275@gmail.com";
 
+        // Waits up to maxWaitMs for EmailJS SDK to appear in window
+        async function waitForEmailJS(maxWaitMs = 3000) {
+            const start = Date.now();
+            while (!window.emailjs || typeof window.emailjs.send !== 'function') {
+                if (Date.now() - start > maxWaitMs) return false;
+                await new Promise(r => setTimeout(r, 100));
+            }
+            return true;
+        }
+
+        // ==================== ADMIN EMAIL ====================
         async function sendOrderNotificationEmail(orderRecord) {
+            console.log("📨 ADMIN email pipeline started for order:", orderRecord.id);
             try {
-                if (!window.emailjs) return;
+                const sdkReady = await waitForEmailJS(3000);
+                if (!sdkReady) {
+                    console.error("❌ ADMIN email ABORTED — EmailJS SDK not ready after 3s.");
+                    console.error("   window.emailjs =", typeof window.emailjs);
+                    showToast("⚠️ Admin email failed (SDK not loaded).");
+                    return false;
+                }
+
                 const templateParams = {
                     to_email:          ORDER_NOTIFICATION_EMAIL,
                     order_id:          orderRecord.id,
@@ -1274,17 +1322,47 @@
                     status:            orderRecord.status,
                     order_date:        orderRecord.date
                 };
-                const res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ADMIN_TEMPLATE_ID, templateParams);
+                console.log("📨 Sending ADMIN email...", {
+                    service: EMAILJS_SERVICE_ID,
+                    template: EMAILJS_ADMIN_TEMPLATE_ID,
+                    to: ORDER_NOTIFICATION_EMAIL
+                });
+                console.log("📨 Template params:", templateParams);
+
+                let res;
+                try {
+                    res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ADMIN_TEMPLATE_ID, templateParams);
+                } catch (firstErr) {
+                    console.warn("⚠️ First ADMIN send attempt failed. Retrying in 1s...", firstErr);
+                    await new Promise(r => setTimeout(r, 1000));
+                    res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ADMIN_TEMPLATE_ID, templateParams);
+                }
+
                 console.log("✅ ADMIN order email sent:", res.status, res.text);
+                return true;
             } catch (e) {
-                console.error("❌ EmailJS admin send error:", e);
+                console.error("❌ EmailJS ADMIN send error:", e);
+                console.error("   Status:", e?.status, "| Text:", e?.text, "| Message:", e?.message);
+                showToast("⚠️ Admin email failed. Check console for details.");
+                return false;
             }
         }
 
+        // ==================== CUSTOMER EMAIL ====================
         async function sendCustomerConfirmationEmail(orderRecord) {
+            console.log("📨 CUSTOMER email pipeline started for order:", orderRecord.id, "→", orderRecord.customerEmail);
             try {
-                if (!window.emailjs) return;
-                if (!orderRecord.customerEmail) return;
+                if (!orderRecord.customerEmail) {
+                    console.warn("⚠️ CUSTOMER email ABORTED — no email on order.");
+                    return false;
+                }
+
+                const sdkReady = await waitForEmailJS(3000);
+                if (!sdkReady) {
+                    console.error("❌ CUSTOMER email ABORTED — EmailJS SDK not ready after 3s.");
+                    return false;
+                }
+
                 const templateParams = {
                     to_email:          orderRecord.customerEmail,
                     order_id:          orderRecord.id,
@@ -1298,10 +1376,27 @@
                     status:            orderRecord.status,
                     order_date:        orderRecord.date
                 };
-                const res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE_ID, templateParams);
+                console.log("📨 Sending CUSTOMER email...", {
+                    service: EMAILJS_SERVICE_ID,
+                    template: EMAILJS_CUSTOMER_TEMPLATE_ID,
+                    to: orderRecord.customerEmail
+                });
+
+                let res;
+                try {
+                    res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE_ID, templateParams);
+                } catch (firstErr) {
+                    console.warn("⚠️ First CUSTOMER send attempt failed. Retrying in 1s...", firstErr);
+                    await new Promise(r => setTimeout(r, 1000));
+                    res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE_ID, templateParams);
+                }
+
                 console.log("✅ CUSTOMER confirmation email sent:", res.status, res.text);
+                return true;
             } catch (e) {
-                console.error("❌ EmailJS customer send error:", e);
+                console.error("❌ EmailJS CUSTOMER send error:", e);
+                console.error("   Status:", e?.status, "| Text:", e?.text, "| Message:", e?.message);
+                return false;
             }
         }
 
@@ -1379,7 +1474,6 @@
         let isProductsLoaded = false;
         let lastSubmittedRefundId = null;
 
-        // ==================== ✅ SMART CACHE LOAD ====================
         const FORCE_FRESH = localStorage.getItem('swift_force_fresh_sync') === '1';
         if (FORCE_FRESH) {
             localStorage.removeItem('swift_force_fresh_sync');
@@ -1431,9 +1525,6 @@
         let adminSelectedVideos = [];
         let editingProductId = null;
 
-        // ==================== ✅ LOADING BUTTON HELPERS ====================
-        // Locks a button and shows an inline spinner + custom label.
-        // Returns a function to restore the button to its original state.
         function lockButton(btnOrSelector, loadingText = "Please wait…") {
             let btn = typeof btnOrSelector === 'string'
                 ? document.querySelector(btnOrSelector)
@@ -1491,9 +1582,9 @@
         window.filterFaqCategory = function(category) {
             const answerBox = document.getElementById('faq-answer-box');
             const questionsList = document.getElementById('faq-questions-list');
-            
+
             answerBox.innerHTML = `<em>Please select a specific question below related to <strong>${category.toUpperCase()}</strong>.</em>`;
-            
+
             const questions = faqData[category] || [];
             questionsList.innerHTML = questions.map((item, idx) => `
                 <button class="btn-secondary" style="text-align: left; font-size: 0.9rem; padding: 0.75rem 1rem; width: 100%; justify-content: flex-start;" onclick="showFaqAnswer('${category}', ${idx})">
@@ -1822,7 +1913,6 @@
             }, 400);
         };
 
-        // ==================== ✅ REFUND SUBMIT WITH LOADING STATE ====================
         window.submitRefundRequest = async function() {
             const name = document.getElementById('refund-name').value.trim();
             const orderId = document.getElementById('refund-order-id').value.trim();
@@ -1844,7 +1934,6 @@
                 return;
             }
 
-            // ✅ Lock the submit button
             const restoreBtn = lockButton('#refund-submit-btn', 'Submitting…');
 
             const readFileAsBase64 = (file) => {
@@ -2258,7 +2347,7 @@
             const colorOptions = document.getElementById('detail-color-options');
             if (product.colors && product.colors.length > 0) {
                 colorContainer.style.display = 'block';
-                colorOptions.innerHTML = product.colors.map(color => 
+                colorOptions.innerHTML = product.colors.map(color =>
                     `<button class="size-btn" onclick="selectDetailColor('${product.id}', '${color}', this)">${color}</button>`
                 ).join('');
                 selectedColors[product.id] = product.colors[0];
@@ -2344,7 +2433,7 @@
         window.updateAuthUI = function() {
             const authBtn = document.getElementById('auth-btn');
             const greetingName = document.getElementById('user-greeting-name');
-            
+
             if (currentUser) {
                 if (greetingName) greetingName.innerText = `Welcome, @${currentUser.username}`;
                 if (authBtn) {
@@ -2398,7 +2487,6 @@
             }
         };
 
-        // ==================== ✅ SIGNUP WITH LOADING STATE ====================
         window.signupUser = async function() {
             const username = document.getElementById('signup-username').value.trim().toLowerCase();
             const name = document.getElementById('signup-name').value.trim();
@@ -2444,7 +2532,6 @@
             }
         };
 
-        // ==================== ✅ LOGIN WITH LOADING STATE ====================
         window.loginUser = async function() {
             const identifier = document.getElementById('login-username-or-email').value.trim().toLowerCase();
             const password = document.getElementById('login-password').value;
@@ -2516,7 +2603,7 @@
             }
 
             if (globalState.promoCodes && globalState.promoCodes.includes(codeInput)) {
-                appliedDiscountPercent = 5; 
+                appliedDiscountPercent = 5;
                 feedbackEl.style.color = "#166534";
                 feedbackEl.innerText = "✓ Promo code applied successfully (5% off)!";
                 updateCartUI();
@@ -2528,7 +2615,6 @@
             }
         };
 
-        // ==================== ✅ COMPLETE ORDER WITH LOADING STATE ====================
         window.completeOrder = async function() {
             const address = document.getElementById('bill-address').value;
             const city = document.getElementById('bill-city').value;
@@ -2542,7 +2628,6 @@
                 return;
             }
 
-            // ✅ Lock the pay button with a spinner
             const restorePayBtn = lockButton('#pay-btn', 'Please wait…');
 
             let subtotalUSD = cart.reduce((sum, item) => sum + (item.priceUSD * item.quantity), 0);
@@ -2586,7 +2671,6 @@
                 const paystack = new PaystackPop();
                 paystack.resumeTransaction(initData.access_code, {
                     onSuccess: async (transaction) => {
-                        // Keep button locked while we verify
                         try {
                             const verifyResponse = await fetch(`https://swiftselect-backend.onrender.com/api/paystack/verify/${transaction.reference}`);
                             const verifyData = await verifyResponse.json();
@@ -2597,7 +2681,6 @@
                                     orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone,
                                     "Paystack Secure Checkout", transaction.reference
                                 );
-                                // Modal closes on finalize — no need to restore
                             } else {
                                 alert("Payment verification failed. Please contact support.");
                                 restorePayBtn();
@@ -2623,7 +2706,10 @@
             }
         };
 
+        // ==================== ✅ FINALIZE ORDER — SAVES FIRST, THEN EMAILS ====================
         async function finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, paymentMethod, reference) {
+            console.log("🎯 finalizeOrderAfterPayment called:", orderId);
+
             localStorage.removeItem('swift_pending_order');
 
             const newOrderRecord = {
@@ -2640,10 +2726,30 @@
                 hasReviewed: false
             };
 
-            await saveOrderToFirebase(newOrderRecord);
-            await sendOrderNotificationEmail(newOrderRecord);
-            await sendCustomerConfirmationEmail(newOrderRecord);
+            // 1. Save order to Firebase FIRST — order is never lost even if email fails
+            console.log("💾 Saving order to Firebase...");
+            try {
+                await saveOrderToFirebase(newOrderRecord);
+                console.log("✅ Order saved.");
+            } catch (err) {
+                console.error("❌ Order save failed (continuing to email anyway):", err);
+            }
 
+            // 2. Send emails (each wrapped so one failing doesn't block the other)
+            console.log("📧 Starting email dispatch...");
+            try {
+                await sendOrderNotificationEmail(newOrderRecord);
+            } catch (err) {
+                console.error("❌ ADMIN email threw:", err);
+            }
+            try {
+                await sendCustomerConfirmationEmail(newOrderRecord);
+            } catch (err) {
+                console.error("❌ CUSTOMER email threw:", err);
+            }
+            console.log("📧 Email dispatch complete.");
+
+            // 3. Update UI regardless of email outcome
             renderRecentOrdersList();
             finalizeOrderCleanUp();
 
@@ -2668,7 +2774,7 @@
         window.continueToOrders = function() {
             document.getElementById('payment-verification-modal').classList.remove('active');
             openOrdersPage();
-            
+
             setTimeout(() => {
                 showTruckAnimation();
             }, 600);
@@ -2677,12 +2783,12 @@
         window.showTruckAnimation = function() {
             const overlay = document.getElementById('truck-animation-overlay');
             overlay.classList.add('active');
-            
+
             const truck = overlay.querySelector('.truck-icon');
             truck.style.animation = 'none';
             truck.offsetHeight;
             truck.style.animation = 'drive 3s ease-in-out forwards';
-            
+
             const text = overlay.querySelector('.truck-text');
             text.style.animation = 'none';
             text.offsetHeight;
@@ -2714,7 +2820,7 @@
                 let statusColor = "#f59e0b";
                 let statusIcon = "⏳";
                 const s = found.status || "";
-                
+
                 if (s.includes("Delivered")) { statusColor = "#16a34a"; statusIcon = "✅"; }
                 else if (s.includes("Transit") || s.includes("Shipped")) { statusColor = "#3b82f6"; statusIcon = "🚚"; }
                 else if (s.includes("Out for Delivery")) { statusColor = "#8b5cf6"; statusIcon = "📦"; }
@@ -2816,7 +2922,7 @@
                             ${statusDetails.icon} ${order.status}
                         </span>
                     </div>
-                    
+
                     <div class="order-card-body">
                         <div class="order-info-row">
                             <span class="order-info-label">Items</span>
@@ -3010,7 +3116,7 @@
             highlightStars(5);
             document.getElementById('rating-order-info').innerText = `Order: ${order.id} (${order.items})`;
             document.getElementById('review-comment').value = '';
-            
+
             document.getElementById('rating-modal').classList.add('active');
         };
 
@@ -3034,7 +3140,6 @@
             }
         }
 
-        // ==================== ✅ SUBMIT REVIEW WITH LOADING STATE ====================
         window.submitReview = async function() {
             const comment = document.getElementById('review-comment').value.trim();
             if (!comment) {
@@ -3158,7 +3263,7 @@
                     <div class="admin-refund-detail"><strong>Account Number:</strong> ${refund.accountNumber}</div>
                     <div class="admin-refund-detail"><strong>Bank:</strong> ${refund.bankName}</div>
                     <div class="admin-refund-detail"><strong>Date:</strong> ${refund.date}</div>
-                    
+
                     <div class="admin-refund-images">
                         <div>
                             <p style="font-size:0.72rem; margin:0 0 0.3rem; font-weight:700;">Receipt (tap to enlarge):</p>
@@ -3184,7 +3289,6 @@
             }).join('');
         }
 
-        // ==================== ✅ UPDATE REFUND STATUS WITH LOADING ====================
         window.updateRefundStatus = async function(refundId) {
             const selectEl = document.getElementById(`admin-refund-status-${refundId}`);
             if (!selectEl) return;
@@ -3230,7 +3334,7 @@
                     <div style="color:#475569; margin-bottom:0.4rem;">Items: ${ord.items} | Total Paid: ${ord.totalPaid || 'N/A'} | Phone: ${ord.phone}</div>
                     <div style="color:#475569; margin-bottom:0.5rem; font-size:0.82rem;">📍 ${ord.address || 'N/A'}</div>
                     <div style="color:#94a3b8; margin-bottom:0.5rem; font-size:0.75rem;">Customer email: ${ord.customerEmail || 'N/A'}</div>
-                    
+
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top: 0.5rem;">
                         <select id="admin-status-${ord.id}" style="margin:0; padding:0.5rem; font-size:16px; flex-grow:1; border-radius: 8px; border: 1px solid #cbd5e1;">
                             <option value="Order Placed - Processing" ${ord.status === 'Order Placed - Processing' ? 'selected' : ''}>Order Placed - Processing</option>
@@ -3248,7 +3352,6 @@
             }).join('');
         }
 
-        // ==================== ✅ UPDATE ORDER STATUS WITH LOADING ====================
         window.updateOrderStatus = async function(orderId) {
             const selectEl = document.getElementById(`admin-status-${orderId}`);
             if (!selectEl) return;
@@ -3377,16 +3480,16 @@
             document.getElementById('admin-shipping').value = product.shipping || '';
             document.getElementById('admin-colors').value = product.colors ? product.colors.join(', ') : '';
 
-            adminSelectedImages = []; 
+            adminSelectedImages = [];
             renderAdminImagePreviews();
-            
-            adminSelectedVideos = []; 
+
+            adminSelectedVideos = [];
             renderAdminVideoPreviews();
 
             document.getElementById('admin-add-btn').innerText = "💾 Update Product Globally";
             document.getElementById('admin-cancel-edit-btn').style.display = 'block';
             document.getElementById('admin-form-title').innerText = "✏️ Edit Product (Leave images blank to keep existing)";
-            
+
             document.getElementById('add-product-form-container').scrollIntoView({behavior:'smooth'});
         };
 
@@ -3398,7 +3501,7 @@
             document.getElementById('admin-desc').value = '';
             document.getElementById('admin-shipping').value = '';
             document.getElementById('admin-colors').value = '';
-            
+
             adminSelectedImages = [];
             adminSelectedVideos = [];
             renderAdminImagePreviews();
@@ -3432,14 +3535,13 @@
             }
         };
 
-        // ==================== ✅ ADD PRODUCT WITH LOADING STATE (already had text swap) ====================
         window.addProduct = async function() {
             const name = document.getElementById('admin-name').value.trim();
             const priceUSD = parseFloat(document.getElementById('admin-price-usd').value);
             const priceNGN = parseFloat(document.getElementById('admin-price-ngn').value);
             const description = document.getElementById('admin-desc').value.trim();
             const shipping = document.getElementById('admin-shipping').value.trim();
-            
+
             const colorsInput = document.getElementById('admin-colors').value.trim();
             const colorsArray = colorsInput ? colorsInput.split(',').map(c => c.trim()).filter(c => c !== '') : [];
 
@@ -3532,17 +3634,17 @@
 
                     showToast('✅ Product updated & synced globally!');
                 } else {
-                    const newProduct = { 
-                        id: Date.now(), 
-                        name, priceUSD, priceNGN, description, 
-                        images: imagesBase64, 
-                        videos: videosBase64, 
+                    const newProduct = {
+                        id: Date.now(),
+                        name, priceUSD, priceNGN, description,
+                        images: imagesBase64,
+                        videos: videosBase64,
                         shipping: shipping || "Ships in 2 - 3 business days",
                         isSoldOut: false,
                         colors: colorsArray
                     };
                     globalState.products.push(newProduct);
-                    
+
                     document.getElementById('admin-name').value = '';
                     document.getElementById('admin-price-usd').value = '';
                     document.getElementById('admin-price-ngn').value = '';
@@ -3690,7 +3792,7 @@
 
         function updateCartUI() {
             const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-            
+
             const badge = document.getElementById('cart-count');
             if (badge) badge.innerText = totalCount;
 
@@ -3739,7 +3841,7 @@
         window.toggleCart = function() {
             const cartModal = document.getElementById('cart-modal');
             cartModal.classList.toggle('active');
-            
+
             if (cartModal.classList.contains('active')) {
                 document.body.classList.add('cart-open');
             } else {
