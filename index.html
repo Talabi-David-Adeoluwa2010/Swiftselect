@@ -4,58 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>SwiftSelect - Premium Online Store</title>
-
-    <!-- ============================================================
-         EMAILJS SDK — bulletproof loader with automatic backup CDN
-         ============================================================ -->
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() {
-            function initEmailJS() {
-                try {
-                    emailjs.init({ publicKey: "5viHIEbeZ90KuRrb3" });
-                    window.__emailjs_ready = true;
-                    console.log("✅ EmailJS SDK ready & initialized.");
-                } catch (e) {
-                    console.error("❌ EmailJS init() failed:", e);
-                }
-            }
-
-            function loadFrom(url, onSuccess, onError) {
-                var s = document.createElement('script');
-                s.src = url;
-                s.async = false;
-                s.onload = onSuccess;
-                s.onerror = onError;
-                document.head.appendChild(s);
-            }
-
-            // Try primary CDN, fall back to unpkg
-            loadFrom(
-                "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js",
-                initEmailJS,
-                function() {
-                    console.warn("⚠️ Primary EmailJS CDN failed. Switching to backup...");
-                    loadFrom(
-                        "https://unpkg.com/@emailjs/browser@4/dist/email.min.js",
-                        initEmailJS,
-                        function() {
-                            console.error("❌ BOTH EmailJS CDNs failed. Emails will NOT work.");
-                        }
-                    );
-                }
-            );
+            emailjs.init({
+                publicKey: "5viHIEbeZ90KuRrb3",
+            });
         })();
     </script>
-
     <!-- Paystack SDK -->
     <script src="https://js.paystack.co/v2/inline.js"></script>
-
+    
     <style>
         :root {
             --primary: #4f46e5;
             --primary-dark: #4338ca;
             --accent: #f59e0b;
-            --bg: #f8fafc;
+            --bg: #f8fafc; 
             --text: #0f172a;
             --card-bg: #ffffff;
             --border: #e2e8f0;
@@ -69,40 +36,40 @@
             text-size-adjust: 100%;
         }
 
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg);
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            padding-bottom: 45px;
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            padding-bottom: 45px; 
         }
-
+        
         body.cart-open { overflow: hidden; }
         body.no-scroll { overflow: hidden; }
 
-        .announcement-bar {
-            background: linear-gradient(90deg, #1e1b4b, #312e81);
-            color: white;
-            text-align: center;
-            padding: 0.5rem;
-            font-size: 0.8rem;
-            font-weight: 500;
+        .announcement-bar { 
+            background: linear-gradient(90deg, #1e1b4b, #312e81); 
+            color: white; 
+            text-align: center; 
+            padding: 0.5rem; 
+            font-size: 0.8rem; 
+            font-weight: 500; 
             letter-spacing: 0.3px;
         }
 
-        header {
-            background: #ffffff;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        header { 
+            background: #ffffff; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            border-bottom: 1px solid var(--border); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
         }
-
+        
         .header-top {
             display: flex;
             justify-content: space-between;
@@ -112,36 +79,36 @@
         }
 
         .logo-container { display: flex; align-items: center; gap: 0.6rem; }
-        .logo-icon {
-            width: 40px; height: 40px;
-            background: linear-gradient(135deg, var(--primary), #9333ea);
-            color: white; display: flex; justify-content: center; align-items: center;
-            border-radius: 12px; font-weight: 800; font-size: 1.2rem;
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+        .logo-icon { 
+            width: 40px; height: 40px; 
+            background: linear-gradient(135deg, var(--primary), #9333ea); 
+            color: white; display: flex; justify-content: center; align-items: center; 
+            border-radius: 12px; font-weight: 800; font-size: 1.2rem; 
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25); 
         }
         .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; color: #0f172a; }
-
+        
         .header-actions { display: flex; align-items: center; gap: 0.75rem; }
-
-        .icon-btn {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            width: 44px; height: 44px;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.25rem; cursor: pointer;
-            position: relative; transition: all 0.2s;
+        
+        .icon-btn { 
+            background: #f8fafc; 
+            border: 1px solid var(--border); 
+            width: 44px; height: 44px; 
+            border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1.25rem; cursor: pointer; 
+            position: relative; transition: all 0.2s; 
             color: #334155;
         }
         .icon-btn:hover { background: #e2e8f0; color: var(--primary); border-color: #cbd5e1; }
-
-        .cart-badge {
-            position: absolute; top: -6px; right: -6px;
-            background: #ef4444; color: white;
-            font-size: 0.75rem; font-weight: 800;
+        
+        .cart-badge { 
+            position: absolute; top: -6px; right: -6px; 
+            background: #ef4444; color: white; 
+            font-size: 0.75rem; font-weight: 800; 
             min-width: 22px; height: 22px; padding: 0 4px;
-            border-radius: 11px;
-            display: flex; align-items: center; justify-content: center;
+            border-radius: 11px; 
+            display: flex; align-items: center; justify-content: center; 
             border: 2px solid white; box-sizing: border-box;
         }
 
@@ -206,7 +173,6 @@
             padding: 0.5rem;
             animation: fadeIn 0.2s ease;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
         .kebab-menu.active {
             display: flex;
             flex-direction: column;
@@ -234,7 +200,7 @@
         }
 
         .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
-
+        
         .hero-banner { background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; padding: 1.5rem 2rem; border-radius: 20px; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.2); position: relative; overflow: hidden; }
         .hero-banner h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
         .hero-banner p { margin: 0; color: #c7d2fe; font-size: 0.9rem; max-width: 600px; line-height: 1.4; }
@@ -242,14 +208,14 @@
         .search-container-wrapper { margin-bottom: 1.25rem; }
         .sticky-search-container { position: sticky; top: 110px; z-index: 90; background: var(--bg); padding: 0.5rem 0; transition: box-shadow 0.2s ease; }
         .sticky-search-container.is-stuck { box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(8px); }
-
+        
         .search-input-wrapper { position: relative; }
         .search-input-wrapper span { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem; }
         .search-input { width: 100%; padding: 0.9rem 1rem 0.9rem 3rem; font-size: 16px; border: 1px solid var(--border); border-radius: 14px; box-sizing: border-box; outline: none; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.2s; }
         .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12); }
 
         .section-title { font-size: 1.35rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; color: #0f172a; }
-
+        
         .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem; }
         @media(min-width: 768px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; } }
 
@@ -257,41 +223,25 @@
         .product-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -8px rgba(0,0,0,0.08); border-color: #cbd5e1; }
         .product-card img { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; background: #f1f5f9; }
         @media(min-width: 768px) { .product-card img { height: 190px; } }
-
+        
         .product-badge { position: absolute; top: 0.85rem; right: 0.85rem; background: #fee2e2; color: #dc2626; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.3px; z-index: 2; }
         .product-badge.sold-out { background: rgba(220, 38, 38, 0.9); color: white; }
-
+        
         .free-shipping-tag { background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.2rem; margin-bottom: 0.4rem; width: fit-content; }
-
+        
         .product-meta { margin-top: 0.75rem; flex-grow: 1; display: flex; flex-direction: column; }
         .product-stars { color: var(--accent); font-size: 0.75rem; margin-bottom: 0.2rem; }
         .product-title { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.3rem; color: #0f172a; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
         .product-price { color: #0f172a; font-weight: 800; font-size: 1.05rem; margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.05rem; }
         .product-price .price-sub { font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-decoration: line-through; }
         .product-price .current-price { color: #0f172a; font-size: 1.05rem; font-weight: 800; }
-
+        
         .btn-marketplace { background: #f97316; color: white; border: none; padding: 0.75rem 1rem; cursor: pointer; border-radius: 10px; width: 100%; font-weight: 700; font-size: 0.95rem; transition: background 0.2s; text-align: center; box-sizing: border-box; }
         .btn-marketplace:hover { background: #ea580c; }
         .btn-marketplace.disabled { background: #cbd5e1; cursor: not-allowed; }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid #e0e7ff; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.9s linear infinite; }
-
-        .btn-spinner {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255,255,255,0.4);
-            border-top-color: #ffffff;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            vertical-align: middle;
-            margin-right: 0.5rem;
-        }
-        .btn-spinner.dark {
-            border: 2px solid rgba(79, 70, 229, 0.3);
-            border-top-color: var(--primary);
-        }
 
         .size-selector { display: flex; gap: 0.35rem; flex-wrap: wrap; }
         .size-btn { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.4rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; }
@@ -313,7 +263,7 @@
         .modal.active { display: flex; }
         .modal-content { background: white; padding: 2.25rem; border-radius: 20px; width: 100%; max-width: 520px; box-sizing: border-box; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
+        
         .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 0.85rem 1rem; margin-bottom: 1.1rem; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; font-size: 16px; outline: none; background: #fff; transition: all 0.2s; }
         .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
 
@@ -332,7 +282,7 @@
         .admin-product-info { display: flex; align-items: center; gap: 1rem; flex-grow: 1; overflow: hidden; }
         .admin-product-info img { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; }
         .admin-actions { display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0; }
-
+        
         .admin-refund-card { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; font-size: 0.85rem; }
         .admin-refund-header { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.3rem; }
         .admin-refund-detail { color: #475569; margin-bottom: 0.2rem; }
@@ -343,12 +293,12 @@
         .rating-stars-input { display: flex; gap: 0.5rem; font-size: 1.75rem; cursor: pointer; color: #cbd5e1; margin-bottom: 1.25rem; }
         .rating-stars-input span.selected { color: var(--accent); }
 
-        .cart-modal {
-            display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 440px;
-            height: 100vh; height: 100dvh;
-            background: white; box-shadow: -15px 0 35px rgba(0,0,0,0.15); z-index: 1200;
-            padding: 0; box-sizing: border-box; flex-direction: column;
-            animation: slideInRight 0.3s ease;
+        .cart-modal { 
+            display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 440px; 
+            height: 100vh; height: 100dvh; 
+            background: white; box-shadow: -15px 0 35px rgba(0,0,0,0.15); z-index: 1200; 
+            padding: 0; box-sizing: border-box; flex-direction: column; 
+            animation: slideInRight 0.3s ease; 
         }
         @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
         .cart-modal.active { display: flex; }
@@ -364,18 +314,18 @@
         .cart-qty-controls { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
         .cart-qty-btn { background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
         .cart-qty-btn:hover { background: #e2e8f0; }
-
-        .cart-footer {
-            border-top: 1px solid var(--border);
-            padding: 1.25rem 1.5rem;
-            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
-            flex-shrink: 0;
-            background: #ffffff;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03);
-            position: relative;
+        
+        .cart-footer { 
+            border-top: 1px solid var(--border); 
+            padding: 1.25rem 1.5rem; 
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); 
+            flex-shrink: 0; 
+            background: #ffffff; 
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03); 
+            position: relative; 
             z-index: 10;
         }
-
+        
         .total-price { font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; display: flex; justify-content: space-between; color: #0f172a; flex-direction: column; gap: 0.3rem; }
         .total-price .total-sub { font-size: 0.95rem; color: #64748b; font-weight: 600; }
 
@@ -420,27 +370,6 @@
         .file-preview { margin-top: 0.5rem; max-width: 100px; border-radius: 8px; display: none; }
         .refund-policy-text { font-size: 0.9rem; line-height: 1.6; color: #334155; }
 
-        .refund-pill {
-            display: inline-block;
-            background: #fef3c7;
-            color: #92400e;
-            padding: 0.25rem 0.6rem;
-            border-radius: 6px;
-            font-family: monospace;
-            font-weight: 800;
-            font-size: 0.8rem;
-        }
-        .recent-order-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.85rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: white;
-            gap: 0.75rem;
-        }
-
         .full-page-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1500; display: none; flex-direction: column; overflow: hidden; }
         .full-page-view.active { display: flex; }
         .full-page-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; background: white; border-bottom: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); flex-shrink: 0; gap: 0.75rem; }
@@ -471,8 +400,6 @@
             padding: 1rem 1.25rem;
             background: #f8fafc;
             border-bottom: 1px solid var(--border);
-            gap: 0.5rem;
-            flex-wrap: wrap;
         }
         .order-id {
             font-family: monospace;
@@ -482,7 +409,6 @@
             padding: 0.25rem 0.6rem;
             border-radius: 6px;
             font-size: 0.85rem;
-            word-break: break-all;
         }
         .order-status-badge {
             font-size: 0.75rem;
@@ -505,13 +431,12 @@
             color: #334155;
             border-bottom: 1px dashed #e2e8f0;
             padding-bottom: 0.4rem;
-            gap: 0.5rem;
         }
         .order-info-row:last-child {
             border-bottom: none;
             padding-bottom: 0;
         }
-        .order-info-label { font-weight: 600; color: #64748b; flex-shrink: 0; }
+        .order-info-label { font-weight: 600; color: #64748b; }
         .order-info-value { font-weight: 600; color: #0f172a; text-align: right; max-width: 65%; word-break: break-word; }
         .order-card-footer {
             padding: 0.85rem 1.25rem;
@@ -520,7 +445,6 @@
             display: flex;
             justify-content: flex-end;
             gap: 0.5rem;
-            flex-wrap: wrap;
         }
 
         .admin-tabs { display: flex; gap: 0.5rem; padding: 0.75rem 1.25rem; background: white; border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
@@ -663,15 +587,14 @@
         }
         .truck-icon {
             position: absolute;
-            left: 100%;
+            left: -150px;
             font-size: 5rem;
             bottom: 20px;
-            transform: scaleX(-1);
             animation: drive 3s ease-in-out forwards;
         }
         @keyframes drive {
-            0% { left: 100%; }
-            100% { left: -150px; }
+            0% { left: -150px; }
+            100% { left: 100%; }
         }
         .truck-text {
             font-size: 1.75rem;
@@ -701,14 +624,14 @@
                 <div class="logo-icon">S</div>
                 <div class="logo">SwiftSelect</div>
             </div>
-
+            
             <div class="header-actions">
                 <button class="icon-btn" onclick="toggleCart()" title="Shopping Cart">
                     🛒
                     <span id="cart-count" class="cart-badge">0</span>
                 </button>
-
-                <button class="icon-btn" id="kebab-toggle-btn" onclick="toggleKebabMenu()" title="More Options">⋮</button>
+                
+                <button class="icon-btn" onclick="toggleKebabMenu()" title="More Options">⋮</button>
             </div>
         </div>
 
@@ -716,13 +639,15 @@
             <div class="user-greeting" id="user-greeting-bar">
                 <span id="user-greeting-name">Welcome, Guest</span>
             </div>
-
+            
             <div class="user-actions">
                 <button class="btn-text" onclick="openOrdersPage()">📦 Orders</button>
                 <button class="btn-text" id="auth-btn" onclick="handleAuthClick()">Login</button>
             </div>
         </div>
 
+        <!-- Kebab Dropdown Menu -->
+        <!-- ✅ UPDATED: Added "See All Customer Reviews" + kept Rate & Review Orders -->
         <div class="kebab-menu" id="kebab-menu">
             <button onclick="openReviewsModal(); toggleKebabMenu();">🌟 See All Customer Reviews</button>
             <button onclick="openMyReviewsModal(); toggleKebabMenu();">⭐ Rate & Review Orders</button>
@@ -867,9 +792,9 @@
                             <input type="number" id="admin-price-ngn" placeholder="Price (₦NGN)">
                         </div>
                         <textarea id="admin-desc" placeholder="Product Description..." rows="2"></textarea>
-
+                        
                         <input type="text" id="admin-colors" placeholder="Available Colors (e.g. Red, Blue, Black) - Optional">
-
+                        
                         <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Pictures (Add 3 to 5 pictures):</label>
                         <input type="file" id="admin-image-input" multiple accept="image/*" style="margin-bottom: 0.5rem;">
                         <div id="admin-image-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;"></div>
@@ -921,7 +846,7 @@
                 </div>
                 <button class="close-btn" onclick="toggleShippingPolicyModal()" style="color: white; font-size: 1.75rem; opacity: 0.8; transition: opacity 0.2s;">&times;</button>
             </div>
-
+            
             <div style="padding: 2rem;">
                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
                     <span style="font-size: 1.5rem;">🚚</span>
@@ -1001,7 +926,7 @@
                 <button class="close-btn" onclick="toggleRefundModal()">&times;</button>
             </div>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Please fill out this form accurately. We will review your request and process it according to our Refund Policy.</p>
-
+            
             <div class="refund-form-group">
                 <label>Full Name</label>
                 <input type="text" id="refund-name" placeholder="e.g., John Doe">
@@ -1055,7 +980,7 @@
                 </div>
             </div>
 
-            <button class="btn-primary" id="refund-submit-btn" onclick="submitRefundRequest()" style="width:100%; margin-bottom:0.75rem;">Submit Refund Request</button>
+            <button class="btn-primary" onclick="submitRefundRequest()" style="width:100%; margin-bottom:0.75rem;">Submit Refund Request</button>
             <button class="btn-secondary" onclick="toggleRefundModal()" style="width:100%;">Cancel</button>
         </div>
     </div>
@@ -1112,7 +1037,7 @@
             <div id="detail-video-container" class="detail-video-container"></div>
             <div class="product-stars" style="margin-bottom: 0.5rem;">⭐⭐⭐⭐⭐ (Verified Global Reviews)</div>
             <div id="detail-price" style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.15rem;"></div>
-
+            
             <div id="detail-colors-container" style="margin-bottom: 1rem; display: none;">
                 <label style="font-size: 0.85rem; font-weight: 700; color: #0f172a; display: block; margin-bottom: 0.4rem;">Select Color:</label>
                 <div id="detail-color-options" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
@@ -1137,7 +1062,7 @@
                 <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.25rem;">Enter your Username or Email and password to access your account globally.</p>
                 <input type="text" id="login-username-or-email" placeholder="Username or Email Address">
                 <input type="password" id="login-password" placeholder="Password">
-                <button class="btn-primary" id="login-btn" onclick="loginUser()" style="width:100%; margin-bottom:0.75rem;">Login</button>
+                <button class="btn-primary" onclick="loginUser()" style="width:100%; margin-bottom:0.75rem;">Login</button>
                 <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
             </div>
             <div id="signup-form-container" style="display: none;">
@@ -1147,7 +1072,7 @@
                 <input type="text" id="signup-name" placeholder="Full Name">
                 <input type="email" id="signup-email" placeholder="Email Address">
                 <input type="password" id="signup-password" placeholder="Create Password">
-                <button class="btn-primary" id="signup-btn" onclick="signupUser()" style="width:100%; margin-bottom:0.75rem;">Create Global Account & Login</button>
+                <button class="btn-primary" onclick="signupUser()" style="width:100%; margin-bottom:0.75rem;">Create Global Account & Login</button>
                 <button class="btn-secondary" onclick="toggleAuthModal()" style="width:100%;">Cancel</button>
             </div>
         </div>
@@ -1185,7 +1110,7 @@
             <select id="bill-payment">
                 <option value="Card Payment">Secure Online Payment via Paystack (Card, USSD, etc.)</option>
             </select>
-            <button class="btn-primary" id="pay-btn" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">Proceed to Payment</button>
+            <button class="btn-primary" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">Proceed to Payment</button>
             <button class="btn-secondary" onclick="toggleBillingModal()" style="width:100%;">Cancel</button>
         </div>
     </div>
@@ -1203,11 +1128,12 @@
                 <span onclick="setRating(5)">★</span>
             </div>
             <textarea id="review-comment" placeholder="Write a short review about your experience and the product quality..." rows="3"></textarea>
-            <button class="btn-primary" id="review-submit-btn" onclick="submitReview()" style="width:100%; margin-bottom:0.75rem;">Submit Global Recommendation</button>
+            <button class="btn-primary" onclick="submitReview()" style="width:100%; margin-bottom:0.75rem;">Submit Global Recommendation</button>
             <button class="btn-secondary" onclick="toggleRatingModal()" style="width:100%;">Skip for now</button>
         </div>
     </div>
 
+    <!-- MY REVIEWS MODAL (accessed from kebab menu) -->
     <div class="modal" id="my-reviews-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -1221,6 +1147,7 @@
         </div>
     </div>
 
+    <!-- CART MODAL -->
     <div class="cart-modal" id="cart-modal">
         <div class="cart-header">
             <h3 style="margin:0;">Your Shopping Cart</h3>
@@ -1282,33 +1209,18 @@
         };
 
         // ==================== ✅ EMAILJS ORDER NOTIFICATION ====================
-        const EMAILJS_SERVICE_ID           = "Swift_alerts";
-        const EMAILJS_ADMIN_TEMPLATE_ID    = "template_tuq2hhk";
-        const EMAILJS_CUSTOMER_TEMPLATE_ID = "template_hv2kyh6";
-        const ORDER_NOTIFICATION_EMAIL     = "talabidavid275@gmail.com";
+        // ✅ Real values wired in from your EmailJS dashboard
+        const EMAILJS_SERVICE_ID           = "Swift_alerts";              // ✅ your Service ID
+        const EMAILJS_ADMIN_TEMPLATE_ID    = "template_tuq2hhk";          // ✅ sends order to YOU (admin)
+        const EMAILJS_CUSTOMER_TEMPLATE_ID = "template_hv2kyh6";          // ✅ sends confirmation to BUYER
+        const ORDER_NOTIFICATION_EMAIL     = "talabidavid275@gmail.com";  // ✅ your inbox
 
-        // Waits up to maxWaitMs for EmailJS SDK to appear in window
-        async function waitForEmailJS(maxWaitMs = 3000) {
-            const start = Date.now();
-            while (!window.emailjs || typeof window.emailjs.send !== 'function') {
-                if (Date.now() - start > maxWaitMs) return false;
-                await new Promise(r => setTimeout(r, 100));
-            }
-            return true;
-        }
-
-        // ==================== ADMIN EMAIL ====================
         async function sendOrderNotificationEmail(orderRecord) {
-            console.log("📨 ADMIN email pipeline started for order:", orderRecord.id);
             try {
-                const sdkReady = await waitForEmailJS(3000);
-                if (!sdkReady) {
-                    console.error("❌ ADMIN email ABORTED — EmailJS SDK not ready after 3s.");
-                    console.error("   window.emailjs =", typeof window.emailjs);
-                    showToast("⚠️ Admin email failed (SDK not loaded).");
-                    return false;
+                if (!window.emailjs) {
+                    console.warn("⚠️ EmailJS SDK not loaded yet. Skipping admin email.");
+                    return;
                 }
-
                 const templateParams = {
                     to_email:          ORDER_NOTIFICATION_EMAIL,
                     order_id:          orderRecord.id,
@@ -1322,47 +1234,23 @@
                     status:            orderRecord.status,
                     order_date:        orderRecord.date
                 };
-                console.log("📨 Sending ADMIN email...", {
-                    service: EMAILJS_SERVICE_ID,
-                    template: EMAILJS_ADMIN_TEMPLATE_ID,
-                    to: ORDER_NOTIFICATION_EMAIL
-                });
-                console.log("📨 Template params:", templateParams);
-
-                let res;
-                try {
-                    res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ADMIN_TEMPLATE_ID, templateParams);
-                } catch (firstErr) {
-                    console.warn("⚠️ First ADMIN send attempt failed. Retrying in 1s...", firstErr);
-                    await new Promise(r => setTimeout(r, 1000));
-                    res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ADMIN_TEMPLATE_ID, templateParams);
-                }
-
+                const res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ADMIN_TEMPLATE_ID, templateParams);
                 console.log("✅ ADMIN order email sent:", res.status, res.text);
-                return true;
             } catch (e) {
-                console.error("❌ EmailJS ADMIN send error:", e);
-                console.error("   Status:", e?.status, "| Text:", e?.text, "| Message:", e?.message);
-                showToast("⚠️ Admin email failed. Check console for details.");
-                return false;
+                console.error("❌ EmailJS admin send error:", e);
             }
         }
 
-        // ==================== CUSTOMER EMAIL ====================
         async function sendCustomerConfirmationEmail(orderRecord) {
-            console.log("📨 CUSTOMER email pipeline started for order:", orderRecord.id, "→", orderRecord.customerEmail);
             try {
+                if (!window.emailjs) {
+                    console.warn("⚠️ EmailJS SDK not loaded yet. Skipping customer email.");
+                    return;
+                }
                 if (!orderRecord.customerEmail) {
-                    console.warn("⚠️ CUSTOMER email ABORTED — no email on order.");
-                    return false;
+                    console.warn("⚠️ No customer email on order — skipping customer confirmation.");
+                    return;
                 }
-
-                const sdkReady = await waitForEmailJS(3000);
-                if (!sdkReady) {
-                    console.error("❌ CUSTOMER email ABORTED — EmailJS SDK not ready after 3s.");
-                    return false;
-                }
-
                 const templateParams = {
                     to_email:          orderRecord.customerEmail,
                     order_id:          orderRecord.id,
@@ -1376,27 +1264,10 @@
                     status:            orderRecord.status,
                     order_date:        orderRecord.date
                 };
-                console.log("📨 Sending CUSTOMER email...", {
-                    service: EMAILJS_SERVICE_ID,
-                    template: EMAILJS_CUSTOMER_TEMPLATE_ID,
-                    to: orderRecord.customerEmail
-                });
-
-                let res;
-                try {
-                    res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE_ID, templateParams);
-                } catch (firstErr) {
-                    console.warn("⚠️ First CUSTOMER send attempt failed. Retrying in 1s...", firstErr);
-                    await new Promise(r => setTimeout(r, 1000));
-                    res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE_ID, templateParams);
-                }
-
+                const res = await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE_ID, templateParams);
                 console.log("✅ CUSTOMER confirmation email sent:", res.status, res.text);
-                return true;
             } catch (e) {
-                console.error("❌ EmailJS CUSTOMER send error:", e);
-                console.error("   Status:", e?.status, "| Text:", e?.text, "| Message:", e?.message);
-                return false;
+                console.error("❌ EmailJS customer send error:", e);
             }
         }
 
@@ -1454,7 +1325,7 @@
         const ordersRef  = ref(db, 'swiftOrders');
         const refundsRef = ref(db, 'swiftRefunds');
 
-        const CACHE_VERSION = 11;
+        const CACHE_VERSION = 9; 
 
         let globalState = {
             _cacheVersion: CACHE_VERSION,
@@ -1474,44 +1345,27 @@
         let isProductsLoaded = false;
         let lastSubmittedRefundId = null;
 
-        const FORCE_FRESH = localStorage.getItem('swift_force_fresh_sync') === '1';
-        if (FORCE_FRESH) {
-            localStorage.removeItem('swift_force_fresh_sync');
-            console.log("🔄 Force fresh sync requested — will show loading spinner.");
-        }
-
-        let cacheLoadedProducts = 0;
-
-        if (!FORCE_FRESH) {
-            try {
-                const cached = await dbHelper.get('swift_cached_state');
-                if (cached) {
-                    globalState = { ...globalState, ...cached };
-                    globalState._cacheVersion = CACHE_VERSION;
-
-                    if (!Array.isArray(globalState.products))   globalState.products = [];
-                    if (!Array.isArray(globalState.orders))     globalState.orders = [];
-                    if (!Array.isArray(globalState.reviews))    globalState.reviews = [];
-                    if (!Array.isArray(globalState.refunds))    globalState.refunds = [];
-                    if (!Array.isArray(globalState.promoCodes)) globalState.promoCodes = ["SWIFT5"];
-                    if (!Array.isArray(globalState.users) || globalState.users.length === 0) {
-                        globalState.users = [{ username: "admin", name: "Administrator", email: "admin@swiftselect.com", password: "admin" }];
-                    }
-
-                    cacheLoadedProducts = globalState.products.length;
-
-                    if (cacheLoadedProducts > 0) {
-                        isProductsLoaded = true;
-                        console.log("✅ Cache hit:", cacheLoadedProducts, "products loaded instantly — no spinner.");
-                    } else {
-                        console.log("📭 Cache exists but has 0 products — will show spinner while Firebase loads.");
-                    }
-                } else {
-                    console.log("🆕 No cache on this device — will show spinner while Firebase loads.");
+        try {
+            const cached = await dbHelper.get('swift_cached_state');
+            if (cached && cached._cacheVersion === CACHE_VERSION && cached.products) {
+                globalState = cached;
+                if (!globalState.refunds) globalState.refunds = [];
+                if (!globalState.orders) globalState.orders = [];
+                if (!globalState.users || globalState.users.length === 0) {
+                    globalState.users = [{ username: "admin", name: "Administrator", email: "admin@swiftselect.com", password: "admin" }];
                 }
-            } catch (e) {
-                console.error("IndexedDB cache load error:", e);
+
+                if (globalState.products.length > 0) {
+                    isProductsLoaded = true;
+                    console.log("✅ Cache hit:", globalState.products.length, "products loaded instantly.");
+                } else {
+                    console.log("📭 Cache empty. Waiting for Firebase...");
+                }
+            } else {
+                console.log("🆕 No valid cache. Waiting for Firebase sync...");
             }
+        } catch (e) {
+            console.error("IndexedDB cache load error:", e);
         }
 
         let currentUser = JSON.parse(localStorage.getItem('swift_current_user')) || null;
@@ -1524,25 +1378,6 @@
         let adminSelectedImages = [];
         let adminSelectedVideos = [];
         let editingProductId = null;
-
-        function lockButton(btnOrSelector, loadingText = "Please wait…") {
-            let btn = typeof btnOrSelector === 'string'
-                ? document.querySelector(btnOrSelector)
-                : btnOrSelector;
-            if (!btn) return () => {};
-            const originalHTML = btn.innerHTML;
-            const originalDisabled = btn.disabled;
-            btn.disabled = true;
-            btn.style.opacity = "0.75";
-            btn.style.cursor = "wait";
-            btn.innerHTML = `<span class="btn-spinner"></span>${loadingText}`;
-            return function restore() {
-                btn.innerHTML = originalHTML;
-                btn.disabled = originalDisabled;
-                btn.style.opacity = "";
-                btn.style.cursor = "";
-            };
-        }
 
         const faqData = {
             shipping: [
@@ -1566,8 +1401,8 @@
 
         document.addEventListener('click', function(event) {
             const menu = document.getElementById('kebab-menu');
-            const kebabToggle = document.getElementById('kebab-toggle-btn');
-            if (!menu.contains(event.target) && event.target !== kebabToggle && !kebabToggle.contains(event.target)) {
+            const btn = event.target.closest('.icon-btn');
+            if (!menu.contains(event.target) && !btn) {
                 menu.classList.remove('active');
             }
         });
@@ -1582,9 +1417,9 @@
         window.filterFaqCategory = function(category) {
             const answerBox = document.getElementById('faq-answer-box');
             const questionsList = document.getElementById('faq-questions-list');
-
+            
             answerBox.innerHTML = `<em>Please select a specific question below related to <strong>${category.toUpperCase()}</strong>.</em>`;
-
+            
             const questions = faqData[category] || [];
             questionsList.innerHTML = questions.map((item, idx) => `
                 <button class="btn-secondary" style="text-align: left; font-size: 0.9rem; padding: 0.75rem 1rem; width: 100%; justify-content: flex-start;" onclick="showFaqAnswer('${category}', ${idx})">
@@ -1675,28 +1510,22 @@
             }
         }
 
-        async function updateOrderFieldsInFirebase(orderId, updates) {
+        async function updateOrderStatusInFirebase(orderId, newStatus) {
             const idx = globalState.orders.findIndex(o => String(o.id) === String(orderId));
-            if (idx !== -1) {
-                globalState.orders[idx] = { ...globalState.orders[idx], ...updates };
-            }
+            if (idx !== -1) globalState.orders[idx].status = newStatus;
             await persistCache();
 
             try {
                 await runTransaction(ordersRef, (current) => {
                     const arr = normalizeToArray(current);
-                    const i = arr.findIndex(o => String(o.id) === String(orderId));
-                    if (i !== -1) arr[i] = { ...arr[i], ...updates };
+                    const target = arr.find(o => String(o.id) === String(orderId));
+                    if (target) target.status = newStatus;
                     return arr;
                 });
             } catch (e) {
-                console.error("Order update sync error:", e);
-                showToast("⚠️ Update may not have synced. Check connection.");
+                console.error("Order status sync error:", e);
+                showToast("⚠️ Status update may not have synced. Check connection.");
             }
-        }
-
-        async function updateOrderStatusInFirebase(orderId, newStatus) {
-            return updateOrderFieldsInFirebase(orderId, { status: newStatus });
         }
 
         async function updateRefundStatusInFirebase(refundId, newStatus) {
@@ -1779,71 +1608,48 @@
             checkPaymentStatus();
         }
 
-        // ==================== ✅ PAYMENT RETURN HANDLING ====================
         async function checkPaymentStatus() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
-                const reference = urlParams.get('reference') || urlParams.get('trxref');
-                if (!reference) return;
+                if (urlParams.get('checkout') === 'success') {
+                    const reference = urlParams.get('reference');
+                    if (!reference) return;
 
-                window.history.replaceState({}, document.title, window.location.pathname);
+                    window.history.replaceState({}, document.title, window.location.pathname);
 
-                const pendingOrderStr = localStorage.getItem('swift_pending_order');
-                if (!pendingOrderStr) return;
+                    const pendingOrderStr = localStorage.getItem('swift_pending_order');
+                    if (!pendingOrderStr) return;
 
-                const pendingOrder = JSON.parse(pendingOrderStr);
-                localStorage.removeItem('swift_pending_order');
+                    const pendingOrder = JSON.parse(pendingOrderStr);
+                    localStorage.removeItem('swift_pending_order');
 
-                try {
-                    localStorage.setItem('swift_payment_verified_signal', JSON.stringify({
-                        reference,
-                        orderId: pendingOrder.orderId,
-                        ts: Date.now()
-                    }));
-                } catch (e) { /* ignore quota errors */ }
+                    const verifyResponse = await fetch(`https://swiftselect-backend.onrender.com/api/paystack/verify/${reference}`);
+                    const verifyData = await verifyResponse.json();
 
-                const verifyResponse = await fetch(`https://swiftselect-backend.onrender.com/api/paystack/verify/${reference}`);
-                const verifyData = await verifyResponse.json();
-
-                if (verifyData.status && verifyData.data.status === 'success') {
-                    await finalizeOrderAfterPayment(
-                        pendingOrder.orderId,
-                        pendingOrder.orderItemsText,
-                        pendingOrder.subtotalUSD,
-                        pendingOrder.subtotalNGN,
-                        pendingOrder.address,
-                        pendingOrder.city,
-                        pendingOrder.state,
-                        pendingOrder.postal,
-                        pendingOrder.country,
-                        pendingOrder.phone,
-                        "Paystack Secure Checkout",
-                        reference
-                    );
-
-                    document.getElementById('payment-verification-modal').classList.add('active');
-                } else {
-                    showToast("Payment verification failed. Please contact support.");
+                    if (verifyData.status && verifyData.data.status === 'success') {
+                        await finalizeOrderAfterPayment(
+                            pendingOrder.orderId, 
+                            pendingOrder.orderItemsText,
+                            pendingOrder.subtotalUSD,
+                            pendingOrder.subtotalNGN,
+                            pendingOrder.address,
+                            pendingOrder.city,
+                            pendingOrder.state,
+                            pendingOrder.postal,
+                            pendingOrder.country,
+                            pendingOrder.phone,
+                            "Paystack Secure Checkout",
+                            reference
+                        );
+                    } else {
+                        showToast("Payment verification failed. Please contact support.");
+                    }
                 }
             } catch (error) {
                 console.error("Payment check error:", error);
                 showToast("⚠️ Verification error. Please check your orders or contact support.");
             }
         }
-
-        // ==================== ✅ CROSS-TAB PAYMENT SYNC ====================
-        window.addEventListener('storage', (e) => {
-            if (e.key !== 'swift_payment_verified_signal' || !e.newValue) return;
-            try {
-                const signal = JSON.parse(e.newValue);
-                if (Date.now() - (signal.ts || 0) > 2 * 60 * 1000) return;
-                document.getElementById('payment-verification-modal').classList.add('active');
-                localStorage.removeItem('swift_payment_verified_signal');
-                console.log("📡 Cross-tab payment verified — showing confirmation modal.");
-            } catch (err) {
-                console.warn("Cross-tab signal parse error:", err);
-            }
-        });
 
         function setupRefundFormHandlers() {
             const receiptInput = document.getElementById('refund-receipt');
@@ -1934,8 +1740,6 @@
                 return;
             }
 
-            const restoreBtn = lockButton('#refund-submit-btn', 'Submitting…');
-
             const readFileAsBase64 = (file) => {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
@@ -1999,8 +1803,6 @@
             } catch (error) {
                 console.error("Refund submission error:", error);
                 alert("Error processing your files. Please try again with smaller images.");
-            } finally {
-                restoreBtn();
             }
         };
 
@@ -2347,7 +2149,7 @@
             const colorOptions = document.getElementById('detail-color-options');
             if (product.colors && product.colors.length > 0) {
                 colorContainer.style.display = 'block';
-                colorOptions.innerHTML = product.colors.map(color =>
+                colorOptions.innerHTML = product.colors.map(color => 
                     `<button class="size-btn" onclick="selectDetailColor('${product.id}', '${color}', this)">${color}</button>`
                 ).join('');
                 selectedColors[product.id] = product.colors[0];
@@ -2433,7 +2235,7 @@
         window.updateAuthUI = function() {
             const authBtn = document.getElementById('auth-btn');
             const greetingName = document.getElementById('user-greeting-name');
-
+            
             if (currentUser) {
                 if (greetingName) greetingName.innerText = `Welcome, @${currentUser.username}`;
                 if (authBtn) {
@@ -2487,7 +2289,7 @@
             }
         };
 
-        window.signupUser = async function() {
+        window.signupUser = function() {
             const username = document.getElementById('signup-username').value.trim().toLowerCase();
             const name = document.getElementById('signup-name').value.trim();
             const email = document.getElementById('signup-email').value.trim().toLowerCase();
@@ -2505,34 +2307,25 @@
                 return;
             }
 
-            const restoreBtn = lockButton('#signup-btn', 'Creating account…');
+            const newUser = { username, name, email, password };
+            globalState.users.push(newUser);
+            saveStateToFirebase();
 
-            try {
-                const newUser = { username, name, email, password };
-                globalState.users.push(newUser);
-                await saveStateToFirebase();
+            currentUser = { username: newUser.username, name: newUser.name, email: newUser.email };
+            localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
 
-                currentUser = { username: newUser.username, name: newUser.name, email: newUser.email };
-                localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
+            updateAuthUI();
+            toggleAuthModal();
 
-                updateAuthUI();
-                toggleAuthModal();
+            document.getElementById('signup-username').value = '';
+            document.getElementById('signup-name').value = '';
+            document.getElementById('signup-email').value = '';
+            document.getElementById('signup-password').value = '';
 
-                document.getElementById('signup-username').value = '';
-                document.getElementById('signup-name').value = '';
-                document.getElementById('signup-email').value = '';
-                document.getElementById('signup-password').value = '';
-
-                showToast(`Global account created! Welcome, @${username}!`);
-            } catch (err) {
-                console.error("Signup error:", err);
-                alert("Could not create account. Please check your connection and try again.");
-            } finally {
-                restoreBtn();
-            }
+            showToast(`Global account created! Welcome, @${username}!`);
         };
 
-        window.loginUser = async function() {
+        window.loginUser = function() {
             const identifier = document.getElementById('login-username-or-email').value.trim().toLowerCase();
             const password = document.getElementById('login-password').value;
 
@@ -2541,31 +2334,22 @@
                 return;
             }
 
-            const restoreBtn = lockButton('#login-btn', 'Logging in…');
-
-            try {
-                const foundUser = globalState.users.find(u => (u.username === identifier || u.email === identifier) && u.password === password);
-                if (!foundUser) {
-                    alert("Invalid username/email or password. Please check your credentials or sign up first.");
-                    return;
-                }
-
-                currentUser = { username: foundUser.username, name: foundUser.name, email: foundUser.email };
-                localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
-
-                updateAuthUI();
-                toggleAuthModal();
-
-                document.getElementById('login-username-or-email').value = '';
-                document.getElementById('login-password').value = '';
-
-                showToast(`Welcome back, @${currentUser.username}!`);
-            } catch (err) {
-                console.error("Login error:", err);
-                alert("Could not log in. Please try again.");
-            } finally {
-                restoreBtn();
+            const foundUser = globalState.users.find(u => (u.username === identifier || u.email === identifier) && u.password === password);
+            if (!foundUser) {
+                alert("Invalid username/email or password. Please check your credentials or sign up first.");
+                return;
             }
+
+            currentUser = { username: foundUser.username, name: foundUser.name, email: foundUser.email };
+            localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
+
+            updateAuthUI();
+            toggleAuthModal();
+
+            document.getElementById('login-username-or-email').value = '';
+            document.getElementById('login-password').value = '';
+
+            showToast(`Welcome back, @${currentUser.username}!`);
         };
 
         window.proceedToCheckout = function() {
@@ -2603,7 +2387,7 @@
             }
 
             if (globalState.promoCodes && globalState.promoCodes.includes(codeInput)) {
-                appliedDiscountPercent = 5;
+                appliedDiscountPercent = 5; 
                 feedbackEl.style.color = "#166534";
                 feedbackEl.innerText = "✓ Promo code applied successfully (5% off)!";
                 updateCartUI();
@@ -2627,8 +2411,6 @@
                 alert("Please fill in all required delivery information fields.");
                 return;
             }
-
-            const restorePayBtn = lockButton('#pay-btn', 'Please wait…');
 
             let subtotalUSD = cart.reduce((sum, item) => sum + (item.priceUSD * item.quantity), 0);
             let subtotalNGN = cart.reduce((sum, item) => sum + (item.priceNGN * item.quantity), 0);
@@ -2677,24 +2459,21 @@
 
                             if (verifyData.status && verifyData.data.status === 'success') {
                                 await finalizeOrderAfterPayment(
-                                    orderId,
+                                    transaction.reference, 
                                     orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone,
                                     "Paystack Secure Checkout", transaction.reference
                                 );
                             } else {
                                 alert("Payment verification failed. Please contact support.");
-                                restorePayBtn();
                             }
                         } catch (error) {
                             console.error("Verification error:", error);
                             alert("An error occurred during verification. Please contact support.");
-                            restorePayBtn();
                         }
                     },
                     onCancel: () => {
                         showToast("Payment canceled.");
                         localStorage.removeItem('swift_pending_order');
-                        restorePayBtn();
                     }
                 });
 
@@ -2702,16 +2481,10 @@
                 console.error('Checkout error:', error);
                 alert('An error occurred during checkout. Please check your connection and try again.');
                 localStorage.removeItem('swift_pending_order');
-                restorePayBtn();
             }
         };
 
-        // ==================== ✅ FINALIZE ORDER — SAVES FIRST, THEN EMAILS ====================
         async function finalizeOrderAfterPayment(orderId, orderItemsText, subtotalUSD, subtotalNGN, address, city, state, postal, country, phone, paymentMethod, reference) {
-            console.log("🎯 finalizeOrderAfterPayment called:", orderId);
-
-            localStorage.removeItem('swift_pending_order');
-
             const newOrderRecord = {
                 id: orderId,
                 customerUsername: currentUser.username,
@@ -2726,30 +2499,14 @@
                 hasReviewed: false
             };
 
-            // 1. Save order to Firebase FIRST — order is never lost even if email fails
-            console.log("💾 Saving order to Firebase...");
-            try {
-                await saveOrderToFirebase(newOrderRecord);
-                console.log("✅ Order saved.");
-            } catch (err) {
-                console.error("❌ Order save failed (continuing to email anyway):", err);
-            }
+            await saveOrderToFirebase(newOrderRecord);
 
-            // 2. Send emails (each wrapped so one failing doesn't block the other)
-            console.log("📧 Starting email dispatch...");
-            try {
-                await sendOrderNotificationEmail(newOrderRecord);
-            } catch (err) {
-                console.error("❌ ADMIN email threw:", err);
-            }
-            try {
-                await sendCustomerConfirmationEmail(newOrderRecord);
-            } catch (err) {
-                console.error("❌ CUSTOMER email threw:", err);
-            }
-            console.log("📧 Email dispatch complete.");
+            // ✅ Send order notification email to YOU (admin)
+            await sendOrderNotificationEmail(newOrderRecord);
 
-            // 3. Update UI regardless of email outcome
+            // ✅ Send order confirmation email to the BUYER (customer)
+            await sendCustomerConfirmationEmail(newOrderRecord);
+
             renderRecentOrdersList();
             finalizeOrderCleanUp();
 
@@ -2774,7 +2531,7 @@
         window.continueToOrders = function() {
             document.getElementById('payment-verification-modal').classList.remove('active');
             openOrdersPage();
-
+            
             setTimeout(() => {
                 showTruckAnimation();
             }, 600);
@@ -2783,12 +2540,12 @@
         window.showTruckAnimation = function() {
             const overlay = document.getElementById('truck-animation-overlay');
             overlay.classList.add('active');
-
+            
             const truck = overlay.querySelector('.truck-icon');
             truck.style.animation = 'none';
             truck.offsetHeight;
             truck.style.animation = 'drive 3s ease-in-out forwards';
-
+            
             const text = overlay.querySelector('.truck-text');
             text.style.animation = 'none';
             text.offsetHeight;
@@ -2820,7 +2577,7 @@
                 let statusColor = "#f59e0b";
                 let statusIcon = "⏳";
                 const s = found.status || "";
-
+                
                 if (s.includes("Delivered")) { statusColor = "#16a34a"; statusIcon = "✅"; }
                 else if (s.includes("Transit") || s.includes("Shipped")) { statusColor = "#3b82f6"; statusIcon = "🚚"; }
                 else if (s.includes("Out for Delivery")) { statusColor = "#8b5cf6"; statusIcon = "📦"; }
@@ -2908,12 +2665,7 @@
 
             listContainer.innerHTML = [...userOrders].reverse().map(order => {
                 const statusDetails = getStatusDetails(order.status);
-                const rated = !!order.hasReviewed;
-                const rateBtnStyle = rated
-                    ? "background:#dcfce7;color:#16a34a;cursor:default;"
-                    : "background:#f59e0b;color:white;";
-                const rateBtnLabel = rated ? '✓ Rated' : '⭐ Rate Us';
-
+                
                 return `
                 <div class="order-card">
                     <div class="order-card-header">
@@ -2922,7 +2674,7 @@
                             ${statusDetails.icon} ${order.status}
                         </span>
                     </div>
-
+                    
                     <div class="order-card-body">
                         <div class="order-info-row">
                             <span class="order-info-label">Items</span>
@@ -2943,30 +2695,12 @@
                     </div>
 
                     <div class="order-card-footer">
-                        <button class="btn-small" onclick="fillTrackingInput('${order.id}')">📦 Track Order</button>
-                        <button class="btn-small" style="${rateBtnStyle}" onclick="rateOrderFromCard('${order.id}')">${rateBtnLabel}</button>
+                        <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Track Order</button>
+                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.6rem 1rem; font-size:0.85rem;" onclick="triggerRatingModal('${order.id}')">Rate & Review</button>` : ''}
                     </div>
                 </div>
                 `;
             }).join('');
-        };
-
-        window.rateOrderFromCard = function(orderId) {
-            const order = globalState.orders.find(o => String(o.id) === String(orderId));
-            if (!order) {
-                showToast("Order not found.");
-                return;
-            }
-            if (order.hasReviewed) {
-                showToast("You've already rated this order. Thank you! ⭐");
-                return;
-            }
-            const status = String(order.status || '');
-            if (status !== "Delivered Successfully") {
-                showToast("You can rate this order after it's delivered successfully.");
-                return;
-            }
-            triggerRatingModal(orderId);
         };
 
         window.fillTrackingInput = function(orderId) {
@@ -3075,7 +2809,7 @@
                             </div>
                         </div>
                         <div class="order-card-footer">
-                            <button class="btn-primary" style="padding:0.6rem 1rem; font-size:0.85rem;background:#f59e0b;" onclick="closeMyReviewsAndRate('${o.id}')">⭐ Rate Us</button>
+                            <button class="btn-primary" style="padding:0.6rem 1rem; font-size:0.85rem;" onclick="closeMyReviewsAndRate('${o.id}')">Rate & Review</button>
                         </div>
                     </div>
                 `).join('');
@@ -3116,7 +2850,7 @@
             highlightStars(5);
             document.getElementById('rating-order-info').innerText = `Order: ${order.id} (${order.items})`;
             document.getElementById('review-comment').value = '';
-
+            
             document.getElementById('rating-modal').classList.add('active');
         };
 
@@ -3140,42 +2874,33 @@
             }
         }
 
-        window.submitReview = async function() {
+        window.submitReview = function() {
             const comment = document.getElementById('review-comment').value.trim();
             if (!comment) {
                 alert("Please write a short review comment.");
                 return;
             }
 
-            const restoreBtn = lockButton('#review-submit-btn', 'Submitting…');
-
-            try {
-                const order = globalState.orders.find(o => String(o.id) === String(currentRatingOrderId));
-                if (order) {
-                    await updateOrderFieldsInFirebase(order.id, { hasReviewed: true });
-                }
-
-                const newReview = {
-                    name: currentUser ? `@${currentUser.username}` : "Verified Customer",
-                    rating: selectedStarCount,
-                    comment: comment,
-                    date: new Date().toLocaleDateString()
-                };
-
-                globalState.reviews.unshift(newReview);
-                await saveStateToFirebase();
-
-                renderReviews();
-                toggleRatingModal();
-                renderRecentOrdersList();
-                renderMyReviewsModal();
-                showToast("Thank you! Your recommendation is now visible globally across all devices.");
-            } catch (err) {
-                console.error("Submit review error:", err);
-                alert("Could not submit your review. Please try again.");
-            } finally {
-                restoreBtn();
+            const order = globalState.orders.find(o => String(o.id) === String(currentRatingOrderId));
+            if (order) {
+                order.hasReviewed = true;
+                updateOrderStatusInFirebase(order.id, order.status);
             }
+
+            const newReview = {
+                name: currentUser ? `@${currentUser.username}` : "Verified Customer",
+                rating: selectedStarCount,
+                comment: comment,
+                date: new Date().toLocaleDateString()
+            };
+
+            globalState.reviews.unshift(newReview);
+            saveStateToFirebase();
+            renderReviews();
+            toggleRatingModal();
+            renderRecentOrdersList();
+            renderMyReviewsModal();
+            showToast("Thank you! Your recommendation is now visible globally across all devices.");
         };
 
         window.openLightbox = function(src) {
@@ -3263,7 +2988,7 @@
                     <div class="admin-refund-detail"><strong>Account Number:</strong> ${refund.accountNumber}</div>
                     <div class="admin-refund-detail"><strong>Bank:</strong> ${refund.bankName}</div>
                     <div class="admin-refund-detail"><strong>Date:</strong> ${refund.date}</div>
-
+                    
                     <div class="admin-refund-images">
                         <div>
                             <p style="font-size:0.72rem; margin:0 0 0.3rem; font-weight:700;">Receipt (tap to enlarge):</p>
@@ -3282,7 +3007,7 @@
                             <option value="Processed" ${refund.status === 'Processed' ? 'selected' : ''}>Processed / Refunded</option>
                             <option value="Rejected" ${refund.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
                         </select>
-                        <button class="btn-primary" id="admin-refund-update-btn-${refund.id}" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateRefundStatus('${refund.id}')">Update Status</button>
+                        <button class="btn-primary" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateRefundStatus('${refund.id}')">Update Status</button>
                     </div>
                 </div>
                 `;
@@ -3294,23 +3019,14 @@
             if (!selectEl) return;
             const newStatus = selectEl.value;
 
-            const restoreBtn = lockButton(`#admin-refund-update-btn-${refundId}`, 'Saving…');
+            const idx = globalState.refunds.findIndex(r => String(r.id) === String(refundId));
+            if (idx !== -1) globalState.refunds[idx].status = newStatus;
 
-            try {
-                const idx = globalState.refunds.findIndex(r => String(r.id) === String(refundId));
-                if (idx !== -1) globalState.refunds[idx].status = newStatus;
+            await updateRefundStatusInFirebase(refundId, newStatus);
 
-                await updateRefundStatusInFirebase(refundId, newStatus);
-
-                showToast(`Refund ${refundId} marked as: ${newStatus}`);
-                renderAdminRefundList();
-                renderMyRefundsList();
-            } catch (err) {
-                console.error("Update refund status error:", err);
-                alert("Could not update refund status. Please try again.");
-            } finally {
-                restoreBtn();
-            }
+            showToast(`Refund ${refundId} marked as: ${newStatus}`);
+            renderAdminRefundList();
+            renderMyRefundsList();
         };
 
         function renderAdminOrderList() {
@@ -3334,7 +3050,7 @@
                     <div style="color:#475569; margin-bottom:0.4rem;">Items: ${ord.items} | Total Paid: ${ord.totalPaid || 'N/A'} | Phone: ${ord.phone}</div>
                     <div style="color:#475569; margin-bottom:0.5rem; font-size:0.82rem;">📍 ${ord.address || 'N/A'}</div>
                     <div style="color:#94a3b8; margin-bottom:0.5rem; font-size:0.75rem;">Customer email: ${ord.customerEmail || 'N/A'}</div>
-
+                    
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top: 0.5rem;">
                         <select id="admin-status-${ord.id}" style="margin:0; padding:0.5rem; font-size:16px; flex-grow:1; border-radius: 8px; border: 1px solid #cbd5e1;">
                             <option value="Order Placed - Processing" ${ord.status === 'Order Placed - Processing' ? 'selected' : ''}>Order Placed - Processing</option>
@@ -3345,7 +3061,7 @@
                             <option value="Delivered Successfully" ${ord.status === 'Delivered Successfully' ? 'selected' : ''}>Delivered Successfully</option>
                             <option value="Cancelled" ${ord.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
                         </select>
-                        <button class="btn-primary" id="admin-order-update-btn-${ord.id}" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateOrderStatus('${ord.id}')">Update Status</button>
+                        <button class="btn-primary" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateOrderStatus('${ord.id}')">Update Status</button>
                     </div>
                 </div>
                 `;
@@ -3357,20 +3073,14 @@
             if (!selectEl) return;
             const newStatus = selectEl.value;
 
-            const restoreBtn = lockButton(`#admin-order-update-btn-${orderId}`, 'Saving…');
+            const idx = globalState.orders.findIndex(o => String(o.id) === String(orderId));
+            if (idx !== -1) globalState.orders[idx].status = newStatus;
 
-            try {
-                await updateOrderFieldsInFirebase(orderId, { status: newStatus });
+            await updateOrderStatusInFirebase(orderId, newStatus);
 
-                showToast(`Order ${orderId} status updated globally!`);
-                renderAdminOrderList();
-                renderRecentOrdersList();
-            } catch (err) {
-                console.error("Update order status error:", err);
-                alert("Could not update order status. Please try again.");
-            } finally {
-                restoreBtn();
-            }
+            showToast(`Order ${orderId} status updated globally!`);
+            renderAdminOrderList();
+            renderRecentOrdersList();
         };
 
         window.adminCreatePromoCode = function() {
@@ -3480,16 +3190,16 @@
             document.getElementById('admin-shipping').value = product.shipping || '';
             document.getElementById('admin-colors').value = product.colors ? product.colors.join(', ') : '';
 
-            adminSelectedImages = [];
+            adminSelectedImages = []; 
             renderAdminImagePreviews();
-
-            adminSelectedVideos = [];
+            
+            adminSelectedVideos = []; 
             renderAdminVideoPreviews();
 
             document.getElementById('admin-add-btn').innerText = "💾 Update Product Globally";
             document.getElementById('admin-cancel-edit-btn').style.display = 'block';
             document.getElementById('admin-form-title').innerText = "✏️ Edit Product (Leave images blank to keep existing)";
-
+            
             document.getElementById('add-product-form-container').scrollIntoView({behavior:'smooth'});
         };
 
@@ -3501,7 +3211,7 @@
             document.getElementById('admin-desc').value = '';
             document.getElementById('admin-shipping').value = '';
             document.getElementById('admin-colors').value = '';
-
+            
             adminSelectedImages = [];
             adminSelectedVideos = [];
             renderAdminImagePreviews();
@@ -3517,7 +3227,6 @@
             if (product) {
                 product.isSoldOut = !product.isSoldOut;
                 saveStateToFirebase();
-                localStorage.setItem('swift_force_fresh_sync', '1');
                 renderProducts();
                 renderAdminProductList();
                 showToast(`Updated stock status for ${product.name}`);
@@ -3528,7 +3237,6 @@
             if (confirm("Are you sure you want to delete this product globally?")) {
                 globalState.products = globalState.products.filter(p => p.id !== productId);
                 saveStateToFirebase();
-                localStorage.setItem('swift_force_fresh_sync', '1');
                 renderProducts();
                 renderAdminProductList();
                 showToast("Product deleted successfully");
@@ -3541,7 +3249,7 @@
             const priceNGN = parseFloat(document.getElementById('admin-price-ngn').value);
             const description = document.getElementById('admin-desc').value.trim();
             const shipping = document.getElementById('admin-shipping').value.trim();
-
+            
             const colorsInput = document.getElementById('admin-colors').value.trim();
             const colorsArray = colorsInput ? colorsInput.split(',').map(c => c.trim()).filter(c => c !== '') : [];
 
@@ -3557,11 +3265,8 @@
 
             const isEditing = !!editingProductId;
             const addBtn = document.getElementById('admin-add-btn');
-            const originalBtnText = addBtn.innerText;
+            addBtn.innerText = isEditing ? "Updating product globally..." : "Processing files...";
             addBtn.disabled = true;
-            addBtn.style.opacity = "0.75";
-            addBtn.style.cursor = "wait";
-            addBtn.innerHTML = `<span class="btn-spinner"></span>${isEditing ? "Updating…" : "Processing…"}`;
 
             try {
                 let imagesBase64 = [];
@@ -3630,21 +3335,19 @@
 
                     await saveStateToFirebase();
 
-                    localStorage.setItem('swift_force_fresh_sync', '1');
-
                     showToast('✅ Product updated & synced globally!');
                 } else {
-                    const newProduct = {
-                        id: Date.now(),
-                        name, priceUSD, priceNGN, description,
-                        images: imagesBase64,
-                        videos: videosBase64,
+                    const newProduct = { 
+                        id: Date.now(), 
+                        name, priceUSD, priceNGN, description, 
+                        images: imagesBase64, 
+                        videos: videosBase64, 
                         shipping: shipping || "Ships in 2 - 3 business days",
                         isSoldOut: false,
                         colors: colorsArray
                     };
                     globalState.products.push(newProduct);
-
+                    
                     document.getElementById('admin-name').value = '';
                     document.getElementById('admin-price-usd').value = '';
                     document.getElementById('admin-price-ngn').value = '';
@@ -3661,23 +3364,17 @@
 
                     await saveStateToFirebase();
 
-                    localStorage.setItem('swift_force_fresh_sync', '1');
-
                     showToast('✅ Product added & synced globally!');
                 }
 
-                addBtn.innerText = originalBtnText;
+                addBtn.innerText = isEditing ? "💾 Update Product Globally" : "Save New Product Globally";
                 addBtn.disabled = false;
-                addBtn.style.opacity = "";
-                addBtn.style.cursor = "";
 
             } catch (err) {
                 console.error("Add/Edit product error:", err);
                 alert(err.message || "Error processing files. Make sure the video/image files are valid or smaller in size.");
-                addBtn.innerText = originalBtnText;
+                addBtn.innerText = isEditing ? "💾 Update Product Globally" : "Save New Product Globally";
                 addBtn.disabled = false;
-                addBtn.style.opacity = "";
-                addBtn.style.cursor = "";
             }
         };
 
@@ -3792,7 +3489,7 @@
 
         function updateCartUI() {
             const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
+            
             const badge = document.getElementById('cart-count');
             if (badge) badge.innerText = totalCount;
 
@@ -3841,7 +3538,7 @@
         window.toggleCart = function() {
             const cartModal = document.getElementById('cart-modal');
             cartModal.classList.toggle('active');
-
+            
             if (cartModal.classList.contains('active')) {
                 document.body.classList.add('cart-open');
             } else {
@@ -3881,21 +3578,10 @@
 
         initApp();
 
-        window.addEventListener('beforeunload', () => {
-            try {
-                globalState._cacheVersion = CACHE_VERSION;
-                dbHelper.save('swift_cached_state', globalState);
-            } catch (e) { /* ignore */ }
-        });
-
         onValue(stateRef, async (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                if (data.products && Array.isArray(data.products) && data.products.length > 0) {
-                    globalState.products = data.products;
-                } else if (!globalState.products || globalState.products.length === 0) {
-                    globalState.products = data.products || [];
-                }
+                if (data.products) globalState.products = data.products;
                 if (data.users) globalState.users = data.users;
                 if (data.reviews) globalState.reviews = data.reviews;
                 if (data.promoCodes) globalState.promoCodes = data.promoCodes;
@@ -3905,15 +3591,14 @@
                 await set(stateRef, buildStatePayload());
             }
 
-            if (!isProductsLoaded) {
-                isProductsLoaded = true;
-            }
+            isProductsLoaded = true;
 
             renderProducts();
             renderReviews();
             renderAdminProductList();
             renderAdminPromoList();
 
+            // ✅ Live-refresh the "See All Reviews" modal if it's currently open
             const reviewsModal = document.getElementById('reviews-modal');
             if (reviewsModal && reviewsModal.classList.contains('active')) {
                 try { renderReviews(); } catch (e) { console.warn(e); }
