@@ -242,6 +242,7 @@
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid #e0e7ff; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.9s linear infinite; }
+        .loading-spinner.small { width: 16px; height: 16px; border-width: 2px; border-color: rgba(255,255,255,0.4); border-top-color: #ffffff; }
 
         .size-selector { display: flex; gap: 0.35rem; flex-wrap: wrap; }
         .size-btn { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.4rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; }
@@ -344,6 +345,7 @@
         }
         .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
         .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4); }
+        .btn-primary:disabled { background: #a5b4fc; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.9; }
         .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
         .btn-secondary:hover { background: #e2e8f0; }
         .btn-danger { background: #fee2e2; color: #dc2626; border: none; }
@@ -610,6 +612,21 @@
             0% { opacity: 0; transform: translateY(20px); }
             100% { opacity: 1; transform: translateY(0); }
         }
+
+        /* Privacy note inside review modal */
+        .review-privacy-note {
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 10px;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.78rem;
+            color: #3730a3;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -647,7 +664,6 @@
         </div>
 
         <!-- Kebab Dropdown Menu -->
-        <!-- ✅ UPDATED: Added "See All Customer Reviews" + kept Rate & Review Orders -->
         <div class="kebab-menu" id="kebab-menu">
             <button onclick="openReviewsModal(); toggleKebabMenu();">🌟 See All Customer Reviews</button>
             <button onclick="openMyReviewsModal(); toggleKebabMenu();">⭐ Rate & Review Orders</button>
@@ -980,7 +996,7 @@
                 </div>
             </div>
 
-            <button class="btn-primary" onclick="submitRefundRequest()" style="width:100%; margin-bottom:0.75rem;">Submit Refund Request</button>
+            <button class="btn-primary" id="refund-submit-btn" onclick="submitRefundRequest()" style="width:100%; margin-bottom:0.75rem;">Submit Refund Request</button>
             <button class="btn-secondary" onclick="toggleRefundModal()" style="width:100%;">Cancel</button>
         </div>
     </div>
@@ -1110,16 +1126,22 @@
             <select id="bill-payment">
                 <option value="Card Payment">Secure Online Payment via Paystack (Card, USSD, etc.)</option>
             </select>
-            <button class="btn-primary" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">Proceed to Payment</button>
+            <button class="btn-primary" id="proceed-payment-btn" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">Proceed to Payment</button>
             <button class="btn-secondary" onclick="toggleBillingModal()" style="width:100%;">Cancel</button>
         </div>
     </div>
 
+    <!-- ============ DELIVERY RATING MODAL (auto-triggered after order is delivered) ============ -->
     <div class="modal" id="rating-modal">
         <div class="modal-content">
             <h3>⭐ Rate Your Delivered Order</h3>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;" id="rating-order-info"></p>
-            <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Rating Stars:</label>
+            <div class="review-privacy-note">
+                🔒 This review is private to your account and synced securely to your device.
+            </div>
+            <p style="font-size: 0.9rem; color: #334155; margin: 0 0 0.75rem; line-height: 1.5;">
+                How was your overall experience with the product quality, our service, and its durability? Please tap the stars to rate us.
+            </p>
             <div class="rating-stars-input" id="star-container">
                 <span onclick="setRating(1)">★</span>
                 <span onclick="setRating(2)">★</span>
@@ -1127,9 +1149,35 @@
                 <span onclick="setRating(4)">★</span>
                 <span onclick="setRating(5)">★</span>
             </div>
-            <textarea id="review-comment" placeholder="Write a short review about your experience and the product quality..." rows="3"></textarea>
-            <button class="btn-primary" onclick="submitReview()" style="width:100%; margin-bottom:0.75rem;">Submit Global Recommendation</button>
+            <textarea id="review-comment" placeholder="Tell us a little more about your experience..." rows="3"></textarea>
+            <button class="btn-primary" onclick="submitReview()" style="width:100%; margin-bottom:0.75rem;">Submit Review</button>
             <button class="btn-secondary" onclick="toggleRatingModal()" style="width:100%;">Skip for now</button>
+        </div>
+    </div>
+
+    <!-- ============ SYSTEM PERFORMANCE RATING MODAL (auto-triggered right after order placement) ============ -->
+    <div class="modal" id="system-rating-modal">
+        <div class="modal-content">
+            <h3>⭐ Rate Our System Performance</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">
+                Thanks for your order! Before you go, please rate how smooth the ordering and checkout experience was.
+            </p>
+            <div class="review-privacy-note">
+                🔒 This review is private to your account and synced securely to your device.
+            </div>
+            <p style="font-size: 0.9rem; color: #334155; margin: 0 0 0.75rem; line-height: 1.5;">
+                How easy was it to shop, checkout, and use our system today? Please tap the stars to rate us.
+            </p>
+            <div class="rating-stars-input" id="system-star-container">
+                <span onclick="setSystemRating(1)">★</span>
+                <span onclick="setSystemRating(2)">★</span>
+                <span onclick="setSystemRating(3)">★</span>
+                <span onclick="setSystemRating(4)">★</span>
+                <span onclick="setSystemRating(5)">★</span>
+            </div>
+            <textarea id="system-review-comment" placeholder="Any feedback on our system performance? (optional)" rows="3"></textarea>
+            <button class="btn-primary" onclick="submitSystemReview()" style="width:100%; margin-bottom:0.75rem;">Submit Rating</button>
+            <button class="btn-secondary" onclick="toggleSystemRatingModal()" style="width:100%;">Skip for now</button>
         </div>
     </div>
 
@@ -1141,7 +1189,7 @@
                 <button class="close-btn" onclick="toggleMyReviewsModal()">&times;</button>
             </div>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">
-                Once your order is marked <strong>"Delivered Successfully"</strong>, you can rate it here. Your review is synced globally via Firebase & IndexedDB.
+                Once your order is marked <strong>"Delivered Successfully"</strong>, you can rate it here. Your review is private to your account and synced globally via Firebase & IndexedDB.
             </p>
             <div id="my-reviews-modal-body" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 60vh; overflow-y: auto; padding-right: 0.25rem;"></div>
         </div>
@@ -1209,11 +1257,10 @@
         };
 
         // ==================== ✅ EMAILJS ORDER NOTIFICATION ====================
-        // ✅ Real values wired in from your EmailJS dashboard
-        const EMAILJS_SERVICE_ID           = "Swift_alerts";              // ✅ your Service ID
-        const EMAILJS_ADMIN_TEMPLATE_ID    = "template_tuq2hhk";          // ✅ sends order to YOU (admin)
-        const EMAILJS_CUSTOMER_TEMPLATE_ID = "template_hv2kyh6";          // ✅ sends confirmation to BUYER
-        const ORDER_NOTIFICATION_EMAIL     = "talabidavid275@gmail.com";  // ✅ your inbox
+        const EMAILJS_SERVICE_ID           = "Swift_alerts";
+        const EMAILJS_ADMIN_TEMPLATE_ID    = "template_tuq2hhk";
+        const EMAILJS_CUSTOMER_TEMPLATE_ID = "template_hv2kyh6";
+        const ORDER_NOTIFICATION_EMAIL     = "talabidavid275@gmail.com";
 
         async function sendOrderNotificationEmail(orderRecord) {
             try {
@@ -1335,8 +1382,8 @@
             ],
             orders: [],
             reviews: [
-                { name: "@david_t", rating: 5, comment: "Super fast shipping to the US and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
-                { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery.", date: "11/08/2026" }
+                { name: "@david_t", rating: 5, comment: "Super fast shipping to the US and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026", type: "delivery", customerUsername: "david_t" },
+                { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery.", date: "11/08/2026", type: "delivery", customerUsername: "sarah_m" }
             ],
             promoCodes: ["SWIFT5"],
             refunds: []
@@ -1374,6 +1421,39 @@
         let currentRatingOrderId = null;
         let selectedStarCount = 5;
         let appliedDiscountPercent = 0;
+
+        // ==================== ✅ RATING FLAGS / MEMORY ====================
+        // These are per-user. They remember which orders still need rating so
+        // the popups fire automatically and don't disappear on reload.
+        let selectedSystemStarCount = 5;
+        let pendingRatings = { system: null, delivered: [] };
+
+        // Load per-user pending rating state from IndexedDB
+        async function loadPendingRatings() {
+            if (!currentUser) { pendingRatings = { system: null, delivered: [] }; return; }
+            try {
+                const key = 'swift_pending_ratings_' + currentUser.username;
+                const saved = await dbHelper.get(key);
+                if (saved) {
+                    pendingRatings = saved;
+                } else {
+                    pendingRatings = { system: null, delivered: [] };
+                }
+            } catch (e) {
+                console.warn("Pending rating load error:", e);
+                pendingRatings = { system: null, delivered: [] };
+            }
+        }
+
+        async function savePendingRatings() {
+            if (!currentUser) return;
+            try {
+                const key = 'swift_pending_ratings_' + currentUser.username;
+                await dbHelper.save(key, pendingRatings);
+            } catch (e) {
+                console.warn("Pending rating save error:", e);
+            }
+        }
 
         let adminSelectedImages = [];
         let adminSelectedVideos = [];
@@ -1561,6 +1641,126 @@
             }
         }
 
+        // ==================== ✅ RATING: HELPERS ====================
+
+        // Save/merge a single review into the global reviews array on Firebase.
+        // Uses a per-review unique id so different devices don't overwrite each other.
+        async function saveReviewToFirebase(reviewRecord) {
+            // Local add
+            if (!globalState.reviews) globalState.reviews = [];
+            const localIdx = globalState.reviews.findIndex(r => r && r.reviewId && r.reviewId === reviewRecord.reviewId);
+            if (localIdx === -1) globalState.reviews.unshift(reviewRecord);
+            else globalState.reviews[localIdx] = reviewRecord;
+            await persistCache();
+
+            // Firebase sync (atomic, dedupe by reviewId)
+            try {
+                await runTransaction(stateRef, (current) => {
+                    if (!current) current = {};
+                    if (!Array.isArray(current.reviews)) current.reviews = normalizeToArray(current.reviews);
+                    const arr = current.reviews;
+                    const idx = arr.findIndex(r => r && r.reviewId && r.reviewId === reviewRecord.reviewId);
+                    if (idx === -1) arr.unshift(reviewRecord);
+                    else arr[idx] = reviewRecord;
+                    current.reviews = arr;
+                    return current;
+                });
+            } catch (e) {
+                console.error("Review sync error:", e);
+                showToast("⚠️ Review saved locally — syncing again shortly.");
+            }
+        }
+
+        function hasUserReviewedOrder(orderId, username) {
+            if (!globalState.reviews) return false;
+            const uname = String(username || '').toLowerCase();
+            const oid = String(orderId);
+            return globalState.reviews.some(r =>
+                r && String(r.orderId || '') === oid &&
+                String(r.customerUsername || '').toLowerCase() === uname
+            );
+        }
+
+        function hasUserRatedSystemForOrder(orderId, username) {
+            if (!globalState.reviews) return false;
+            const uname = String(username || '').toLowerCase();
+            const oid = String(orderId);
+            return globalState.reviews.some(r =>
+                r && String(r.orderId || '') === oid &&
+                String(r.customerUsername || '').toLowerCase() === uname &&
+                r.type === 'system'
+            );
+        }
+
+        // Auto-trigger the "delivered order" rating popup for the current user
+        // if they have any delivered, unrated orders. Only the most recent one
+        // is shown — others wait for the next opportunity.
+        async function maybeAutoShowDeliveryRating() {
+            if (!currentUser) return;
+            if (document.getElementById('rating-modal').classList.contains('active')) return;
+            if (document.getElementById('system-rating-modal').classList.contains('active')) return;
+
+            const uname = String(currentUser.username || '').toLowerCase();
+            const uemail = String(currentUser.email || '').toLowerCase();
+
+            const myOrders = (globalState.orders || []).filter(o => {
+                const ou = String(o.customerUsername || '').toLowerCase();
+                const oe = String(o.customerEmail || '').toLowerCase();
+                return ou === uname || (uemail && oe === uemail);
+            });
+
+            const deliveredUnrated = myOrders.filter(o => {
+                const s = String(o.status || '');
+                return s.includes("Delivered") && !hasUserReviewedOrder(o.id, currentUser.username);
+            });
+
+            if (deliveredUnrated.length === 0) return;
+
+            // Most recent first (orders stored oldest → newest, so reverse)
+            const target = [...deliveredUnrated].reverse()[0];
+
+            // Prevent re-showing while user is still deciding
+            currentRatingOrderId = target.id;
+            selectedStarCount = 5;
+            highlightStars(5);
+            const infoEl = document.getElementById('rating-order-info');
+            if (infoEl) infoEl.innerText = `Order: ${target.id} (${target.items})`;
+            const commentEl = document.getElementById('review-comment');
+            if (commentEl) commentEl.value = '';
+
+            document.getElementById('rating-modal').classList.add('active');
+        }
+
+        // Auto-trigger the "system performance" rating popup for the current user
+        // if they have just placed an order and haven't rated it yet.
+        async function maybeAutoShowSystemRating() {
+            if (!currentUser) return;
+            if (document.getElementById('rating-modal').classList.contains('active')) return;
+            if (document.getElementById('system-rating-modal').classList.contains('active')) return;
+            if (!pendingRatings.system) return;
+            if (hasUserRatedSystemForOrder(pendingRatings.system.orderId, currentUser.username)) {
+                // Already rated (maybe from another device) → clear and bail
+                pendingRatings.system = null;
+                await savePendingRatings();
+                return;
+            }
+
+            const infoEl = document.getElementById('system-review-comment');
+            if (infoEl) infoEl.value = '';
+            selectedSystemStarCount = 5;
+            highlightSystemStars(5);
+
+            document.getElementById('system-rating-modal').classList.add('active');
+        }
+
+        function highlightSystemStars(count) {
+            const stars = document.getElementById('system-star-container').children;
+            for (let i = 0; i < stars.length; i++) {
+                if (i < count) stars[i].classList.add('selected');
+                else stars[i].classList.remove('selected');
+            }
+        }
+
         function refreshOrderDependentUI() {
             try { renderRecentOrdersList(); } catch (e) { console.warn(e); }
 
@@ -1579,6 +1779,9 @@
             if (myReviewsModal && myReviewsModal.classList.contains('active')) {
                 try { renderMyReviewsModal(); } catch (e) { console.warn(e); }
             }
+
+            // ✅ Auto-popup delivered-order rating when order status changes
+            try { maybeAutoShowDeliveryRating(); } catch (e) { console.warn(e); }
         }
 
         function refreshRefundDependentUI() {
@@ -1606,6 +1809,12 @@
             setupAdminMediaUploadHandlers();
             setupRefundFormHandlers();
             checkPaymentStatus();
+            // After cache/pending load, try to auto-show any waiting popups
+            setTimeout(async () => {
+                await loadPendingRatings();
+                try { maybeAutoShowSystemRating(); } catch (e) { console.warn(e); }
+                try { maybeAutoShowDeliveryRating(); } catch (e) { console.warn(e); }
+            }, 800);
         }
 
         async function checkPaymentStatus() {
@@ -1720,6 +1929,9 @@
         };
 
         window.submitRefundRequest = async function() {
+            const submitBtn = document.getElementById('refund-submit-btn');
+            const originalBtnHTML = submitBtn ? submitBtn.innerHTML : 'Submit Refund Request';
+
             const name = document.getElementById('refund-name').value.trim();
             const orderId = document.getElementById('refund-order-id').value.trim();
             const address = document.getElementById('refund-address').value.trim();
@@ -1738,6 +1950,12 @@
             if (!receiptFile || !idFile) {
                 alert("Please upload both your payment receipt and a valid ID.");
                 return;
+            }
+
+            // ✅ Loading state: one-click "Processing… + spinner"
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading-spinner small"></span> Processing…';
             }
 
             const readFileAsBase64 = (file) => {
@@ -1803,6 +2021,12 @@
             } catch (error) {
                 console.error("Refund submission error:", error);
                 alert("Error processing your files. Please try again with smaller images.");
+            } finally {
+                // ✅ Revert button state
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHTML;
+                }
             }
         };
 
@@ -2232,7 +2456,7 @@
             }, 2500);
         };
 
-        window.updateAuthUI = function() {
+        window.updateAuthUI = async function() {
             const authBtn = document.getElementById('auth-btn');
             const greetingName = document.getElementById('user-greeting-name');
             
@@ -2249,6 +2473,7 @@
                     authBtn.classList.add('primary');
                 }
             }
+            await loadPendingRatings();
             renderRecentOrdersList();
             renderMyRefundsList();
         };
@@ -2258,6 +2483,7 @@
                 if (confirm("Are you sure you want to log out?")) {
                     localStorage.removeItem('swift_current_user');
                     currentUser = null;
+                    pendingRatings = { system: null, delivered: [] };
                     updateAuthUI();
                     showToast("You have been logged out.");
                 }
@@ -2289,7 +2515,7 @@
             }
         };
 
-        window.signupUser = function() {
+        window.signupUser = async function() {
             const username = document.getElementById('signup-username').value.trim().toLowerCase();
             const name = document.getElementById('signup-name').value.trim();
             const email = document.getElementById('signup-email').value.trim().toLowerCase();
@@ -2314,6 +2540,7 @@
             currentUser = { username: newUser.username, name: newUser.name, email: newUser.email };
             localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
 
+            await loadPendingRatings();
             updateAuthUI();
             toggleAuthModal();
 
@@ -2323,9 +2550,13 @@
             document.getElementById('signup-password').value = '';
 
             showToast(`Global account created! Welcome, @${username}!`);
+            setTimeout(async () => {
+                try { await maybeAutoShowSystemRating(); } catch (e) { console.warn(e); }
+                try { await maybeAutoShowDeliveryRating(); } catch (e) { console.warn(e); }
+            }, 500);
         };
 
-        window.loginUser = function() {
+        window.loginUser = async function() {
             const identifier = document.getElementById('login-username-or-email').value.trim().toLowerCase();
             const password = document.getElementById('login-password').value;
 
@@ -2343,6 +2574,7 @@
             currentUser = { username: foundUser.username, name: foundUser.name, email: foundUser.email };
             localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
 
+            await loadPendingRatings();
             updateAuthUI();
             toggleAuthModal();
 
@@ -2350,6 +2582,10 @@
             document.getElementById('login-password').value = '';
 
             showToast(`Welcome back, @${currentUser.username}!`);
+            setTimeout(async () => {
+                try { await maybeAutoShowSystemRating(); } catch (e) { console.warn(e); }
+                try { await maybeAutoShowDeliveryRating(); } catch (e) { console.warn(e); }
+            }, 500);
         };
 
         window.proceedToCheckout = function() {
@@ -2373,6 +2609,10 @@
             document.getElementById('bill-promo').value = '';
             document.getElementById('promo-feedback').innerText = '';
             updateCartUI();
+
+            // Revert payment button if modal reopens
+            const btn = document.getElementById('proceed-payment-btn');
+            if (btn) { btn.disabled = false; btn.innerHTML = 'Proceed to Payment'; }
         };
 
         window.applyPromoCode = function() {
@@ -2400,6 +2640,9 @@
         };
 
         window.completeOrder = async function() {
+            const payBtn = document.getElementById('proceed-payment-btn');
+            const originalBtnHTML = payBtn ? payBtn.innerHTML : 'Proceed to Payment';
+
             const address = document.getElementById('bill-address').value;
             const city = document.getElementById('bill-city').value;
             const state = document.getElementById('bill-state').value;
@@ -2436,6 +2679,12 @@
             };
             localStorage.setItem('swift_pending_order', JSON.stringify(pendingOrder));
 
+            // ✅ Loading state: one-click "Processing… + spinner"
+            if (payBtn) {
+                payBtn.disabled = true;
+                payBtn.innerHTML = '<span class="loading-spinner small"></span> Processing…';
+            }
+
             try {
                 const initResponse = await fetch('https://swiftselect-backend.onrender.com/api/paystack/initialize', {
                     method: 'POST',
@@ -2465,15 +2714,18 @@
                                 );
                             } else {
                                 alert("Payment verification failed. Please contact support.");
+                                if (payBtn) { payBtn.disabled = false; payBtn.innerHTML = originalBtnHTML; }
                             }
                         } catch (error) {
                             console.error("Verification error:", error);
                             alert("An error occurred during verification. Please contact support.");
+                            if (payBtn) { payBtn.disabled = false; payBtn.innerHTML = originalBtnHTML; }
                         }
                     },
                     onCancel: () => {
                         showToast("Payment canceled.");
                         localStorage.removeItem('swift_pending_order');
+                        if (payBtn) { payBtn.disabled = false; payBtn.innerHTML = originalBtnHTML; }
                     }
                 });
 
@@ -2481,6 +2733,7 @@
                 console.error('Checkout error:', error);
                 alert('An error occurred during checkout. Please check your connection and try again.');
                 localStorage.removeItem('swift_pending_order');
+                if (payBtn) { payBtn.disabled = false; payBtn.innerHTML = originalBtnHTML; }
             }
         };
 
@@ -2501,11 +2754,12 @@
 
             await saveOrderToFirebase(newOrderRecord);
 
-            // ✅ Send order notification email to YOU (admin)
             await sendOrderNotificationEmail(newOrderRecord);
-
-            // ✅ Send order confirmation email to the BUYER (customer)
             await sendCustomerConfirmationEmail(newOrderRecord);
+
+            // ✅ Queue the "system performance" rating popup for this new order
+            pendingRatings.system = { orderId: orderId };
+            await savePendingRatings();
 
             renderRecentOrdersList();
             finalizeOrderCleanUp();
@@ -2535,6 +2789,13 @@
             setTimeout(() => {
                 showTruckAnimation();
             }, 600);
+
+            // ✅ After truck animation starts, show the system performance rating popup.
+            // The user can still skip — it stays remembered in IndexedDB and will
+            // re-appear next visit until rated.
+            setTimeout(async () => {
+                try { await maybeAutoShowSystemRating(); } catch (e) { console.warn(e); }
+            }, 6200);
         };
 
         window.showTruckAnimation = function() {
@@ -2665,7 +2926,10 @@
 
             listContainer.innerHTML = [...userOrders].reverse().map(order => {
                 const statusDetails = getStatusDetails(order.status);
-                
+                const alreadyReviewed = hasUserReviewedOrder(order.id, currentUser.username);
+                const isDelivered = String(order.status || "").includes("Delivered");
+                const showRateBtn = isDelivered && !alreadyReviewed;
+
                 return `
                 <div class="order-card">
                     <div class="order-card-header">
@@ -2696,7 +2960,7 @@
 
                     <div class="order-card-footer">
                         <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Track Order</button>
-                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.6rem 1rem; font-size:0.85rem;" onclick="triggerRatingModal('${order.id}')">Rate & Review</button>` : ''}
+                        ${showRateBtn ? `<button class="btn-primary" style="padding: 0.6rem 1rem; font-size:0.85rem;" onclick="triggerRatingModal('${order.id}')">Rate & Review</button>` : ''}
                     </div>
                 </div>
                 `;
@@ -2722,22 +2986,33 @@
             }
         };
 
+        // ==================== ✅ GLOBAL REVIEWS FEED (unchanged behavior) ====================
         window.renderReviews = function() {
             const modalGrid = document.getElementById('modal-reviews-grid');
             if (!modalGrid) return;
 
-            if (globalState.reviews.length === 0) {
+            if (!globalState.reviews || globalState.reviews.length === 0) {
                 modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Delivered orders can submit recommendations globally!</p>';
                 return;
             }
 
-            modalGrid.innerHTML = globalState.reviews.map(r => `
-                <div class="review-card" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; font-size: 0.9rem;">
-                    <div class="stars" style="color: var(--accent); margin-bottom: 0.3rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
-                    <p style="margin: 0.3rem 0; color: #334155;">"${r.comment}"</p>
-                    <span class="author" style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block;">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
-                </div>
-            `).join('');
+            // Show the most recent first, include only reviews that have a comment
+            const valid = globalState.reviews.filter(r => r && typeof r.rating === 'number');
+            if (valid.length === 0) {
+                modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Delivered orders can submit recommendations globally!</p>';
+                return;
+            }
+
+            modalGrid.innerHTML = [...valid].reverse().map(r => {
+                const typeTag = r.type === 'system' ? '<span style="background:#eef2ff; color:#3730a3; padding:0.15rem 0.5rem; border-radius:6px; font-size:0.7rem; font-weight:700; margin-left:0.4rem;">System</span>' : '';
+                return `
+                    <div class="review-card" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; font-size: 0.9rem;">
+                        <div class="stars" style="color: var(--accent); margin-bottom: 0.3rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                        <p style="margin: 0.3rem 0; color: #334155;">"${r.comment || ''}"</p>
+                        <span class="author" style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block;">— ${r.name} ${typeTag} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
+                    </div>
+                `;
+            }).join('');
         };
 
         window.openReviewsModal = function() {
@@ -2773,22 +3048,29 @@
                 return ou === uname || (uemail && oe === uemail);
             });
 
+            // ✅ Private per-user: only show reviews authored by this user
+            const myReviews = (globalState.reviews || []).filter(r =>
+                r && String(r.customerUsername || '').toLowerCase() === uname
+            );
+
             const delivered = myOrders.filter(o => String(o.status || '').includes("Delivered"));
-            const pending   = delivered.filter(o => !o.hasReviewed);
-            const reviewed  = delivered.filter(o =>  o.hasReviewed);
+            const pending   = delivered.filter(o => !hasUserReviewedOrder(o.id, currentUser.username));
+            const reviewedOrderIds = new Set(
+                myReviews.filter(r => r.type === 'delivery' && r.orderId).map(r => String(r.orderId))
+            );
+            const reviewed  = delivered.filter(o => reviewedOrderIds.has(String(o.id)));
+
+            let html = '';
 
             if (delivered.length === 0) {
-                body.innerHTML = `
+                html += `
                     <div style="text-align:center; padding:1.5rem;">
                         <div style="font-size:2.5rem;">📦</div>
                         <p style="color:#0f172a; font-weight:700; margin:0.5rem 0 0.25rem;">No delivered orders yet</p>
                         <p style="color:#64748b; font-size:0.85rem; margin:0;">You can rate an order once its status is marked "Delivered Successfully".</p>
                     </div>
                 `;
-                return;
             }
-
-            let html = '';
 
             if (pending.length > 0) {
                 html += `<h4 style="margin:0.25rem 0; font-size:0.95rem; color:#0f172a;">⭐ Awaiting Your Review</h4>`;
@@ -2817,8 +3099,10 @@
 
             if (reviewed.length > 0) {
                 html += `<h4 style="margin:1rem 0 0.25rem; font-size:0.95rem; color:#0f172a;">✅ Already Reviewed</h4>`;
-                html += reviewed.map(o => `
-                    <div class="order-card" style="margin-bottom:0.5rem; opacity:0.85;">
+                html += reviewed.map(o => {
+                    const rev = myReviews.find(r => r.type === 'delivery' && String(r.orderId) === String(o.id));
+                    return `
+                    <div class="order-card" style="margin-bottom:0.5rem; opacity:0.9;">
                         <div class="order-card-header">
                             <span class="order-id">${o.id}</span>
                             <span class="order-status-badge" style="background:#e0e7ff; color:#4f46e5;">⭐ Reviewed</span>
@@ -2827,6 +3111,43 @@
                             <div class="order-info-row">
                                 <span class="order-info-label">Items</span>
                                 <span class="order-info-value">${o.items}</span>
+                            </div>
+                            ${rev ? `<div class="order-info-row">
+                                <span class="order-info-label">Your Rating</span>
+                                <span class="order-info-value" style="color: #f59e0b;">${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}</span>
+                            </div>
+                            <div class="order-info-row">
+                                <span class="order-info-label">Comment</span>
+                                <span class="order-info-value">${rev.comment || '(no comment)'}</span>
+                            </div>` : ''}
+                        </div>
+                    </div>
+                `;
+                }).join('');
+            }
+
+            // System reviews section (private)
+            const mySystemReviews = myReviews.filter(r => r.type === 'system');
+            if (mySystemReviews.length > 0) {
+                html += `<h4 style="margin:1rem 0 0.25rem; font-size:0.95rem; color:#0f172a;">🖥️ Your System Ratings</h4>`;
+                html += mySystemReviews.map(r => `
+                    <div class="order-card" style="margin-bottom:0.5rem; opacity:0.9;">
+                        <div class="order-card-header">
+                            <span class="order-id">${r.orderId || '—'}</span>
+                            <span class="order-status-badge" style="background:#eef2ff; color:#3730a3;">System</span>
+                        </div>
+                        <div class="order-card-body">
+                            <div class="order-info-row">
+                                <span class="order-info-label">Rating</span>
+                                <span class="order-info-value" style="color:#f59e0b;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+                            </div>
+                            <div class="order-info-row">
+                                <span class="order-info-label">Comment</span>
+                                <span class="order-info-value">${r.comment || '(no comment)'}</span>
+                            </div>
+                            <div class="order-info-row">
+                                <span class="order-info-label">Date</span>
+                                <span class="order-info-value">${r.date}</span>
                             </div>
                         </div>
                     </div>
@@ -2841,9 +3162,11 @@
             triggerRatingModal(orderId);
         };
 
+        // ==================== ✅ DELIVERY RATING MODAL LOGIC ====================
         window.triggerRatingModal = function(orderId) {
             const order = globalState.orders.find(o => String(o.id) === String(orderId));
-            if (!order || order.hasReviewed) return;
+            if (!order) return;
+            if (hasUserReviewedOrder(orderId, currentUser ? currentUser.username : '')) return;
 
             currentRatingOrderId = orderId;
             selectedStarCount = 5;
@@ -2856,6 +3179,7 @@
 
         window.toggleRatingModal = function() {
             document.getElementById('rating-modal').classList.remove('active');
+            // If they skipped, the next order-list refresh will re-offer it
         };
 
         window.setRating = function(count) {
@@ -2874,33 +3198,87 @@
             }
         }
 
-        window.submitReview = function() {
+        window.submitReview = async function() {
             const comment = document.getElementById('review-comment').value.trim();
-            if (!comment) {
-                alert("Please write a short review comment.");
+
+            const order = globalState.orders.find(o => String(o.id) === String(currentRatingOrderId));
+            if (!order) {
+                alert("We couldn't find that order. Please try again.");
                 return;
             }
 
-            const order = globalState.orders.find(o => String(o.id) === String(currentRatingOrderId));
-            if (order) {
-                order.hasReviewed = true;
-                updateOrderStatusInFirebase(order.id, order.status);
-            }
-
-            const newReview = {
+            const reviewRecord = {
+                reviewId: 'rev-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+                orderId: order.id,
+                type: 'delivery',
                 name: currentUser ? `@${currentUser.username}` : "Verified Customer",
+                customerUsername: currentUser ? currentUser.username : "guest",
+                customerEmail: currentUser ? currentUser.email : "",
                 rating: selectedStarCount,
                 comment: comment,
                 date: new Date().toLocaleDateString()
             };
 
-            globalState.reviews.unshift(newReview);
-            saveStateToFirebase();
+            await saveReviewToFirebase(reviewRecord);
+
+            // Mark the order locally so it doesn't prompt again
+            order.hasReviewed = true;
+            await persistCache();
+
             renderReviews();
             toggleRatingModal();
             renderRecentOrdersList();
             renderMyReviewsModal();
-            showToast("Thank you! Your recommendation is now visible globally across all devices.");
+            showToast("Thank you! Your review has been saved.");
+        };
+
+        // ==================== ✅ SYSTEM PERFORMANCE RATING MODAL LOGIC ====================
+        window.toggleSystemRatingModal = function() {
+            document.getElementById('system-rating-modal').classList.remove('active');
+            // If skipped, we keep pendingRatings.system so it re-appears next visit
+        };
+
+        window.setSystemRating = function(count) {
+            selectedSystemStarCount = count;
+            highlightSystemStars(count);
+        };
+
+        window.submitSystemReview = async function() {
+            if (!currentUser) {
+                alert("Please log in to submit your rating.");
+                return;
+            }
+            if (!pendingRatings.system || !pendingRatings.system.orderId) {
+                // Nothing to attach to — just close
+                document.getElementById('system-rating-modal').classList.remove('active');
+                return;
+            }
+
+            const comment = document.getElementById('system-review-comment').value.trim();
+
+            const reviewRecord = {
+                reviewId: 'rev-sys-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+                orderId: pendingRatings.system.orderId,
+                type: 'system',
+                name: `@${currentUser.username}`,
+                customerUsername: currentUser.username,
+                customerEmail: currentUser.email,
+                rating: selectedSystemStarCount,
+                comment: comment,
+                date: new Date().toLocaleDateString()
+            };
+
+            await saveReviewToFirebase(reviewRecord);
+
+            pendingRatings.system = null;
+            await savePendingRatings();
+
+            document.getElementById('system-review-comment').value = '';
+            document.getElementById('system-rating-modal').classList.remove('active');
+
+            renderReviews();
+            renderMyReviewsModal();
+            showToast("Thanks! Your system rating has been saved.");
         };
 
         window.openLightbox = function(src) {
@@ -3583,7 +3961,7 @@
             if (data) {
                 if (data.products) globalState.products = data.products;
                 if (data.users) globalState.users = data.users;
-                if (data.reviews) globalState.reviews = data.reviews;
+                if (data.reviews) globalState.reviews = normalizeToArray(data.reviews);
                 if (data.promoCodes) globalState.promoCodes = data.promoCodes;
                 globalState._cacheVersion = CACHE_VERSION;
                 await persistCache();
@@ -3603,12 +3981,20 @@
             if (reviewsModal && reviewsModal.classList.contains('active')) {
                 try { renderReviews(); } catch (e) { console.warn(e); }
             }
+
+            // ✅ Live-refresh "My Reviews" modal if open
+            const myReviewsModal = document.getElementById('my-reviews-modal');
+            if (myReviewsModal && myReviewsModal.classList.contains('active')) {
+                try { renderMyReviewsModal(); } catch (e) { console.warn(e); }
+            }
         });
 
         onValue(ordersRef, async (snapshot) => {
             globalState.orders = normalizeToArray(snapshot.val());
             await persistCache();
             refreshOrderDependentUI();
+            // Auto-popup delivered-order rating when the customer has one waiting
+            try { await maybeAutoShowDeliveryRating(); } catch (e) { console.warn(e); }
         });
 
         onValue(refundsRef, async (snapshot) => {
