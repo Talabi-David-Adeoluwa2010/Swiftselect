@@ -1377,13 +1377,11 @@
         let isProductsLoaded = false;
         let lastSubmittedRefundId = null;
 
-        // ✅ Single-fire guards (prevent double clicks / duplicate submissions)
         let isProcessingPayment = false;
         let isProcessingRefund  = false;
         let isSubmittingReview  = false;
         let isSubmittingSystemReview = false;
 
-        // ✅ Track which order IDs are currently mid-write so onValue doesn't clobber them
         const inFlightOrderWrites = new Set();
 
         try {
@@ -1528,11 +1526,7 @@
             }
         }
 
-        // ==================== ✅ SAFE ORDER WRITES (no more disappearing) ====================
-        // Writes are done by reading the current list, merging by ID, then writing back.
-        // The ID of the order being changed is added to `inFlightOrderWrites` while
-        // the write is pending, so the onValue listener won't clobber it if Firebase
-        // briefly echoes a stale snapshot.
+        // ==================== ✅ SAFE ORDER WRITES ====================
         async function readOrdersFromFirebase() {
             try {
                 const snap = await get(ordersRef);
@@ -1546,7 +1540,6 @@
         async function mergeOrdersAndWrite(localChangeFn) {
             const remote = await readOrdersFromFirebase();
             const base = remote !== null ? remote : (globalState.orders || []);
-            // Dedup by ID (last one wins)
             const map = new Map();
             base.forEach(o => { if (o && o.id) map.set(String(o.id), o); });
             localChangeFn(map);
@@ -1558,7 +1551,6 @@
         async function saveOrderToFirebase(orderRecord) {
             inFlightOrderWrites.add(String(orderRecord.id));
 
-            // Local state first (instant UI)
             const localIdx = globalState.orders.findIndex(o => String(o.id) === String(orderRecord.id));
             if (localIdx === -1) globalState.orders.push(orderRecord);
             else globalState.orders[localIdx] = { ...globalState.orders[localIdx], ...orderRecord };
@@ -1678,29 +1670,34 @@
             }
         }
 
-        // ==================== ✅ RATING HELPERS ====================
+        // ==================== ✅ RATING HELPERS (BACKGROUND SYNC) ====================
         async function saveReviewToFirebase(reviewRecord) {
+            // 1) Local state first — instant
             if (!globalState.reviews) globalState.reviews = [];
             const localIdx = globalState.reviews.findIndex(r => r && r.reviewId && r.reviewId === reviewRecord.reviewId);
             if (localIdx === -1) globalState.reviews.unshift(reviewRecord);
             else globalState.reviews[localIdx] = reviewRecord;
-            await persistCache();
 
-            try {
-                // Read-modify-write for the reviews array on stateRef (safe merge by reviewId)
-                const snap = await get(stateRef);
-                const current = snap.val() || {};
-                if (!Array.isArray(current.reviews)) current.reviews = normalizeToArray(current.reviews);
-                const arr = current.reviews;
-                const idx = arr.findIndex(r => r && r.reviewId && r.reviewId === reviewRecord.reviewId);
-                if (idx === -1) arr.unshift(reviewRecord);
-                else arr[idx] = reviewRecord;
-                current.reviews = arr;
-                await set(stateRef, current);
-            } catch (e) {
-                console.error("Review sync error:", e);
-                showToast("⚠️ Review saved locally — will retry sync.");
-            }
+            // 2) Persist to IndexedDB so it survives reload (fire-and-forget)
+            persistCache();
+
+            // 3) Sync to Firebase in the BACKGROUND — do NOT await this in the UI
+            (async () => {
+                try {
+                    const snap = await get(stateRef);
+                    const current = snap.val() || {};
+                    if (!Array.isArray(current.reviews)) current.reviews = normalizeToArray(current.reviews);
+                    const arr = current.reviews;
+                    const idx = arr.findIndex(r => r && r.reviewId && r.reviewId === reviewRecord.reviewId);
+                    if (idx === -1) arr.unshift(reviewRecord);
+                    else arr[idx] = reviewRecord;
+                    current.reviews = arr;
+                    await set(stateRef, current);
+                } catch (e) {
+                    console.error("Review background sync error:", e);
+                    showToast("⚠️ Review saved locally — will sync when online.");
+                }
+            })();
         }
 
         function hasUserReviewedOrder(orderId, username) {
@@ -1951,7 +1948,6 @@
             }, 400);
         };
 
-        // ==================== ✅ REFUND SUBMISSION (one-press only + spinner) ====================
         window.submitRefundRequest = async function() {
             if (isProcessingRefund) return;
 
@@ -2636,7 +2632,6 @@
             document.getElementById('promo-feedback').innerText = '';
             updateCartUI();
 
-            // Reset button state each time modal opens
             const btn = document.getElementById('proceed-payment-btn');
             if (btn) { btn.disabled = false; btn.innerHTML = 'Proceed to Payment'; }
             isProcessingPayment = false;
@@ -2666,9 +2661,7 @@
             }
         };
 
-        // ==================== ✅ PAYMENT SUBMISSION (one-press only + spinner) ====================
         window.completeOrder = async function() {
-            // ✅ HARD GUARD: prevents multi-tap, duplicate orders, duplicate emails
             if (isProcessingPayment) return;
 
             const payBtn = document.getElementById('proceed-payment-btn');
@@ -2710,7 +2703,6 @@
             };
             localStorage.setItem('swift_pending_order', JSON.stringify(pendingOrder));
 
-            // ✅ Engage the one-press lock + spinner
             isProcessingPayment = true;
             if (payBtn) {
                 payBtn.disabled = true;
@@ -3225,7 +3217,7 @@
             }
         }
 
-        // ✅ Review submit is also guarded so accidental double taps don't create duplicates
+        // ✅ Instant close + background sync
         window.submitReview = async function() {
             if (isSubmittingReview) return;
 
@@ -3236,44 +3228,32 @@
             }
 
             const comment = document.getElementById('review-comment').value.trim();
-            const submitBtn = document.getElementById('submit-review-btn');
-            const originalHTML = submitBtn ? submitBtn.innerHTML : 'Submit Review';
 
             isSubmittingReview = true;
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="loading-spinner small"></span> Saving…';
-            }
+
+            const reviewRecord = {
+                reviewId: 'rev-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+                orderId: order.id,
+                type: 'delivery',
+                name: currentUser ? `@${currentUser.username}` : "Verified Customer",
+                customerUsername: currentUser ? currentUser.username : "guest",
+                customerEmail: currentUser ? currentUser.email : "",
+                rating: selectedStarCount,
+                comment: comment,
+                date: new Date().toLocaleDateString()
+            };
+
+            order.hasReviewed = true;
+            document.getElementById('rating-modal').classList.remove('active');
+            renderReviews();
+            renderRecentOrdersList();
+            renderMyReviewsModal();
+            showToast("Thank you! Your review has been saved.");
 
             try {
-                const reviewRecord = {
-                    reviewId: 'rev-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
-                    orderId: order.id,
-                    type: 'delivery',
-                    name: currentUser ? `@${currentUser.username}` : "Verified Customer",
-                    customerUsername: currentUser ? currentUser.username : "guest",
-                    customerEmail: currentUser ? currentUser.email : "",
-                    rating: selectedStarCount,
-                    comment: comment,
-                    date: new Date().toLocaleDateString()
-                };
-
                 await saveReviewToFirebase(reviewRecord);
-
-                order.hasReviewed = true;
-                await persistCache();
-
-                renderReviews();
-                document.getElementById('rating-modal').classList.remove('active');
-                renderRecentOrdersList();
-                renderMyReviewsModal();
-                showToast("Thank you! Your review has been saved.");
             } finally {
                 isSubmittingReview = false;
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalHTML;
-                }
             }
         };
 
@@ -3286,6 +3266,7 @@
             highlightSystemStars(count);
         };
 
+        // ✅ Instant close + background sync
         window.submitSystemReview = async function() {
             if (isSubmittingSystemReview) return;
 
@@ -3299,45 +3280,33 @@
             }
 
             const comment = document.getElementById('system-review-comment').value.trim();
-            const submitBtn = document.getElementById('submit-system-review-btn');
-            const originalHTML = submitBtn ? submitBtn.innerHTML : 'Submit Rating';
 
             isSubmittingSystemReview = true;
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="loading-spinner small"></span> Saving…';
-            }
+
+            const reviewRecord = {
+                reviewId: 'rev-sys-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+                orderId: pendingRatings.system.orderId,
+                type: 'system',
+                name: `@${currentUser.username}`,
+                customerUsername: currentUser.username,
+                customerEmail: currentUser.email,
+                rating: selectedSystemStarCount,
+                comment: comment,
+                date: new Date().toLocaleDateString()
+            };
+
+            pendingRatings.system = null;
+            document.getElementById('system-review-comment').value = '';
+            document.getElementById('system-rating-modal').classList.remove('active');
+            renderReviews();
+            renderMyReviewsModal();
+            showToast("Thanks! Your system rating has been saved.");
 
             try {
-                const reviewRecord = {
-                    reviewId: 'rev-sys-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
-                    orderId: pendingRatings.system.orderId,
-                    type: 'system',
-                    name: `@${currentUser.username}`,
-                    customerUsername: currentUser.username,
-                    customerEmail: currentUser.email,
-                    rating: selectedSystemStarCount,
-                    comment: comment,
-                    date: new Date().toLocaleDateString()
-                };
-
+                savePendingRatings();
                 await saveReviewToFirebase(reviewRecord);
-
-                pendingRatings.system = null;
-                await savePendingRatings();
-
-                document.getElementById('system-review-comment').value = '';
-                document.getElementById('system-rating-modal').classList.remove('active');
-
-                renderReviews();
-                renderMyReviewsModal();
-                showToast("Thanks! Your system rating has been saved.");
             } finally {
                 isSubmittingSystemReview = false;
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalHTML;
-                }
             }
         };
 
@@ -4047,22 +4016,17 @@
             }
         });
 
-        // ✅ SAFE ORDERS LISTENER — merges instead of clobbering.
-        // Any order currently mid-write (in `inFlightOrderWrites`) is preserved
-        // locally so its pending new value isn't overwritten by a stale echo.
         onValue(ordersRef, async (snapshot) => {
             const remote = normalizeToArray(snapshot.val());
             const remoteMap = new Map();
             remote.forEach(o => { if (o && o.id) remoteMap.set(String(o.id), o); });
 
-            // Merge with any locally-known orders that aren't in the remote snapshot
             (globalState.orders || []).forEach(o => {
                 if (!o || !o.id) return;
                 const key = String(o.id);
                 if (!remoteMap.has(key)) remoteMap.set(key, o);
             });
 
-            // For in-flight orders, keep the LOCAL (newer) version
             inFlightOrderWrites.forEach(key => {
                 const local = (globalState.orders || []).find(o => String(o.id) === key);
                 if (local) remoteMap.set(key, local);
