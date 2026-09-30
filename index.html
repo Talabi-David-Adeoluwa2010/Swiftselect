@@ -242,6 +242,7 @@
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid #e0e7ff; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.9s linear infinite; }
+        .loading-spinner.small { width: 16px; height: 16px; border-width: 2px; border-color: rgba(255,255,255,0.4); border-top-color: #ffffff; }
 
         .size-selector { display: flex; gap: 0.35rem; flex-wrap: wrap; }
         .size-btn { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.4rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; }
@@ -344,6 +345,7 @@
         }
         .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
         .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4); }
+        .btn-primary:disabled { background: #a5b4fc; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.9; }
         .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
         .btn-secondary:hover { background: #e2e8f0; }
         .btn-danger { background: #fee2e2; color: #dc2626; border: none; }
@@ -610,6 +612,20 @@
             0% { opacity: 0; transform: translateY(20px); }
             100% { opacity: 1; transform: translateY(0); }
         }
+
+        .review-privacy-note {
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 10px;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.78rem;
+            color: #3730a3;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -646,8 +662,6 @@
             </div>
         </div>
 
-        <!-- Kebab Dropdown Menu -->
-        <!-- ✅ UPDATED: Added "See All Customer Reviews" + kept Rate & Review Orders -->
         <div class="kebab-menu" id="kebab-menu">
             <button onclick="openReviewsModal(); toggleKebabMenu();">🌟 See All Customer Reviews</button>
             <button onclick="openMyReviewsModal(); toggleKebabMenu();">⭐ Rate & Review Orders</button>
@@ -980,7 +994,7 @@
                 </div>
             </div>
 
-            <button class="btn-primary" onclick="submitRefundRequest()" style="width:100%; margin-bottom:0.75rem;">Submit Refund Request</button>
+            <button class="btn-primary" id="refund-submit-btn" onclick="submitRefundRequest()" style="width:100%; margin-bottom:0.75rem;">Submit Refund Request</button>
             <button class="btn-secondary" onclick="toggleRefundModal()" style="width:100%;">Cancel</button>
         </div>
     </div>
@@ -1110,7 +1124,7 @@
             <select id="bill-payment">
                 <option value="Card Payment">Secure Online Payment via Paystack (Card, USSD, etc.)</option>
             </select>
-            <button class="btn-primary" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">Proceed to Payment</button>
+            <button class="btn-primary" id="proceed-payment-btn" onclick="completeOrder()" style="width:100%; margin-bottom:0.75rem;">Proceed to Payment</button>
             <button class="btn-secondary" onclick="toggleBillingModal()" style="width:100%;">Cancel</button>
         </div>
     </div>
@@ -1119,7 +1133,12 @@
         <div class="modal-content">
             <h3>⭐ Rate Your Delivered Order</h3>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;" id="rating-order-info"></p>
-            <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Select Rating Stars:</label>
+            <div class="review-privacy-note">
+                🔒 This review is private to your account and synced securely to your device.
+            </div>
+            <p style="font-size: 0.9rem; color: #334155; margin: 0 0 0.75rem; line-height: 1.5;">
+                How was your overall experience with the product quality, our service, and its durability? Please tap the stars to rate us.
+            </p>
             <div class="rating-stars-input" id="star-container">
                 <span onclick="setRating(1)">★</span>
                 <span onclick="setRating(2)">★</span>
@@ -1127,13 +1146,37 @@
                 <span onclick="setRating(4)">★</span>
                 <span onclick="setRating(5)">★</span>
             </div>
-            <textarea id="review-comment" placeholder="Write a short review about your experience and the product quality..." rows="3"></textarea>
-            <button class="btn-primary" onclick="submitReview()" style="width:100%; margin-bottom:0.75rem;">Submit Global Recommendation</button>
+            <textarea id="review-comment" placeholder="Tell us a little more about your experience..." rows="3"></textarea>
+            <button class="btn-primary" id="submit-review-btn" onclick="submitReview()" style="width:100%; margin-bottom:0.75rem;">Submit Review</button>
             <button class="btn-secondary" onclick="toggleRatingModal()" style="width:100%;">Skip for now</button>
         </div>
     </div>
 
-    <!-- MY REVIEWS MODAL (accessed from kebab menu) -->
+    <div class="modal" id="system-rating-modal">
+        <div class="modal-content">
+            <h3>⭐ Rate Our System Performance</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">
+                Thanks for your order! Before you go, please rate how smooth the ordering and checkout experience was.
+            </p>
+            <div class="review-privacy-note">
+                🔒 This review is private to your account and synced securely to your device.
+            </div>
+            <p style="font-size: 0.9rem; color: #334155; margin: 0 0 0.75rem; line-height: 1.5;">
+                How easy was it to shop, checkout, and use our system today? Please tap the stars to rate us.
+            </p>
+            <div class="rating-stars-input" id="system-star-container">
+                <span onclick="setSystemRating(1)">★</span>
+                <span onclick="setSystemRating(2)">★</span>
+                <span onclick="setSystemRating(3)">★</span>
+                <span onclick="setSystemRating(4)">★</span>
+                <span onclick="setSystemRating(5)">★</span>
+            </div>
+            <textarea id="system-review-comment" placeholder="Any feedback on our system performance? (optional)" rows="3"></textarea>
+            <button class="btn-primary" id="submit-system-review-btn" onclick="submitSystemReview()" style="width:100%; margin-bottom:0.75rem;">Submit Rating</button>
+            <button class="btn-secondary" onclick="toggleSystemRatingModal()" style="width:100%;">Skip for now</button>
+        </div>
+    </div>
+
     <div class="modal" id="my-reviews-modal">
         <div class="modal-content" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -1141,13 +1184,12 @@
                 <button class="close-btn" onclick="toggleMyReviewsModal()">&times;</button>
             </div>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">
-                Once your order is marked <strong>"Delivered Successfully"</strong>, you can rate it here. Your review is synced globally via Firebase & IndexedDB.
+                Once your order is marked <strong>"Delivered Successfully"</strong>, you can rate it here. Your review is private to your account and synced globally via Firebase & IndexedDB.
             </p>
             <div id="my-reviews-modal-body" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 60vh; overflow-y: auto; padding-right: 0.25rem;"></div>
         </div>
     </div>
 
-    <!-- CART MODAL -->
     <div class="cart-modal" id="cart-modal">
         <div class="cart-header">
             <h3 style="margin:0;">Your Shopping Cart</h3>
@@ -1200,7 +1242,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const IDB_CONFIG = {
             dbName: "SwiftSelectDB",
@@ -1209,18 +1251,14 @@
         };
 
         // ==================== ✅ EMAILJS ORDER NOTIFICATION ====================
-        // ✅ Real values wired in from your EmailJS dashboard
-        const EMAILJS_SERVICE_ID           = "Swift_alerts";              // ✅ your Service ID
-        const EMAILJS_ADMIN_TEMPLATE_ID    = "template_tuq2hhk";          // ✅ sends order to YOU (admin)
-        const EMAILJS_CUSTOMER_TEMPLATE_ID = "template_hv2kyh6";          // ✅ sends confirmation to BUYER
-        const ORDER_NOTIFICATION_EMAIL     = "talabidavid275@gmail.com";  // ✅ your inbox
+        const EMAILJS_SERVICE_ID           = "Swift_alerts";
+        const EMAILJS_ADMIN_TEMPLATE_ID    = "template_tuq2hhk";
+        const EMAILJS_CUSTOMER_TEMPLATE_ID = "template_hv2kyh6";
+        const ORDER_NOTIFICATION_EMAIL     = "talabidavid275@gmail.com";
 
         async function sendOrderNotificationEmail(orderRecord) {
             try {
-                if (!window.emailjs) {
-                    console.warn("⚠️ EmailJS SDK not loaded yet. Skipping admin email.");
-                    return;
-                }
+                if (!window.emailjs) return;
                 const templateParams = {
                     to_email:          ORDER_NOTIFICATION_EMAIL,
                     order_id:          orderRecord.id,
@@ -1243,14 +1281,8 @@
 
         async function sendCustomerConfirmationEmail(orderRecord) {
             try {
-                if (!window.emailjs) {
-                    console.warn("⚠️ EmailJS SDK not loaded yet. Skipping customer email.");
-                    return;
-                }
-                if (!orderRecord.customerEmail) {
-                    console.warn("⚠️ No customer email on order — skipping customer confirmation.");
-                    return;
-                }
+                if (!window.emailjs) return;
+                if (!orderRecord.customerEmail) return;
                 const templateParams = {
                     to_email:          orderRecord.customerEmail,
                     order_id:          orderRecord.id,
@@ -1325,7 +1357,7 @@
         const ordersRef  = ref(db, 'swiftOrders');
         const refundsRef = ref(db, 'swiftRefunds');
 
-        const CACHE_VERSION = 9; 
+        const CACHE_VERSION = 10; 
 
         let globalState = {
             _cacheVersion: CACHE_VERSION,
@@ -1335,8 +1367,8 @@
             ],
             orders: [],
             reviews: [
-                { name: "@david_t", rating: 5, comment: "Super fast shipping to the US and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026" },
-                { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery.", date: "11/08/2026" }
+                { name: "@david_t", rating: 5, comment: "Super fast shipping to the US and excellent product quality. Highly recommend SwiftSelect!", date: "10/08/2026", type: "delivery", customerUsername: "david_t" },
+                { name: "@sarah_m", rating: 5, comment: "Genuine store items, smooth checkout process and quick delivery.", date: "11/08/2026", type: "delivery", customerUsername: "sarah_m" }
             ],
             promoCodes: ["SWIFT5"],
             refunds: []
@@ -1344,6 +1376,15 @@
 
         let isProductsLoaded = false;
         let lastSubmittedRefundId = null;
+
+        // ✅ Single-fire guards (prevent double clicks / duplicate submissions)
+        let isProcessingPayment = false;
+        let isProcessingRefund  = false;
+        let isSubmittingReview  = false;
+        let isSubmittingSystemReview = false;
+
+        // ✅ Track which order IDs are currently mid-write so onValue doesn't clobber them
+        const inFlightOrderWrites = new Set();
 
         try {
             const cached = await dbHelper.get('swift_cached_state');
@@ -1358,11 +1399,7 @@
                 if (globalState.products.length > 0) {
                     isProductsLoaded = true;
                     console.log("✅ Cache hit:", globalState.products.length, "products loaded instantly.");
-                } else {
-                    console.log("📭 Cache empty. Waiting for Firebase...");
                 }
-            } else {
-                console.log("🆕 No valid cache. Waiting for Firebase sync...");
             }
         } catch (e) {
             console.error("IndexedDB cache load error:", e);
@@ -1374,6 +1411,31 @@
         let currentRatingOrderId = null;
         let selectedStarCount = 5;
         let appliedDiscountPercent = 0;
+
+        let selectedSystemStarCount = 5;
+        let pendingRatings = { system: null, delivered: [] };
+
+        async function loadPendingRatings() {
+            if (!currentUser) { pendingRatings = { system: null, delivered: [] }; return; }
+            try {
+                const key = 'swift_pending_ratings_' + currentUser.username;
+                const saved = await dbHelper.get(key);
+                pendingRatings = saved || { system: null, delivered: [] };
+            } catch (e) {
+                console.warn("Pending rating load error:", e);
+                pendingRatings = { system: null, delivered: [] };
+            }
+        }
+
+        async function savePendingRatings() {
+            if (!currentUser) return;
+            try {
+                const key = 'swift_pending_ratings_' + currentUser.username;
+                await dbHelper.save(key, pendingRatings);
+            } catch (e) {
+                console.warn("Pending rating save error:", e);
+            }
+        }
 
         let adminSelectedImages = [];
         let adminSelectedVideos = [];
@@ -1395,8 +1457,7 @@
         };
 
         window.toggleKebabMenu = function() {
-            const menu = document.getElementById('kebab-menu');
-            menu.classList.toggle('active');
+            document.getElementById('kebab-menu').classList.toggle('active');
         };
 
         document.addEventListener('click', function(event) {
@@ -1417,9 +1478,7 @@
         window.filterFaqCategory = function(category) {
             const answerBox = document.getElementById('faq-answer-box');
             const questionsList = document.getElementById('faq-questions-list');
-            
             answerBox.innerHTML = `<em>Please select a specific question below related to <strong>${category.toUpperCase()}</strong>.</em>`;
-            
             const questions = faqData[category] || [];
             questionsList.innerHTML = questions.map((item, idx) => `
                 <button class="btn-secondary" style="text-align: left; font-size: 0.9rem; padding: 0.75rem 1rem; width: 100%; justify-content: flex-start;" onclick="showFaqAnswer('${category}', ${idx})">
@@ -1430,8 +1489,7 @@
 
         window.showFaqAnswer = function(category, index) {
             const item = faqData[category][index];
-            const answerBox = document.getElementById('faq-answer-box');
-            answerBox.innerHTML = `<strong>Q: ${item.q}</strong><br><br><span style="color: #0f172a; line-height: 1.5;">A: ${item.a}</span>`;
+            document.getElementById('faq-answer-box').innerHTML = `<strong>Q: ${item.q}</strong><br><br><span style="color: #0f172a; line-height: 1.5;">A: ${item.a}</span>`;
         };
 
         function normalizeToArray(val) {
@@ -1470,79 +1528,76 @@
             }
         }
 
-        async function saveOrderToFirebase(orderRecord) {
-            const localIdx = globalState.orders.findIndex(o => String(o.id) === String(orderRecord.id));
-            if (localIdx === -1) globalState.orders.push(orderRecord);
-            else globalState.orders[localIdx] = orderRecord;
-            await persistCache();
-
+        // ==================== ✅ SAFE ORDER WRITES (no more disappearing) ====================
+        // Writes are done by reading the current list, merging by ID, then writing back.
+        // The ID of the order being changed is added to `inFlightOrderWrites` while
+        // the write is pending, so the onValue listener won't clobber it if Firebase
+        // briefly echoes a stale snapshot.
+        async function readOrdersFromFirebase() {
             try {
-                await runTransaction(ordersRef, (current) => {
-                    const arr = normalizeToArray(current);
-                    const idx = arr.findIndex(o => String(o.id) === String(orderRecord.id));
-                    if (idx === -1) arr.push(orderRecord);
-                    else arr[idx] = { ...arr[idx], ...orderRecord };
-                    return arr;
-                });
+                const snap = await get(ordersRef);
+                return normalizeToArray(snap.val());
             } catch (e) {
-                console.error("Order sync error:", e);
-                showToast("⚠️ Order saved locally — syncing again shortly.");
+                console.warn("readOrdersFromFirebase failed:", e);
+                return null;
             }
         }
 
-        async function saveRefundToFirebase(refundRecord) {
-            const localIdx = globalState.refunds.findIndex(r => String(r.id) === String(refundRecord.id));
-            if (localIdx === -1) globalState.refunds.push(refundRecord);
-            else globalState.refunds[localIdx] = refundRecord;
+        async function mergeOrdersAndWrite(localChangeFn) {
+            const remote = await readOrdersFromFirebase();
+            const base = remote !== null ? remote : (globalState.orders || []);
+            // Dedup by ID (last one wins)
+            const map = new Map();
+            base.forEach(o => { if (o && o.id) map.set(String(o.id), o); });
+            localChangeFn(map);
+            const merged = Array.from(map.values());
+            await set(ordersRef, merged);
+            return merged;
+        }
+
+        async function saveOrderToFirebase(orderRecord) {
+            inFlightOrderWrites.add(String(orderRecord.id));
+
+            // Local state first (instant UI)
+            const localIdx = globalState.orders.findIndex(o => String(o.id) === String(orderRecord.id));
+            if (localIdx === -1) globalState.orders.push(orderRecord);
+            else globalState.orders[localIdx] = { ...globalState.orders[localIdx], ...orderRecord };
             await persistCache();
 
             try {
-                await runTransaction(refundsRef, (current) => {
-                    const arr = normalizeToArray(current);
-                    const idx = arr.findIndex(r => String(r.id) === String(refundRecord.id));
-                    if (idx === -1) arr.push(refundRecord);
-                    else arr[idx] = { ...arr[idx], ...refundRecord };
-                    return arr;
+                const merged = await mergeOrdersAndWrite(map => {
+                    const existing = map.get(String(orderRecord.id));
+                    map.set(String(orderRecord.id), existing ? { ...existing, ...orderRecord } : orderRecord);
                 });
+                globalState.orders = merged;
+                await persistCache();
             } catch (e) {
-                console.error("Refund sync error:", e);
-                showToast("⚠️ Refund saved locally — syncing again shortly.");
+                console.error("Order sync error:", e);
+                showToast("⚠️ Order saved locally — will retry sync.");
+            } finally {
+                setTimeout(() => inFlightOrderWrites.delete(String(orderRecord.id)), 4000);
             }
         }
 
         async function updateOrderStatusInFirebase(orderId, newStatus) {
+            inFlightOrderWrites.add(String(orderId));
+
             const idx = globalState.orders.findIndex(o => String(o.id) === String(orderId));
             if (idx !== -1) globalState.orders[idx].status = newStatus;
             await persistCache();
 
             try {
-                await runTransaction(ordersRef, (current) => {
-                    const arr = normalizeToArray(current);
-                    const target = arr.find(o => String(o.id) === String(orderId));
-                    if (target) target.status = newStatus;
-                    return arr;
+                const merged = await mergeOrdersAndWrite(map => {
+                    const t = map.get(String(orderId));
+                    if (t) t.status = newStatus;
                 });
+                globalState.orders = merged;
+                await persistCache();
             } catch (e) {
                 console.error("Order status sync error:", e);
                 showToast("⚠️ Status update may not have synced. Check connection.");
-            }
-        }
-
-        async function updateRefundStatusInFirebase(refundId, newStatus) {
-            const idx = globalState.refunds.findIndex(r => String(r.id) === String(refundId));
-            if (idx !== -1) globalState.refunds[idx].status = newStatus;
-            await persistCache();
-
-            try {
-                await runTransaction(refundsRef, (current) => {
-                    const arr = normalizeToArray(current);
-                    const target = arr.find(r => String(r.id) === String(refundId));
-                    if (target) target.status = newStatus;
-                    return arr;
-                });
-            } catch (e) {
-                console.error("Refund status sync error:", e);
-                showToast("⚠️ Refund status may not have synced. Check connection.");
+            } finally {
+                setTimeout(() => inFlightOrderWrites.delete(String(orderId)), 4000);
             }
         }
 
@@ -1552,12 +1607,182 @@
             await persistCache();
 
             try {
-                await runTransaction(ordersRef, (current) => {
-                    const arr = normalizeToArray(current);
-                    return arr.filter(o => String(o.customerUsername || '').toLowerCase() !== uname);
+                const merged = await mergeOrdersAndWrite(map => {
+                    for (const [k, v] of Array.from(map.entries())) {
+                        if (String(v.customerUsername || '').toLowerCase() === uname) map.delete(k);
+                    }
                 });
+                globalState.orders = merged;
+                await persistCache();
             } catch (e) {
                 console.error("Clear orders sync error:", e);
+            }
+        }
+
+        // ==================== ✅ SAFE REFUND WRITES ====================
+        async function readRefundsFromFirebase() {
+            try {
+                const snap = await get(refundsRef);
+                return normalizeToArray(snap.val());
+            } catch (e) {
+                console.warn("readRefundsFromFirebase failed:", e);
+                return null;
+            }
+        }
+
+        async function mergeRefundsAndWrite(localChangeFn) {
+            const remote = await readRefundsFromFirebase();
+            const base = remote !== null ? remote : (globalState.refunds || []);
+            const map = new Map();
+            base.forEach(r => { if (r && r.id) map.set(String(r.id), r); });
+            localChangeFn(map);
+            const merged = Array.from(map.values());
+            await set(refundsRef, merged);
+            return merged;
+        }
+
+        async function saveRefundToFirebase(refundRecord) {
+            const localIdx = globalState.refunds.findIndex(r => String(r.id) === String(refundRecord.id));
+            if (localIdx === -1) globalState.refunds.push(refundRecord);
+            else globalState.refunds[localIdx] = refundRecord;
+            await persistCache();
+
+            try {
+                const merged = await mergeRefundsAndWrite(map => {
+                    const existing = map.get(String(refundRecord.id));
+                    map.set(String(refundRecord.id), existing ? { ...existing, ...refundRecord } : refundRecord);
+                });
+                globalState.refunds = merged;
+                await persistCache();
+            } catch (e) {
+                console.error("Refund sync error:", e);
+                showToast("⚠️ Refund saved locally — will retry sync.");
+            }
+        }
+
+        async function updateRefundStatusInFirebase(refundId, newStatus) {
+            const idx = globalState.refunds.findIndex(r => String(r.id) === String(refundId));
+            if (idx !== -1) globalState.refunds[idx].status = newStatus;
+            await persistCache();
+
+            try {
+                const merged = await mergeRefundsAndWrite(map => {
+                    const t = map.get(String(refundId));
+                    if (t) t.status = newStatus;
+                });
+                globalState.refunds = merged;
+                await persistCache();
+            } catch (e) {
+                console.error("Refund status sync error:", e);
+                showToast("⚠️ Refund status may not have synced. Check connection.");
+            }
+        }
+
+        // ==================== ✅ RATING HELPERS ====================
+        async function saveReviewToFirebase(reviewRecord) {
+            if (!globalState.reviews) globalState.reviews = [];
+            const localIdx = globalState.reviews.findIndex(r => r && r.reviewId && r.reviewId === reviewRecord.reviewId);
+            if (localIdx === -1) globalState.reviews.unshift(reviewRecord);
+            else globalState.reviews[localIdx] = reviewRecord;
+            await persistCache();
+
+            try {
+                // Read-modify-write for the reviews array on stateRef (safe merge by reviewId)
+                const snap = await get(stateRef);
+                const current = snap.val() || {};
+                if (!Array.isArray(current.reviews)) current.reviews = normalizeToArray(current.reviews);
+                const arr = current.reviews;
+                const idx = arr.findIndex(r => r && r.reviewId && r.reviewId === reviewRecord.reviewId);
+                if (idx === -1) arr.unshift(reviewRecord);
+                else arr[idx] = reviewRecord;
+                current.reviews = arr;
+                await set(stateRef, current);
+            } catch (e) {
+                console.error("Review sync error:", e);
+                showToast("⚠️ Review saved locally — will retry sync.");
+            }
+        }
+
+        function hasUserReviewedOrder(orderId, username) {
+            if (!globalState.reviews) return false;
+            const uname = String(username || '').toLowerCase();
+            const oid = String(orderId);
+            return globalState.reviews.some(r =>
+                r && String(r.orderId || '') === oid &&
+                String(r.customerUsername || '').toLowerCase() === uname &&
+                r.type === 'delivery'
+            );
+        }
+
+        function hasUserRatedSystemForOrder(orderId, username) {
+            if (!globalState.reviews) return false;
+            const uname = String(username || '').toLowerCase();
+            const oid = String(orderId);
+            return globalState.reviews.some(r =>
+                r && String(r.orderId || '') === oid &&
+                String(r.customerUsername || '').toLowerCase() === uname &&
+                r.type === 'system'
+            );
+        }
+
+        async function maybeAutoShowDeliveryRating() {
+            if (!currentUser) return;
+            if (document.getElementById('rating-modal').classList.contains('active')) return;
+            if (document.getElementById('system-rating-modal').classList.contains('active')) return;
+
+            const uname = String(currentUser.username || '').toLowerCase();
+            const uemail = String(currentUser.email || '').toLowerCase();
+
+            const myOrders = (globalState.orders || []).filter(o => {
+                const ou = String(o.customerUsername || '').toLowerCase();
+                const oe = String(o.customerEmail || '').toLowerCase();
+                return ou === uname || (uemail && oe === uemail);
+            });
+
+            const deliveredUnrated = myOrders.filter(o => {
+                const s = String(o.status || '');
+                return s.includes("Delivered") && !hasUserReviewedOrder(o.id, currentUser.username);
+            });
+
+            if (deliveredUnrated.length === 0) return;
+
+            const target = [...deliveredUnrated].reverse()[0];
+
+            currentRatingOrderId = target.id;
+            selectedStarCount = 5;
+            highlightStars(5);
+            const infoEl = document.getElementById('rating-order-info');
+            if (infoEl) infoEl.innerText = `Order: ${target.id} (${target.items})`;
+            const commentEl = document.getElementById('review-comment');
+            if (commentEl) commentEl.value = '';
+
+            document.getElementById('rating-modal').classList.add('active');
+        }
+
+        async function maybeAutoShowSystemRating() {
+            if (!currentUser) return;
+            if (document.getElementById('rating-modal').classList.contains('active')) return;
+            if (document.getElementById('system-rating-modal').classList.contains('active')) return;
+            if (!pendingRatings.system) return;
+            if (hasUserRatedSystemForOrder(pendingRatings.system.orderId, currentUser.username)) {
+                pendingRatings.system = null;
+                await savePendingRatings();
+                return;
+            }
+
+            const infoEl = document.getElementById('system-review-comment');
+            if (infoEl) infoEl.value = '';
+            selectedSystemStarCount = 5;
+            highlightSystemStars(5);
+
+            document.getElementById('system-rating-modal').classList.add('active');
+        }
+
+        function highlightSystemStars(count) {
+            const stars = document.getElementById('system-star-container').children;
+            for (let i = 0; i < stars.length; i++) {
+                if (i < count) stars[i].classList.add('selected');
+                else stars[i].classList.remove('selected');
             }
         }
 
@@ -1579,6 +1804,8 @@
             if (myReviewsModal && myReviewsModal.classList.contains('active')) {
                 try { renderMyReviewsModal(); } catch (e) { console.warn(e); }
             }
+
+            try { maybeAutoShowDeliveryRating(); } catch (e) { console.warn(e); }
         }
 
         function refreshRefundDependentUI() {
@@ -1606,6 +1833,11 @@
             setupAdminMediaUploadHandlers();
             setupRefundFormHandlers();
             checkPaymentStatus();
+            setTimeout(async () => {
+                await loadPendingRatings();
+                try { maybeAutoShowSystemRating(); } catch (e) { console.warn(e); }
+                try { maybeAutoShowDeliveryRating(); } catch (e) { console.warn(e); }
+            }, 800);
         }
 
         async function checkPaymentStatus() {
@@ -1719,7 +1951,13 @@
             }, 400);
         };
 
+        // ==================== ✅ REFUND SUBMISSION (one-press only + spinner) ====================
         window.submitRefundRequest = async function() {
+            if (isProcessingRefund) return;
+
+            const submitBtn = document.getElementById('refund-submit-btn');
+            const originalBtnHTML = submitBtn ? submitBtn.innerHTML : 'Submit Refund Request';
+
             const name = document.getElementById('refund-name').value.trim();
             const orderId = document.getElementById('refund-order-id').value.trim();
             const address = document.getElementById('refund-address').value.trim();
@@ -1738,6 +1976,12 @@
             if (!receiptFile || !idFile) {
                 alert("Please upload both your payment receipt and a valid ID.");
                 return;
+            }
+
+            isProcessingRefund = true;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading-spinner small"></span> Processing…';
             }
 
             const readFileAsBase64 = (file) => {
@@ -1803,6 +2047,12 @@
             } catch (error) {
                 console.error("Refund submission error:", error);
                 alert("Error processing your files. Please try again with smaller images.");
+            } finally {
+                isProcessingRefund = false;
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHTML;
+                }
             }
         };
 
@@ -2232,7 +2482,7 @@
             }, 2500);
         };
 
-        window.updateAuthUI = function() {
+        window.updateAuthUI = async function() {
             const authBtn = document.getElementById('auth-btn');
             const greetingName = document.getElementById('user-greeting-name');
             
@@ -2249,6 +2499,7 @@
                     authBtn.classList.add('primary');
                 }
             }
+            await loadPendingRatings();
             renderRecentOrdersList();
             renderMyRefundsList();
         };
@@ -2258,6 +2509,7 @@
                 if (confirm("Are you sure you want to log out?")) {
                     localStorage.removeItem('swift_current_user');
                     currentUser = null;
+                    pendingRatings = { system: null, delivered: [] };
                     updateAuthUI();
                     showToast("You have been logged out.");
                 }
@@ -2289,7 +2541,7 @@
             }
         };
 
-        window.signupUser = function() {
+        window.signupUser = async function() {
             const username = document.getElementById('signup-username').value.trim().toLowerCase();
             const name = document.getElementById('signup-name').value.trim();
             const email = document.getElementById('signup-email').value.trim().toLowerCase();
@@ -2314,6 +2566,7 @@
             currentUser = { username: newUser.username, name: newUser.name, email: newUser.email };
             localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
 
+            await loadPendingRatings();
             updateAuthUI();
             toggleAuthModal();
 
@@ -2323,9 +2576,13 @@
             document.getElementById('signup-password').value = '';
 
             showToast(`Global account created! Welcome, @${username}!`);
+            setTimeout(async () => {
+                try { await maybeAutoShowSystemRating(); } catch (e) { console.warn(e); }
+                try { await maybeAutoShowDeliveryRating(); } catch (e) { console.warn(e); }
+            }, 500);
         };
 
-        window.loginUser = function() {
+        window.loginUser = async function() {
             const identifier = document.getElementById('login-username-or-email').value.trim().toLowerCase();
             const password = document.getElementById('login-password').value;
 
@@ -2343,6 +2600,7 @@
             currentUser = { username: foundUser.username, name: foundUser.name, email: foundUser.email };
             localStorage.setItem('swift_current_user', JSON.stringify(currentUser));
 
+            await loadPendingRatings();
             updateAuthUI();
             toggleAuthModal();
 
@@ -2350,6 +2608,10 @@
             document.getElementById('login-password').value = '';
 
             showToast(`Welcome back, @${currentUser.username}!`);
+            setTimeout(async () => {
+                try { await maybeAutoShowSystemRating(); } catch (e) { console.warn(e); }
+                try { await maybeAutoShowDeliveryRating(); } catch (e) { console.warn(e); }
+            }, 500);
         };
 
         window.proceedToCheckout = function() {
@@ -2373,6 +2635,11 @@
             document.getElementById('bill-promo').value = '';
             document.getElementById('promo-feedback').innerText = '';
             updateCartUI();
+
+            // Reset button state each time modal opens
+            const btn = document.getElementById('proceed-payment-btn');
+            if (btn) { btn.disabled = false; btn.innerHTML = 'Proceed to Payment'; }
+            isProcessingPayment = false;
         };
 
         window.applyPromoCode = function() {
@@ -2399,7 +2666,14 @@
             }
         };
 
+        // ==================== ✅ PAYMENT SUBMISSION (one-press only + spinner) ====================
         window.completeOrder = async function() {
+            // ✅ HARD GUARD: prevents multi-tap, duplicate orders, duplicate emails
+            if (isProcessingPayment) return;
+
+            const payBtn = document.getElementById('proceed-payment-btn');
+            const originalBtnHTML = payBtn ? payBtn.innerHTML : 'Proceed to Payment';
+
             const address = document.getElementById('bill-address').value;
             const city = document.getElementById('bill-city').value;
             const state = document.getElementById('bill-state').value;
@@ -2436,6 +2710,15 @@
             };
             localStorage.setItem('swift_pending_order', JSON.stringify(pendingOrder));
 
+            // ✅ Engage the one-press lock + spinner
+            isProcessingPayment = true;
+            if (payBtn) {
+                payBtn.disabled = true;
+                payBtn.innerHTML = '<span class="loading-spinner small"></span> Processing…';
+            }
+
+            let paystackOpened = false;
+
             try {
                 const initResponse = await fetch('https://swiftselect-backend.onrender.com/api/paystack/initialize', {
                     method: 'POST',
@@ -2451,6 +2734,7 @@
                 const initData = await initResponse.json();
 
                 const paystack = new PaystackPop();
+                paystackOpened = true;
                 paystack.resumeTransaction(initData.access_code, {
                     onSuccess: async (transaction) => {
                         try {
@@ -2469,11 +2753,16 @@
                         } catch (error) {
                             console.error("Verification error:", error);
                             alert("An error occurred during verification. Please contact support.");
+                        } finally {
+                            isProcessingPayment = false;
+                            if (payBtn) { payBtn.disabled = false; payBtn.innerHTML = originalBtnHTML; }
                         }
                     },
                     onCancel: () => {
                         showToast("Payment canceled.");
                         localStorage.removeItem('swift_pending_order');
+                        isProcessingPayment = false;
+                        if (payBtn) { payBtn.disabled = false; payBtn.innerHTML = originalBtnHTML; }
                     }
                 });
 
@@ -2481,6 +2770,8 @@
                 console.error('Checkout error:', error);
                 alert('An error occurred during checkout. Please check your connection and try again.');
                 localStorage.removeItem('swift_pending_order');
+                isProcessingPayment = false;
+                if (payBtn) { payBtn.disabled = false; payBtn.innerHTML = originalBtnHTML; }
             }
         };
 
@@ -2500,12 +2791,11 @@
             };
 
             await saveOrderToFirebase(newOrderRecord);
-
-            // ✅ Send order notification email to YOU (admin)
             await sendOrderNotificationEmail(newOrderRecord);
-
-            // ✅ Send order confirmation email to the BUYER (customer)
             await sendCustomerConfirmationEmail(newOrderRecord);
+
+            pendingRatings.system = { orderId: orderId };
+            await savePendingRatings();
 
             renderRecentOrdersList();
             finalizeOrderCleanUp();
@@ -2535,6 +2825,10 @@
             setTimeout(() => {
                 showTruckAnimation();
             }, 600);
+
+            setTimeout(async () => {
+                try { await maybeAutoShowSystemRating(); } catch (e) { console.warn(e); }
+            }, 6200);
         };
 
         window.showTruckAnimation = function() {
@@ -2665,7 +2959,10 @@
 
             listContainer.innerHTML = [...userOrders].reverse().map(order => {
                 const statusDetails = getStatusDetails(order.status);
-                
+                const alreadyReviewed = hasUserReviewedOrder(order.id, currentUser.username);
+                const isDelivered = String(order.status || "").includes("Delivered");
+                const showRateBtn = isDelivered && !alreadyReviewed;
+
                 return `
                 <div class="order-card">
                     <div class="order-card-header">
@@ -2696,7 +2993,7 @@
 
                     <div class="order-card-footer">
                         <button class="btn-small" onclick="fillTrackingInput('${order.id}')">Track Order</button>
-                        ${order.status === "Delivered Successfully" && !order.hasReviewed ? `<button class="btn-primary" style="padding: 0.6rem 1rem; font-size:0.85rem;" onclick="triggerRatingModal('${order.id}')">Rate & Review</button>` : ''}
+                        ${showRateBtn ? `<button class="btn-primary" style="padding: 0.6rem 1rem; font-size:0.85rem;" onclick="triggerRatingModal('${order.id}')">Rate & Review</button>` : ''}
                     </div>
                 </div>
                 `;
@@ -2726,18 +3023,27 @@
             const modalGrid = document.getElementById('modal-reviews-grid');
             if (!modalGrid) return;
 
-            if (globalState.reviews.length === 0) {
+            if (!globalState.reviews || globalState.reviews.length === 0) {
                 modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Delivered orders can submit recommendations globally!</p>';
                 return;
             }
 
-            modalGrid.innerHTML = globalState.reviews.map(r => `
-                <div class="review-card" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; font-size: 0.9rem;">
-                    <div class="stars" style="color: var(--accent); margin-bottom: 0.3rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
-                    <p style="margin: 0.3rem 0; color: #334155;">"${r.comment}"</p>
-                    <span class="author" style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block;">— ${r.name} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
-                </div>
-            `).join('');
+            const valid = globalState.reviews.filter(r => r && typeof r.rating === 'number');
+            if (valid.length === 0) {
+                modalGrid.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; grid-column: 1/-1;">No reviews yet. Delivered orders can submit recommendations globally!</p>';
+                return;
+            }
+
+            modalGrid.innerHTML = [...valid].reverse().map(r => {
+                const typeTag = r.type === 'system' ? '<span style="background:#eef2ff; color:#3730a3; padding:0.15rem 0.5rem; border-radius:6px; font-size:0.7rem; font-weight:700; margin-left:0.4rem;">System</span>' : '';
+                return `
+                    <div class="review-card" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 12px; font-size: 0.9rem;">
+                        <div class="stars" style="color: var(--accent); margin-bottom: 0.3rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                        <p style="margin: 0.3rem 0; color: #334155;">"${r.comment || ''}"</p>
+                        <span class="author" style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-top: 0.5rem; display: block;">— ${r.name} ${typeTag} <span style="color: #94a3b8; font-weight: normal;">(${r.date})</span></span>
+                    </div>
+                `;
+            }).join('');
         };
 
         window.openReviewsModal = function() {
@@ -2773,22 +3079,28 @@
                 return ou === uname || (uemail && oe === uemail);
             });
 
+            const myReviews = (globalState.reviews || []).filter(r =>
+                r && String(r.customerUsername || '').toLowerCase() === uname
+            );
+
             const delivered = myOrders.filter(o => String(o.status || '').includes("Delivered"));
-            const pending   = delivered.filter(o => !o.hasReviewed);
-            const reviewed  = delivered.filter(o =>  o.hasReviewed);
+            const pending   = delivered.filter(o => !hasUserReviewedOrder(o.id, currentUser.username));
+            const reviewedOrderIds = new Set(
+                myReviews.filter(r => r.type === 'delivery' && r.orderId).map(r => String(r.orderId))
+            );
+            const reviewed  = delivered.filter(o => reviewedOrderIds.has(String(o.id)));
+
+            let html = '';
 
             if (delivered.length === 0) {
-                body.innerHTML = `
+                html += `
                     <div style="text-align:center; padding:1.5rem;">
                         <div style="font-size:2.5rem;">📦</div>
                         <p style="color:#0f172a; font-weight:700; margin:0.5rem 0 0.25rem;">No delivered orders yet</p>
                         <p style="color:#64748b; font-size:0.85rem; margin:0;">You can rate an order once its status is marked "Delivered Successfully".</p>
                     </div>
                 `;
-                return;
             }
-
-            let html = '';
 
             if (pending.length > 0) {
                 html += `<h4 style="margin:0.25rem 0; font-size:0.95rem; color:#0f172a;">⭐ Awaiting Your Review</h4>`;
@@ -2817,8 +3129,10 @@
 
             if (reviewed.length > 0) {
                 html += `<h4 style="margin:1rem 0 0.25rem; font-size:0.95rem; color:#0f172a;">✅ Already Reviewed</h4>`;
-                html += reviewed.map(o => `
-                    <div class="order-card" style="margin-bottom:0.5rem; opacity:0.85;">
+                html += reviewed.map(o => {
+                    const rev = myReviews.find(r => r.type === 'delivery' && String(r.orderId) === String(o.id));
+                    return `
+                    <div class="order-card" style="margin-bottom:0.5rem; opacity:0.9;">
                         <div class="order-card-header">
                             <span class="order-id">${o.id}</span>
                             <span class="order-status-badge" style="background:#e0e7ff; color:#4f46e5;">⭐ Reviewed</span>
@@ -2827,6 +3141,42 @@
                             <div class="order-info-row">
                                 <span class="order-info-label">Items</span>
                                 <span class="order-info-value">${o.items}</span>
+                            </div>
+                            ${rev ? `<div class="order-info-row">
+                                <span class="order-info-label">Your Rating</span>
+                                <span class="order-info-value" style="color: #f59e0b;">${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}</span>
+                            </div>
+                            <div class="order-info-row">
+                                <span class="order-info-label">Comment</span>
+                                <span class="order-info-value">${rev.comment || '(no comment)'}</span>
+                            </div>` : ''}
+                        </div>
+                    </div>
+                `;
+                }).join('');
+            }
+
+            const mySystemReviews = myReviews.filter(r => r.type === 'system');
+            if (mySystemReviews.length > 0) {
+                html += `<h4 style="margin:1rem 0 0.25rem; font-size:0.95rem; color:#0f172a;">🖥️ Your System Ratings</h4>`;
+                html += mySystemReviews.map(r => `
+                    <div class="order-card" style="margin-bottom:0.5rem; opacity:0.9;">
+                        <div class="order-card-header">
+                            <span class="order-id">${r.orderId || '—'}</span>
+                            <span class="order-status-badge" style="background:#eef2ff; color:#3730a3;">System</span>
+                        </div>
+                        <div class="order-card-body">
+                            <div class="order-info-row">
+                                <span class="order-info-label">Rating</span>
+                                <span class="order-info-value" style="color:#f59e0b;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+                            </div>
+                            <div class="order-info-row">
+                                <span class="order-info-label">Comment</span>
+                                <span class="order-info-value">${r.comment || '(no comment)'}</span>
+                            </div>
+                            <div class="order-info-row">
+                                <span class="order-info-label">Date</span>
+                                <span class="order-info-value">${r.date}</span>
                             </div>
                         </div>
                     </div>
@@ -2843,7 +3193,8 @@
 
         window.triggerRatingModal = function(orderId) {
             const order = globalState.orders.find(o => String(o.id) === String(orderId));
-            if (!order || order.hasReviewed) return;
+            if (!order) return;
+            if (hasUserReviewedOrder(orderId, currentUser ? currentUser.username : '')) return;
 
             currentRatingOrderId = orderId;
             selectedStarCount = 5;
@@ -2874,33 +3225,120 @@
             }
         }
 
-        window.submitReview = function() {
-            const comment = document.getElementById('review-comment').value.trim();
-            if (!comment) {
-                alert("Please write a short review comment.");
+        // ✅ Review submit is also guarded so accidental double taps don't create duplicates
+        window.submitReview = async function() {
+            if (isSubmittingReview) return;
+
+            const order = globalState.orders.find(o => String(o.id) === String(currentRatingOrderId));
+            if (!order) {
+                alert("We couldn't find that order. Please try again.");
                 return;
             }
 
-            const order = globalState.orders.find(o => String(o.id) === String(currentRatingOrderId));
-            if (order) {
-                order.hasReviewed = true;
-                updateOrderStatusInFirebase(order.id, order.status);
+            const comment = document.getElementById('review-comment').value.trim();
+            const submitBtn = document.getElementById('submit-review-btn');
+            const originalHTML = submitBtn ? submitBtn.innerHTML : 'Submit Review';
+
+            isSubmittingReview = true;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading-spinner small"></span> Saving…';
             }
 
-            const newReview = {
-                name: currentUser ? `@${currentUser.username}` : "Verified Customer",
-                rating: selectedStarCount,
-                comment: comment,
-                date: new Date().toLocaleDateString()
-            };
+            try {
+                const reviewRecord = {
+                    reviewId: 'rev-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+                    orderId: order.id,
+                    type: 'delivery',
+                    name: currentUser ? `@${currentUser.username}` : "Verified Customer",
+                    customerUsername: currentUser ? currentUser.username : "guest",
+                    customerEmail: currentUser ? currentUser.email : "",
+                    rating: selectedStarCount,
+                    comment: comment,
+                    date: new Date().toLocaleDateString()
+                };
 
-            globalState.reviews.unshift(newReview);
-            saveStateToFirebase();
-            renderReviews();
-            toggleRatingModal();
-            renderRecentOrdersList();
-            renderMyReviewsModal();
-            showToast("Thank you! Your recommendation is now visible globally across all devices.");
+                await saveReviewToFirebase(reviewRecord);
+
+                order.hasReviewed = true;
+                await persistCache();
+
+                renderReviews();
+                document.getElementById('rating-modal').classList.remove('active');
+                renderRecentOrdersList();
+                renderMyReviewsModal();
+                showToast("Thank you! Your review has been saved.");
+            } finally {
+                isSubmittingReview = false;
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalHTML;
+                }
+            }
+        };
+
+        window.toggleSystemRatingModal = function() {
+            document.getElementById('system-rating-modal').classList.remove('active');
+        };
+
+        window.setSystemRating = function(count) {
+            selectedSystemStarCount = count;
+            highlightSystemStars(count);
+        };
+
+        window.submitSystemReview = async function() {
+            if (isSubmittingSystemReview) return;
+
+            if (!currentUser) {
+                alert("Please log in to submit your rating.");
+                return;
+            }
+            if (!pendingRatings.system || !pendingRatings.system.orderId) {
+                document.getElementById('system-rating-modal').classList.remove('active');
+                return;
+            }
+
+            const comment = document.getElementById('system-review-comment').value.trim();
+            const submitBtn = document.getElementById('submit-system-review-btn');
+            const originalHTML = submitBtn ? submitBtn.innerHTML : 'Submit Rating';
+
+            isSubmittingSystemReview = true;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading-spinner small"></span> Saving…';
+            }
+
+            try {
+                const reviewRecord = {
+                    reviewId: 'rev-sys-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+                    orderId: pendingRatings.system.orderId,
+                    type: 'system',
+                    name: `@${currentUser.username}`,
+                    customerUsername: currentUser.username,
+                    customerEmail: currentUser.email,
+                    rating: selectedSystemStarCount,
+                    comment: comment,
+                    date: new Date().toLocaleDateString()
+                };
+
+                await saveReviewToFirebase(reviewRecord);
+
+                pendingRatings.system = null;
+                await savePendingRatings();
+
+                document.getElementById('system-review-comment').value = '';
+                document.getElementById('system-rating-modal').classList.remove('active');
+
+                renderReviews();
+                renderMyReviewsModal();
+                showToast("Thanks! Your system rating has been saved.");
+            } finally {
+                isSubmittingSystemReview = false;
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalHTML;
+                }
+            }
         };
 
         window.openLightbox = function(src) {
@@ -3583,7 +4021,7 @@
             if (data) {
                 if (data.products) globalState.products = data.products;
                 if (data.users) globalState.users = data.users;
-                if (data.reviews) globalState.reviews = data.reviews;
+                if (data.reviews) globalState.reviews = normalizeToArray(data.reviews);
                 if (data.promoCodes) globalState.promoCodes = data.promoCodes;
                 globalState._cacheVersion = CACHE_VERSION;
                 await persistCache();
@@ -3598,21 +4036,54 @@
             renderAdminProductList();
             renderAdminPromoList();
 
-            // ✅ Live-refresh the "See All Reviews" modal if it's currently open
             const reviewsModal = document.getElementById('reviews-modal');
             if (reviewsModal && reviewsModal.classList.contains('active')) {
                 try { renderReviews(); } catch (e) { console.warn(e); }
             }
+
+            const myReviewsModal = document.getElementById('my-reviews-modal');
+            if (myReviewsModal && myReviewsModal.classList.contains('active')) {
+                try { renderMyReviewsModal(); } catch (e) { console.warn(e); }
+            }
         });
 
+        // ✅ SAFE ORDERS LISTENER — merges instead of clobbering.
+        // Any order currently mid-write (in `inFlightOrderWrites`) is preserved
+        // locally so its pending new value isn't overwritten by a stale echo.
         onValue(ordersRef, async (snapshot) => {
-            globalState.orders = normalizeToArray(snapshot.val());
+            const remote = normalizeToArray(snapshot.val());
+            const remoteMap = new Map();
+            remote.forEach(o => { if (o && o.id) remoteMap.set(String(o.id), o); });
+
+            // Merge with any locally-known orders that aren't in the remote snapshot
+            (globalState.orders || []).forEach(o => {
+                if (!o || !o.id) return;
+                const key = String(o.id);
+                if (!remoteMap.has(key)) remoteMap.set(key, o);
+            });
+
+            // For in-flight orders, keep the LOCAL (newer) version
+            inFlightOrderWrites.forEach(key => {
+                const local = (globalState.orders || []).find(o => String(o.id) === key);
+                if (local) remoteMap.set(key, local);
+            });
+
+            globalState.orders = Array.from(remoteMap.values());
             await persistCache();
             refreshOrderDependentUI();
+            try { await maybeAutoShowDeliveryRating(); } catch (e) { console.warn(e); }
         });
 
         onValue(refundsRef, async (snapshot) => {
-            globalState.refunds = normalizeToArray(snapshot.val());
+            const remote = normalizeToArray(snapshot.val());
+            const remoteMap = new Map();
+            remote.forEach(r => { if (r && r.id) remoteMap.set(String(r.id), r); });
+            (globalState.refunds || []).forEach(r => {
+                if (!r || !r.id) return;
+                const key = String(r.id);
+                if (!remoteMap.has(key)) remoteMap.set(key, r);
+            });
+            globalState.refunds = Array.from(remoteMap.values());
             await persistCache();
             refreshRefundDependentUI();
         });
