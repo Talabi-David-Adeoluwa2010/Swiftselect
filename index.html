@@ -813,7 +813,7 @@
                         <input type="file" id="admin-image-input" multiple accept="image/*" style="margin-bottom: 0.5rem;">
                         <div id="admin-image-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;"></div>
 
-                        <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Videos (Max 2 short videos, under 2MB each):</label>
+                        <label style="font-size: 0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">Product Videos (Max 2 short videos, under 6MB each):</label>
                         <input type="file" id="admin-video-input" accept="video/*,.mov,.mp4,.m4v,.quicktime" multiple style="margin-bottom: 0.5rem;">
                         <div id="admin-video-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.1rem;"></div>
 
@@ -826,8 +826,10 @@
                 <div class="admin-section-box">
                     <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.05rem; color: #0f172a;">Manage Catalog Inventory & Status (Global Sync)</h4>
                     <div id="admin-product-list" style="border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem; background: white;"></div>
-                    <button class="btn-primary" onclick="forcePushToFirebase()" style="width:100%; margin-top:1rem; background: #16a34a;">🚀 Force Sync Local Products to Firebase</button>
+                    <button class="btn-primary" onclick="migrateAllToCloudinary()" style="width:100%; margin-top:1rem; background: #7c3aed;">☁️ Migrate All Products to Cloudinary</button>
+                    <button class="btn-primary" onclick="forcePushToFirebase()" style="width:100%; margin-top:0.5rem; background: #16a34a;">🚀 Force Sync Local Products to Firebase</button>
                     <button class="btn-primary" onclick="factoryResetStore()" style="width:100%; margin-top:0.5rem; background: #dc2626;">🔄 Factory Reset (Fix Frozen App / Restore Defaults)</button>
+                    <div id="migrate-progress" style="margin-top:0.75rem; font-size:0.85rem; color:#475569; font-weight:600; text-align:center; display:none;"></div>
                 </div>
             </div>
 
@@ -1242,13 +1244,90 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const IDB_CONFIG = {
             dbName: "SwiftSelectDB",
             storeName: "storeState",
             version: 1
         };
+
+        // ==================== ✅ CLOUDINARY CONFIG ====================
+        const CLOUDINARY_CLOUD_NAME = "w0qu9oh4";
+        const CLOUDINARY_UPLOAD_PRESET = "swiftselect_uploads";
+        const CLOUDINARY_IMAGE_ENDPOINT = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+        const CLOUDINARY_VIDEO_ENDPOINT = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`;
+
+        // Uploads a Blob/File to Cloudinary. Returns the secure URL.
+        async function uploadToCloudinary(fileOrBlob, isVideo = false) {
+            const formData = new FormData();
+            formData.append('file', fileOrBlob);
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+            formData.append('folder', 'swiftselect/products');
+
+            const endpoint = isVideo ? CLOUDINARY_VIDEO_ENDPOINT : CLOUDINARY_IMAGE_ENDPOINT;
+            const res = await fetch(endpoint, { method: 'POST', body: formData });
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error('Cloudinary upload failed: ' + errText);
+            }
+            const data = await res.json();
+            if (!data.secure_url) throw new Error('Cloudinary returned no URL');
+            return data.secure_url;
+        }
+
+        // Convert a Base64 data URL to a Blob (for migrating old products)
+        function dataUrlToBlob(dataUrl) {
+            const [meta, base64] = dataUrl.split(',');
+            const mimeMatch = meta.match(/data:(.*?);base64/);
+            const mime = mimeMatch ? mimeMatch[1] : 'application/octet-stream';
+            const binary = atob(base64);
+            const len = binary.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+            return new Blob([bytes], { type: mime });
+        }
+
+        function isCloudinaryUrl(str) {
+            return typeof str === 'string' && str.startsWith('https://res.cloudinary.com/');
+        }
+
+        function isBase64Image(str) {
+            return typeof str === 'string' && str.startsWith('data:');
+        }
+
+        // Compress an image file to a smaller JPEG blob before uploading
+        function compressImageToBlob(file, maxWidth = 800, quality = 0.65) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            if (width > maxWidth) {
+                                height = Math.round((height * maxWidth) / width);
+                                width = maxWidth;
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            canvas.toBlob((blob) => {
+                                if (blob) resolve(blob);
+                                else reject(new Error('Image compression failed'));
+                            }, 'image/jpeg', quality);
+                        } catch (err) { reject(err); }
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
 
         // ==================== ✅ EMAILJS ORDER NOTIFICATION ====================
         const EMAILJS_SERVICE_ID           = "Swift_alerts";
@@ -1357,7 +1436,7 @@
         const ordersRef  = ref(db, 'swiftOrders');
         const refundsRef = ref(db, 'swiftRefunds');
 
-        const CACHE_VERSION = 10; 
+        const CACHE_VERSION = 11; 
 
         let globalState = {
             _cacheVersion: CACHE_VERSION,
@@ -1381,6 +1460,7 @@
         let isProcessingRefund  = false;
         let isSubmittingReview  = false;
         let isSubmittingSystemReview = false;
+        let isMigrating = false;
 
         const inFlightOrderWrites = new Set();
 
@@ -1672,16 +1752,13 @@
 
         // ==================== ✅ RATING HELPERS (BACKGROUND SYNC) ====================
         async function saveReviewToFirebase(reviewRecord) {
-            // 1) Local state first — instant
             if (!globalState.reviews) globalState.reviews = [];
             const localIdx = globalState.reviews.findIndex(r => r && r.reviewId && r.reviewId === reviewRecord.reviewId);
             if (localIdx === -1) globalState.reviews.unshift(reviewRecord);
             else globalState.reviews[localIdx] = reviewRecord;
 
-            // 2) Persist to IndexedDB so it survives reload (fire-and-forget)
             persistCache();
 
-            // 3) Sync to Firebase in the BACKGROUND — do NOT await this in the UI
             (async () => {
                 try {
                     const snap = await get(stateRef);
@@ -2232,8 +2309,8 @@
                             alert('You can upload a maximum of 2 videos.');
                             break;
                         }
-                        if (file.size > 2 * 1024 * 1024) {
-                            alert(`Video "${file.name}" is too large (>2MB). Please upload a smaller video clip to ensure instant sync.`);
+                        if (file.size > 6 * 1024 * 1024) {
+                            alert(`Video "${file.name}" is too large (>6MB). Please upload a smaller video clip.`);
                             continue;
                         }
                         adminSelectedVideos.push(file);
@@ -3217,7 +3294,6 @@
             }
         }
 
-        // ✅ Instant close + background sync
         window.submitReview = async function() {
             if (isSubmittingReview) return;
 
@@ -3266,7 +3342,6 @@
             highlightSystemStars(count);
         };
 
-        // ✅ Instant close + background sync
         window.submitSystemReview = async function() {
             if (isSubmittingSystemReview) return;
 
@@ -3544,12 +3619,16 @@
                 return;
             }
 
-            listContainer.innerHTML = globalState.products.map(product => `
+            listContainer.innerHTML = globalState.products.map(product => {
+                const needsMigration = (product.images && product.images.some(isBase64Image)) ||
+                                       (product.videos && product.videos.some(isBase64Image));
+                const badge = needsMigration ? '<span style="background:#fef3c7; color:#92400e; padding:0.15rem 0.4rem; border-radius:6px; font-size:0.7rem; font-weight:700; margin-left:0.4rem;">Needs Migration</span>' : '<span style="background:#dcfce7; color:#166534; padding:0.15rem 0.4rem; border-radius:6px; font-size:0.7rem; font-weight:700; margin-left:0.4rem;">Cloudinary</span>';
+                return `
                 <div class="admin-product-row">
                     <div class="admin-product-info">
                         <img src="${product.images && product.images.length > 0 ? product.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'}" alt="">
                         <div style="overflow:hidden;">
-                            <strong style="font-size: 0.9rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${product.name}</strong>
+                            <strong style="font-size: 0.9rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${product.name} ${badge}</strong>
                             <small style="color: #64748b; font-size: 0.75rem;">$${product.priceUSD} / ₦${product.priceNGN.toLocaleString()} | Images: ${product.images ? product.images.length : 0} | Videos: ${product.videos ? product.videos.length : 0}</small>
                         </div>
                     </div>
@@ -3561,8 +3640,116 @@
                         <button class="btn-danger-small" style="border-radius: 8px;" onclick="deleteProduct(${product.id})">Delete</button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
+
+        // ==================== ✅ MIGRATE ALL PRODUCTS TO CLOUDINARY ====================
+        window.migrateAllToCloudinary = async function() {
+            if (isMigrating) {
+                showToast("Migration already running...");
+                return;
+            }
+
+            const productsToMigrate = (globalState.products || []).filter(p =>
+                (p.images && p.images.some(isBase64Image)) ||
+                (p.videos && p.videos.some(isBase64Image))
+            );
+
+            if (productsToMigrate.length === 0) {
+                showToast("✅ Everything is already on Cloudinary!");
+                return;
+            }
+
+            if (!confirm(`This will upload ${productsToMigrate.length} product(s) with old Base64 images/videos to Cloudinary. Continue?`)) {
+                return;
+            }
+
+            isMigrating = true;
+
+            const progressEl = document.getElementById('migrate-progress');
+            if (progressEl) {
+                progressEl.style.display = 'block';
+                progressEl.style.color = '#4f46e5';
+            }
+
+            let successCount = 0;
+            let failCount = 0;
+
+            for (let i = 0; i < productsToMigrate.length; i++) {
+                const product = productsToMigrate[i];
+                const progressMsg = `Migrating ${i + 1} of ${productsToMigrate.length}: ${product.name}`;
+                if (progressEl) progressEl.innerText = progressMsg;
+                console.log(progressMsg);
+
+                try {
+                    const newImages = [];
+                    for (const img of (product.images || [])) {
+                        if (isCloudinaryUrl(img)) {
+                            newImages.push(img);
+                        } else if (isBase64Image(img)) {
+                            const blob = dataUrlToBlob(img);
+                            const url = await uploadToCloudinary(blob, false);
+                            newImages.push(url);
+                        } else if (typeof img === 'string') {
+                            newImages.push(img); // keep as-is
+                        }
+                    }
+
+                    const newVideos = [];
+                    for (const vid of (product.videos || [])) {
+                        if (isCloudinaryUrl(vid)) {
+                            newVideos.push(vid);
+                        } else if (isBase64Image(vid)) {
+                            const blob = dataUrlToBlob(vid);
+                            const url = await uploadToCloudinary(blob, true);
+                            newVideos.push(url);
+                        } else if (typeof vid === 'string') {
+                            newVideos.push(vid);
+                        }
+                    }
+
+                    const idx = globalState.products.findIndex(p => String(p.id) === String(product.id));
+                    if (idx !== -1) {
+                        globalState.products[idx] = {
+                            ...globalState.products[idx],
+                            images: newImages,
+                            videos: newVideos
+                        };
+                    }
+
+                    await persistCache();
+                    renderProducts();
+                    renderAdminProductList();
+
+                    successCount++;
+                    console.log(`✅ Migrated ${product.name}`);
+                } catch (e) {
+                    console.error(`❌ Failed to migrate ${product.name}:`, e);
+                    failCount++;
+                }
+            }
+
+            // Final push to Firebase
+            try {
+                await set(stateRef, buildStatePayload());
+                console.log("✅ Migration synced to Firebase");
+            } catch (e) {
+                console.error("❌ Final Firebase sync failed:", e);
+            }
+
+            isMigrating = false;
+
+            if (progressEl) {
+                progressEl.style.color = '#16a34a';
+                progressEl.innerHTML = `✅ Migration complete! Success: ${successCount}, Failed: ${failCount}`;
+                setTimeout(() => { progressEl.style.display = 'none'; }, 8000);
+            }
+
+            showToast(`Migration done — ${successCount} succeeded, ${failCount} failed.`);
+            renderProducts();
+            renderAdminProductList();
+        };
 
         window.forcePushToFirebase = function() {
             if (confirm("Push all products currently on this phone to Firebase so other devices can see them?")) {
@@ -3650,6 +3837,7 @@
             }
         };
 
+        // ==================== ✅ ADD / EDIT PRODUCT WITH CLOUDINARY UPLOAD ====================
         window.addProduct = async function() {
             const name = document.getElementById('admin-name').value.trim();
             const priceUSD = parseFloat(document.getElementById('admin-price-usd').value);
@@ -3676,43 +3864,39 @@
             addBtn.disabled = true;
 
             try {
-                let imagesBase64 = [];
+                // ✅ Upload new images to Cloudinary (if any selected)
+                let imagesUrls = [];
                 if (adminSelectedImages.length > 0) {
                     if (adminSelectedImages.length < 3 || adminSelectedImages.length > 5) {
                         throw new Error("You must select between 3 to 5 new pictures if you choose to update them.");
                     }
                     for (let i = 0; i < adminSelectedImages.length; i++) {
-                        try {
-                            const compressedImg = await compressImage(adminSelectedImages[i], 800, 0.65);
-                            imagesBase64.push(compressedImg);
-                        } catch (imgErr) {
-                            const fallbackBase64 = await readFileAsBase64(adminSelectedImages[i]);
-                            imagesBase64.push(fallbackBase64);
-                        }
+                        addBtn.innerText = `Uploading image ${i + 1} of ${adminSelectedImages.length}...`;
+                        const compressedBlob = await compressImageToBlob(adminSelectedImages[i], 800, 0.65);
+                        const url = await uploadToCloudinary(compressedBlob, false);
+                        imagesUrls.push(url);
                     }
                 } else if (editingProductId) {
                     const existingProduct = globalState.products.find(p => p.id === editingProductId);
-                    imagesBase64 = existingProduct.images;
+                    imagesUrls = existingProduct.images;
                 } else {
                     throw new Error("Could not process any of the selected images. Please try smaller files.");
                 }
 
-                let videosBase64 = [];
+                // ✅ Upload new videos to Cloudinary (if any selected)
+                let videosUrls = [];
                 if (adminSelectedVideos.length > 0) {
                     for (let i = 0; i < adminSelectedVideos.length; i++) {
-                        if (adminSelectedVideos[i].size > 2 * 1024 * 1024) {
-                            throw new Error(`Video "${adminSelectedVideos[i].name}" exceeds 2MB limit. Please select a smaller video clip.`);
+                        if (adminSelectedVideos[i].size > 6 * 1024 * 1024) {
+                            throw new Error(`Video "${adminSelectedVideos[i].name}" exceeds 6MB limit. Please select a smaller video clip.`);
                         }
-                        try {
-                            const vidBase64 = await readFileAsBase64(adminSelectedVideos[i]);
-                            videosBase64.push(vidBase64);
-                        } catch (vidErr) {
-                            console.warn("Video read warning, skipping video:", vidErr);
-                        }
+                        addBtn.innerText = `Uploading video ${i + 1} of ${adminSelectedVideos.length}...`;
+                        const url = await uploadToCloudinary(adminSelectedVideos[i], true);
+                        videosUrls.push(url);
                     }
                 } else if (editingProductId) {
                     const existingProduct = globalState.products.find(p => p.id === editingProductId);
-                    videosBase64 = existingProduct.videos || [];
+                    videosUrls = existingProduct.videos || [];
                 }
 
                 if (isEditing) {
@@ -3727,8 +3911,8 @@
                         priceUSD,
                         priceNGN,
                         description,
-                        images: imagesBase64,
-                        videos: videosBase64,
+                        images: imagesUrls,
+                        videos: videosUrls,
                         shipping: shipping || "Ships in 2 - 3 business days",
                         colors: colorsArray
                     };
@@ -3747,8 +3931,8 @@
                     const newProduct = { 
                         id: Date.now(), 
                         name, priceUSD, priceNGN, description, 
-                        images: imagesBase64, 
-                        videos: videosBase64, 
+                        images: imagesUrls, 
+                        videos: videosUrls, 
                         shipping: shipping || "Ships in 2 - 3 business days",
                         isSoldOut: false,
                         colors: colorsArray
@@ -3790,43 +3974,6 @@
                 const reader = new FileReader();
                 reader.onload = e => resolve(e.target.result);
                 reader.onerror = err => reject(err);
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function compressImage(file, maxWidth, quality) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        try {
-                            const canvas = document.createElement('canvas');
-                            let width = img.width;
-                            let height = img.height;
-
-                            if (width > maxWidth) {
-                                height = Math.round((height * maxWidth) / width);
-                                width = maxWidth;
-                            }
-
-                            canvas.width = width;
-                            canvas.height = height;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0, width, height);
-                            resolve(canvas.toDataURL('image/jpeg', quality));
-                        } catch (err) {
-                            reject(err);
-                        }
-                    };
-                    img.onerror = function(err) {
-                        reject(err);
-                    };
-                    img.src = e.target.result;
-                };
-                reader.onerror = function(err) {
-                    reject(err);
-                };
                 reader.readAsDataURL(file);
             });
         }
