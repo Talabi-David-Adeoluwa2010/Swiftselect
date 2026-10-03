@@ -1258,7 +1258,6 @@
         const CLOUDINARY_IMAGE_ENDPOINT = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
         const CLOUDINARY_VIDEO_ENDPOINT = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`;
 
-        // Uploads a Blob/File to Cloudinary. Returns the secure URL.
         async function uploadToCloudinary(fileOrBlob, isVideo = false) {
             const formData = new FormData();
             formData.append('file', fileOrBlob);
@@ -1276,7 +1275,6 @@
             return data.secure_url;
         }
 
-        // Convert a Base64 data URL to a Blob (for migrating old products)
         function dataUrlToBlob(dataUrl) {
             const [meta, base64] = dataUrl.split(',');
             const mimeMatch = meta.match(/data:(.*?);base64/);
@@ -1296,7 +1294,6 @@
             return typeof str === 'string' && str.startsWith('data:');
         }
 
-        // Compress an image file to a smaller JPEG blob before uploading
         function compressImageToBlob(file, maxWidth = 800, quality = 0.65) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -1463,6 +1460,53 @@
         let isMigrating = false;
 
         const inFlightOrderWrites = new Set();
+
+        // ==================== ✅ ORDER STATUS PIPELINE (single source of truth) ====================
+        // Ordered from earliest to latest. Used by admin dropdown + customer tracking.
+        const ORDER_STATUSES = [
+            "Order Placed - Processing",
+            "Payment Received",
+            "Package on the move",
+            "package left warehouse",
+            "package arrived sorting centre",
+            "package left sorting centre",
+            "Package arrived at the origin airport",
+            "package in flight",
+            "Package arrived destination country",
+            "Package being inspected by custom",
+            "package completely ready for transit",
+            "Order Shipped",
+            "In Transit",
+            "Out for Delivery",
+            "Delivered Successfully",
+            "Cancelled"
+        ];
+
+        // Map: status string (lowercased) → { color, bg, icon }
+        const ORDER_STATUS_META = {
+            "order placed - processing":          { color: "#f59e0b", bg: "#fef3c7", icon: "⏳" },
+            "payment received":                   { color: "#10b981", bg: "#d1fae5", icon: "💰" },
+            "package on the move":                { color: "#8b5cf6", bg: "#ede9fe", icon: "🚚" },
+            "package left warehouse":             { color: "#8b5cf6", bg: "#ede9fe", icon: "🏠" },
+            "package arrived sorting centre":     { color: "#8b5cf6", bg: "#ede9fe", icon: "📥" },
+            "package left sorting centre":        { color: "#8b5cf6", bg: "#ede9fe", icon: "📤" },
+            "package arrived at the origin airport": { color: "#8b5cf6", bg: "#ede9fe", icon: "✈️" },
+            "package in flight":                  { color: "#8b5cf6", bg: "#ede9fe", icon: "🛫" },
+            "package arrived destination country":{ color: "#8b5cf6", bg: "#ede9fe", icon: "🛬" },
+            "package being inspected by custom":  { color: "#8b5cf6", bg: "#ede9fe", icon: "👮" },
+            "package completely ready for transit": { color: "#8b5cf6", bg: "#ede9fe", icon: "✅" },
+            "order shipped":                      { color: "#3b82f6", bg: "#dbeafe", icon: "🚚" },
+            "in transit":                         { color: "#3b82f6", bg: "#dbeafe", icon: "🚚" },
+            "out for delivery":                   { color: "#8b5cf6", bg: "#ede9fe", icon: "📦" },
+            "delivered successfully":             { color: "#16a34a", bg: "#dcfce7", icon: "✅" },
+            "cancelled":                          { color: "#dc2626", bg: "#fee2e2", icon: "❌" }
+        };
+
+        function getOrderStatusMeta(status) {
+            const key = String(status || "").toLowerCase().trim();
+            if (ORDER_STATUS_META[key]) return ORDER_STATUS_META[key];
+            return { color: "#64748b", bg: "#f1f5f9", icon: "•" };
+        }
 
         try {
             const cached = await dbHelper.get('swift_cached_state');
@@ -2937,25 +2981,7 @@
                     return;
                 }
 
-                let statusColor = "#f59e0b";
-                let statusIcon = "⏳";
-                const s = found.status || "";
-                
-                if (s.includes("Delivered")) { statusColor = "#16a34a"; statusIcon = "✅"; }
-                else if (s.includes("Package on the move")) { statusColor = "#f59e0b"; statusIcon = "⚙️"; }
-                else if (s.includes("package completely ready for transit")) { statusColor = "#f59e0b"; statusIcon = "✅"; }
-                else if (s.includes("Package being inspected by custom")) { statusColor = "#f59e0b"; statusIcon = "👮"; }
-                else if (s.includes("Package arrived destination country")) { statusColor = "#f59e0b"; statusIcon = "🛬"; }
-                else if (s.includes("package in flight")) { statusColor = "#f59e0b"; statusIcon = "🛫"; }
-                else if (s.includes("Package arrived at the origin airport")) { statusColor = "#f59e0b"; statusIcon = "✈️"; }
-                else if (s.includes("package left sorting centre")) { statusColor = "#f59e0b"; statusIcon = "⏳"; }
-                else if (s.includes("package arrived sorting centre")) { statusColor = "#f59e0b"; statusIcon = "⏳"; }
-                else if (s.includes("package left warehouse")) { statusColor = "#f59e0b"; statusIcon = "🏠"; }
-                else if (s.includes("Transit") || s.includes("Shipped")) { statusColor = "#3b82f6"; statusIcon = "🚚"; }
-                else if (s.includes("Out for Delivery")) { statusColor = "#8b5cf6"; statusIcon = "📦"; }
-                else if (s.includes("Payment Received")) { statusColor = "#10b981"; statusIcon = "💰"; }
-                else if (s.includes("Processing")) { statusColor = "#f59e0b"; statusIcon = "⏳"; }
-                else if (s.includes("Cancelled")) { statusColor = "#dc2626"; statusIcon = "❌"; }
+                const statusDetails = getOrderStatusMeta(found.status);
 
                 resultBox.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
@@ -2965,8 +2991,8 @@
                         </div>
                         <div style="text-align: right;">
                             <p style="margin: 0 0 0.15rem; font-size: 0.72rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Status</p>
-                            <span class="refund-status-badge" style="background: ${statusColor}22; color: ${statusColor}; border: 1px solid ${statusColor}55;">
-                                ${statusIcon} ${found.status}
+                            <span class="refund-status-badge" style="background: ${statusDetails.color}22; color: ${statusDetails.color}; border: 1px solid ${statusDetails.color}55;">
+                                ${statusDetails.icon} ${found.status}
                             </span>
                         </div>
                     </div>
@@ -3024,30 +3050,10 @@
                 return;
             }
 
-            const getStatusDetails = (status) => {
-                const s = status || "";
-                if (s.includes("Delivered")) return { color: "#16a34a", bg: "#dcfce7", icon: "✅" };
-                if (s.includes("Transit") || s.includes("Shipped")) return { color: "#3b82f6", bg: "#dbeafe", icon: "🚚" };
-                if (s.includes("Package on the move")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "⚙️" };
-                if (s.includes("package completely ready for transit")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "✅" };
-                if (s.includes("Package being inspected by custom")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "👮" };
-                if (s.includes("Package arrived destination country")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "🛬" };
-                if (s.includes("package in flight")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "🛫" };
-                if (s.includes("Package arrived at the origin airport")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "✈️" };
-                if (s.includes("package left sorting centre")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "⏳" };
-                if (s.includes("package arrived sorting centre")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "⏳" };
-                if (s.includes("package left warehouse")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "🏠" };
-                if (s.includes("Out for Delivery")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "📦" };
-                if (s.includes("Payment Received")) return { color: "#10b981", bg: "#d1fae5", icon: "💰" };
-                if (s.includes("Processing")) return { color: "#f59e0b", bg: "#fef3c7", icon: "⏳" };
-                if (s.includes("Cancelled")) return { color: "#dc2626", bg: "#fee2e2", icon: "❌" };
-                return { color: "#64748b", bg: "#f1f5f9", icon: "•" };
-            };
-
             listContainer.innerHTML = [...userOrders].reverse().map(order => {
-                const statusDetails = getStatusDetails(order.status);
+                const statusDetails = getOrderStatusMeta(order.status);
                 const alreadyReviewed = hasUserReviewedOrder(order.id, currentUser.username);
-                const isDelivered = String(order.status || "").includes("Delivered");
+                const isDelivered = String(order.status || '').includes("Delivered");
                 const showRateBtn = isDelivered && !alreadyReviewed;
 
                 return `
@@ -3541,6 +3547,10 @@
             const ordersToShow = [...globalState.orders].reverse();
 
             listContainer.innerHTML = ordersToShow.map((ord) => {
+                const statusOptionsHtml = ORDER_STATUSES.map(s =>
+                    `<option value="${s}" ${ord.status === s ? 'selected' : ''}>${s}</option>`
+                ).join('');
+
                 return `
                 <div class="admin-order-card">
                     <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem; flex-wrap:wrap; gap:0.3rem;">
@@ -3553,13 +3563,7 @@
                     
                     <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top: 0.5rem;">
                         <select id="admin-status-${ord.id}" style="margin:0; padding:0.5rem; font-size:16px; flex-grow:1; border-radius: 8px; border: 1px solid #cbd5e1;">
-                            <option value="Order Placed - Processing" ${ord.status === 'Order Placed - Processing' ? 'selected' : ''}>Order Placed - Processing</option>
-                            <option value="Payment Received" ${ord.status === 'Payment Received' ? 'selected' : ''}>Payment Received</option>
-                            <option value="Order Shipped" ${ord.status === 'Order Shipped' ? 'selected' : ''}>Order Shipped</option>
-                            <option value="In Transit" ${ord.status === 'In Transit' ? 'selected' : ''}>In Transit</option>
-                            <option value="Out for Delivery" ${ord.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
-                            <option value="Delivered Successfully" ${ord.status === 'Delivered Successfully' ? 'selected' : ''}>Delivered Successfully</option>
-                            <option value="Cancelled" ${ord.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                            ${statusOptionsHtml}
                         </select>
                         <button class="btn-primary" style="padding: 0.5rem 1rem; font-size:0.9rem; width:auto; border-radius: 8px;" onclick="updateOrderStatus('${ord.id}')">Update Status</button>
                     </div>
@@ -3710,7 +3714,7 @@
                             const url = await uploadToCloudinary(blob, false);
                             newImages.push(url);
                         } else if (typeof img === 'string') {
-                            newImages.push(img); // keep as-is
+                            newImages.push(img);
                         }
                     }
 
@@ -3748,7 +3752,6 @@
                 }
             }
 
-            // Final push to Firebase
             try {
                 await set(stateRef, buildStatePayload());
                 console.log("✅ Migration synced to Firebase");
@@ -3882,7 +3885,6 @@
             addBtn.disabled = true;
 
             try {
-                // ✅ Upload new images to Cloudinary (if any selected)
                 let imagesUrls = [];
                 if (adminSelectedImages.length > 0) {
                     if (adminSelectedImages.length < 3 || adminSelectedImages.length > 5) {
@@ -3901,7 +3903,6 @@
                     throw new Error("Could not process any of the selected images. Please try smaller files.");
                 }
 
-                // ✅ Upload new videos to Cloudinary (if any selected)
                 let videosUrls = [];
                 if (adminSelectedVideos.length > 0) {
                     for (let i = 0; i < adminSelectedVideos.length; i++) {
