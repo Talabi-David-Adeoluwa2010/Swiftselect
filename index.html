@@ -3028,6 +3028,15 @@
                 const s = status || "";
                 if (s.includes("Delivered")) return { color: "#16a34a", bg: "#dcfce7", icon: "✅" };
                 if (s.includes("Transit") || s.includes("Shipped")) return { color: "#3b82f6", bg: "#dbeafe", icon: "🚚" };
+                if (s.includes("Package on the move")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "⚙️" };
+                if (s.includes("package completely ready for transit")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "✅" };
+                if (s.includes("Package being inspected by custom")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "👮" };
+                if (s.includes("Package arrived destination country")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "🛬" };
+                if (s.includes("package in flight")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "🛫" };
+                if (s.includes("Package arrived at the origin airport")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "✈️" };
+                if (s.includes("package left sorting centre")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "⏳" };
+                if (s.includes("package arrived sorting centre")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "⏳" };
+                if (s.includes("package left warehouse")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "🏠" };
                 if (s.includes("Out for Delivery")) return { color: "#8b5cf6", bg: "#ede9fe", icon: "📦" };
                 if (s.includes("Payment Received")) return { color: "#10b981", bg: "#d1fae5", icon: "💰" };
                 if (s.includes("Processing")) return { color: "#f59e0b", bg: "#fef3c7", icon: "⏳" };
