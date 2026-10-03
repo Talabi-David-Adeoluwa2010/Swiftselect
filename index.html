@@ -2942,6 +2942,15 @@
                 const s = found.status || "";
                 
                 if (s.includes("Delivered")) { statusColor = "#16a34a"; statusIcon = "✅"; }
+                else if (s.includes("Package on the move")) { statusColor = "#f59e0b"; statusIcon = "⚙️"; }
+                else if (s.includes("package completely ready for transit")) { statusColor = "#f59e0b"; statusIcon = "✅"; }
+                else if (s.includes("Package being inspected by custom")) { statusColor = "#f59e0b"; statusIcon = "👮"; }
+                else if (s.includes("Package arrived destination country")) { statusColor = "#f59e0b"; statusIcon = "🛬"; }
+                else if (s.includes("package in flight")) { statusColor = "#f59e0b"; statusIcon = "🛫"; }
+                else if (s.includes("Package arrived at the origin airport")) { statusColor = "#f59e0b"; statusIcon = "✈️"; }
+                else if (s.includes("package left sorting centre")) { statusColor = "#f59e0b"; statusIcon = "⏳"; }
+                else if (s.includes("package arrived sorting centre")) { statusColor = "#f59e0b"; statusIcon = "⏳"; }
+                else if (s.includes("package left warehouse")) { statusColor = "#f59e0b"; statusIcon = "🏠"; }
                 else if (s.includes("Transit") || s.includes("Shipped")) { statusColor = "#3b82f6"; statusIcon = "🚚"; }
                 else if (s.includes("Out for Delivery")) { statusColor = "#8b5cf6"; statusIcon = "📦"; }
                 else if (s.includes("Payment Received")) { statusColor = "#10b981"; statusIcon = "💰"; }
