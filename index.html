@@ -709,11 +709,68 @@
             margin-bottom: 0.6rem; text-transform: uppercase;
         }
         .theme-banner .deco-hero-badge { color: #fff; }
-    </style>
+            /* ==================== 🎄 ADVANCED SEASONAL DECORATIONS (NEW) ==================== */
+        .seasonal-lights {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 20px;
+            z-index: 999; pointer-events: none; border-top: 4px solid #1a1a1a;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .seasonal-lights::before, .seasonal-lights::after {
+            content: ''; position: absolute; top: 4px; width: 100%; height: 15px;
+            background-image: 
+                radial-gradient(circle at 15px 10px, #ff0000 4px, transparent 5px),
+                radial-gradient(circle at 45px 10px, #00ff00 4px, transparent 5px),
+                radial-gradient(circle at 75px 10px, #ffff00 4px, transparent 5px),
+                radial-gradient(circle at 105px 10px, #00ffff 4px, transparent 5px);
+            background-size: 120px 20px; background-repeat: repeat-x;
+            animation: blinkLights 1.5s infinite alternate;
+        }
+        .seasonal-lights::after { filter: blur(4px); opacity: 0.6; }
+        @keyframes blinkLights {
+            0% { opacity: 0.6; transform: scaleY(0.9); }
+            100% { opacity: 1; transform: scaleY(1.1); }
+        }
+        body.theme-christmas-active .seasonal-lights { display: block; }
+
+        .cart-santa-hat {
+            display: none; position: absolute; top: -18px; right: -10px; width: 40px; height: 40px;
+            z-index: 10; pointer-events: none; transform: rotate(15deg);
+            animation: hatBounce 2s ease-in-out infinite alternate;
+        }
+        .cart-santa-hat::before {
+            content: ''; position: absolute; bottom: 0; right: 0;
+            width: 30px; height: 20px; background: #ff0000; border-radius: 0 0 15px 15px;
+        }
+        .cart-santa-hat::after {
+            content: ''; position: absolute; top: -5px; left: 0;
+            width: 20px; height: 20px; background: #ff0000; border-radius: 50% 50% 0 0;
+            box-shadow: 10px 0 0 0 #ff0000, 20px 5px 0 -2px #ff0000;
+        }
+        .cart-santa-hat .hat-pom {
+            position: absolute; top: 15px; right: -5px; width: 14px; height: 14px; background: #fff;
+            border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        body.theme-christmas-active .cart-santa-hat { display: block; }
+        @keyframes hatBounce {
+            0% { transform: rotate(15deg) translateY(0); }
+            100% { transform: rotate(20deg) translateY(-3px); }
+        }
+
+        body.theme-christmas-active .product-card {
+            border-top: 5px solid;
+            border-image: repeating-linear-gradient(45deg, #ff0000, #ff0000 10px, #ffffff 10px, #ffffff 20px) 5;
+        }
+</style>
 </head>
 <body>
-
     <div id="decoration-layer"></div>
+    
+    <!-- 🎄 Seasonal Hardware Decorations -->
+    <div class="seasonal-lights"></div>
+    
+    <div class="cart-santa-hat" id="santa-hat-element" style="display:none;">
+        <div class="hat-pom"></div>
+    </div>
 
     <div class="announcement-bar">
         ⚡ Instant Global Firebase Cloud Sync & IndexedDB Storage Active | Paystack ($ & ₦)
