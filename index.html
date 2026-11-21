@@ -731,30 +731,7 @@
             100% { opacity: 1; transform: scaleY(1.1); }
         }
         body.theme-christmas-active .seasonal-lights { display: block; }
-
-        .cart-santa-hat {
-            display: none; position: absolute; top: -18px; right: -10px; width: 40px; height: 40px;
-            z-index: 10; pointer-events: none; transform: rotate(15deg);
-            animation: hatBounce 2s ease-in-out infinite alternate;
-        }
-        .cart-santa-hat::before {
-            content: ''; position: absolute; bottom: 0; right: 0;
-            width: 30px; height: 20px; background: #ff0000; border-radius: 0 0 15px 15px;
-        }
-        .cart-santa-hat::after {
-            content: ''; position: absolute; top: -5px; left: 0;
-            width: 20px; height: 20px; background: #ff0000; border-radius: 50% 50% 0 0;
-            box-shadow: 10px 0 0 0 #ff0000, 20px 5px 0 -2px #ff0000;
-        }
-        .cart-santa-hat .hat-pom {
-            position: absolute; top: 15px; right: -5px; width: 14px; height: 14px; background: #fff;
-            border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        }
-        body.theme-christmas-active .cart-santa-hat { display: block; }
-        @keyframes hatBounce {
-            0% { transform: rotate(15deg) translateY(0); }
-            100% { transform: rotate(20deg) translateY(-3px); }
-        }
+        
 
         body.theme-christmas-active .product-card {
             border-top: 5px solid;
@@ -768,10 +745,6 @@
     <!-- 🎄 Seasonal Hardware Decorations -->
     <div class="seasonal-lights"></div>
     
-    <div class="cart-santa-hat" id="santa-hat-element" style="display:none;">
-        <div class="hat-pom"></div>
-    </div>
-
     <div class="announcement-bar">
         ⚡ Instant Global Firebase Cloud Sync & IndexedDB Storage Active | Paystack ($ & ₦)
     </div>
@@ -2822,17 +2795,8 @@
 
             // 2) Advanced Seasonal Decorations (Lights, Hats, Candy Canes)
             document.body.classList.remove('theme-christmas-active');
-            const santaHat = document.getElementById('santa-hat-element');
-            const cartBtn = document.querySelector('button[onclick="toggleCart()"]');
-            
-            if (t.id === 'theme-christmas') {
+                        if (t.id === 'theme-christmas') {
                 document.body.classList.add('theme-christmas-active');
-                if (cartBtn && santaHat) {
-                    cartBtn.appendChild(santaHat);
-                    santaHat.style.display = 'block';
-                }
-            } else {
-                if (santaHat) santaHat.style.display = 'none';
             }
 
             // 3) Hero banner
