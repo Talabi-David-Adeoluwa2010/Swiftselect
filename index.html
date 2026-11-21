@@ -2812,13 +2812,30 @@
             return (globalState.themes || []).find(t => t.id === id) || DEFAULT_THEME;
         };
 
-        window.applyActiveTheme = function() {
+                window.applyActiveTheme = function() {
             const t = getActiveTheme();
 
+            // 1) Color tokens
             document.documentElement.style.setProperty('--primary', t.primary || DEFAULT_THEME.primary);
             document.documentElement.style.setProperty('--accent',  t.accent  || DEFAULT_THEME.accent);
             document.documentElement.style.setProperty('--bg', t.bgTint || '#f8fafc');
 
+            // 2) Advanced Seasonal Decorations (Lights, Hats, Candy Canes)
+            document.body.classList.remove('theme-christmas-active');
+            const santaHat = document.getElementById('santa-hat-element');
+            const cartBtn = document.querySelector('button[onclick="toggleCart()"]');
+            
+            if (t.id === 'theme-christmas') {
+                document.body.classList.add('theme-christmas-active');
+                if (cartBtn && santaHat) {
+                    cartBtn.appendChild(santaHat);
+                    santaHat.style.display = 'block';
+                }
+            } else {
+                if (santaHat) santaHat.style.display = 'none';
+            }
+
+            // 3) Hero banner
             const banner = document.getElementById('theme-banner');
             const titleEl = document.getElementById('theme-banner-title');
             const subEl   = document.getElementById('theme-banner-subtitle');
@@ -2845,9 +2862,9 @@
                 subEl.innerText   = t.bannerSubtitle || DEFAULT_THEME.bannerSubtitle;
             }
 
+            // 4) Decoration layer
             applyDecorations(t);
         };
-
         function isCheckoutPath() {
             const p = (window.location.pathname + window.location.search).toLowerCase();
             if (DECO_SAFE_PATHS.some(x => p.includes(x))) return true;
